@@ -1,0 +1,416 @@
+:root {
+  --fundo: #FAFAF7;
+  --superficie: #FFFFFF;
+  --borda: #E6E4DE;
+  --texto: #17181C;
+  --texto-apoio: #6B6E76;
+  --destaque: #1D4ED8;
+  --destaque-hover: #1E40AF;
+
+  /* etapas do funil — só nas etiquetas de etapa */
+  --etapa-novo: #64748B;
+  --etapa-em-contato: #D97706;
+  --etapa-proposta: #7C3AED;
+  --etapa-cliente: #15803D;
+
+  --raio: 10px;
+
+  /* aviso de erro — cor funcional, não é cor de marca */
+  --erro: #B42318;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: var(--fonte), system-ui, sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+a { color: var(--destaque); }
+a:hover { color: var(--destaque-hover); }
+
+/* ---- layout ---- */
+
+.pagina {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 64px 24px 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.cabecalho { margin-bottom: 8px; }
+
+.cartao {
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  padding: 32px;
+}
+
+.titulo-secao {
+  margin: 0 0 24px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.apoio {
+  margin: 4px 0 0;
+  color: var(--texto-apoio);
+  font-size: 15px;
+}
+
+/* ---- formulário ---- */
+
+.campo { display: block; margin-bottom: 20px; }
+
+.campo label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.campo-duplo { display: flex; gap: 8px; }
+
+.campo-duplo select { flex: 0 0 210px; min-width: 0; }
+.campo-duplo input { flex: 1 1 auto; }
+
+.campo input,
+.campo select {
+  width: 100%;
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--texto);
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+}
+
+.campo select { appearance: auto; cursor: pointer; }
+
+.campo input:focus,
+.campo select:focus {
+  outline: 2px solid var(--destaque);
+  outline-offset: 1px;
+  border-color: var(--destaque);
+}
+
+.botao {
+  padding: 12px 24px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--superficie);
+  background: var(--destaque);
+  border: 1px solid var(--destaque);
+  border-radius: var(--raio);
+  cursor: pointer;
+}
+
+.botao:hover { background: var(--destaque-hover); border-color: var(--destaque-hover); }
+.botao:disabled { opacity: 0.55; cursor: default; }
+
+.erro {
+  margin: 0 0 20px;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--erro);
+  border: 1px solid var(--erro);
+  border-radius: var(--raio);
+}
+
+/* ---- lista de contatos ---- */
+
+.lista { margin: 0; padding: 0; list-style: none; }
+
+.lista > li {
+  padding: 20px 0;
+  border-top: 1px solid var(--borda);
+}
+
+.lista > li:first-child { border-top: 0; padding-top: 0; }
+.lista > li:last-child { padding-bottom: 0; }
+
+.contato-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.nome { margin: 0; font-size: 17px; font-weight: 700; }
+
+.etiqueta {
+  padding: 4px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid;
+  border-radius: var(--raio);
+}
+
+/* ---- anotações por contato ---- */
+
+.anotacoes { margin-top: 14px; }
+
+.anotacoes summary {
+  width: fit-content;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--destaque);
+  cursor: pointer;
+}
+
+.anotacoes summary:hover { color: var(--destaque-hover); }
+.anotacoes[open] summary { margin-bottom: 16px; }
+
+.notas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.notas li {
+  padding: 14px 16px;
+  background: var(--fundo);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+}
+
+.notas p { margin: 0; font-size: 15px; }
+
+.notas .data {
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: var(--texto-apoio);
+}
+
+.anotacoes textarea {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--texto);
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  resize: vertical;
+}
+
+.anotacoes textarea:focus {
+  outline: 2px solid var(--destaque);
+  outline-offset: 1px;
+  border-color: var(--destaque);
+}
+
+.botao-pequeno {
+  margin-top: 12px;
+  padding: 10px 18px;
+  font-size: 15px;
+}
+
+/* ---- ações de cada anotação ---- */
+
+.nota-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.acoes-nota {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* o form do Excluir não deve criar caixa própria, senão desalinha o botão */
+.nota-topo .acoes-nota form { display: contents; }
+
+.botao-texto {
+  padding: 0;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto-apoio);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.botao-texto:hover { color: var(--destaque); }
+.botao-excluir:hover { color: var(--erro); }
+
+.notas form .acoes-nota { margin-top: 12px; }
+.notas form .botao-pequeno { margin-top: 0; }
+
+/* ---- login e sair ---- */
+
+.pagina-login { max-width: 420px; }
+
+.topo-pagina {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+/* ---- navbar ---- */
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 14px 20px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+}
+
+.navbar-links { display: flex; gap: 8px; }
+
+.navbar-links a {
+  padding: 6px 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--texto-apoio);
+  text-decoration: none;
+  border-radius: var(--raio);
+}
+
+.navbar-links a:hover { color: var(--texto); background: var(--fundo); }
+
+.navbar-links a.ativo {
+  color: var(--destaque);
+  background: var(--fundo);
+}
+
+.navbar-conta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.navbar-conta .apoio { margin: 0; font-size: 14px; }
+
+/* ---- registo e avisos ---- */
+
+.ajuda {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--texto-apoio);
+}
+
+.aviso {
+  margin: 0 0 20px;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--texto);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  background: var(--fundo);
+}
+
+.rodape-form {
+  margin: 24px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--borda);
+}
+
+.etiqueta-admin { color: var(--destaque); border-color: var(--destaque); }
+
+/* o form dos botões de texto não deve criar caixa própria, senão desalinha */
+.acoes-nota form { display: contents; }
+
+/* ---- follow-up escrito pela IA ---- */
+
+.follow-up { margin-top: 12px; }
+
+.follow-up .apoio { font-size: 14px; }
+.follow-up .erro { margin: 12px 0 0; }
+
+.mensagem-ia {
+  margin-top: 12px;
+  padding: 16px;
+  background: var(--fundo);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+}
+
+.mensagem-ia p {
+  margin: 0 0 14px;
+  font-size: 15px;
+  white-space: pre-wrap;
+}
+
+/* ---- painel do funil ---- */
+
+.painel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 16px;
+}
+
+.painel-caixa {
+  padding: 20px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+}
+
+.painel-numero {
+  margin: 0;
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.painel-rotulo {
+  margin: 8px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texto-apoio);
+}
+
+/* ---- seletor de etapa do funil ---- */
+
+.seletor-etapa {
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--superficie);
+  border: 1px solid;
+  border-radius: var(--raio);
+  cursor: pointer;
+}
+
+.seletor-etapa:focus {
+  outline: 2px solid var(--destaque);
+  outline-offset: 1px;
+}
