@@ -4,9 +4,8 @@ import { revalidatePath } from "next/cache";
 import { supabase } from "../lib/supabase";
 import { exigirSessao } from "./sessao-actions";
 import { escreverFollowUp } from "../lib/ia";
-import { LIMITES, emailValido } from "../lib/validacao";
-
-const ETAPAS = ["novo", "em contato", "proposta", "cliente"];
+import { ETAPAS } from "./etapas";
+import { LIMITES, emailValido, idValido } from "../lib/validacao";
 
 // Junta indicativo + número num telefone só. Devolve { telefone } ou { erro }.
 // Regra E.164: no máximo 15 dígitos somando indicativo e número.
@@ -51,8 +50,10 @@ export async function salvarContato(estadoAnterior, dados) {
   const { error } = await supabase.from("contatos").insert({ nome, email, telefone });
   if (error) return { erro: "Não foi possível salvar. Tente de novo." };
 
-  revalidatePath("/");
-  return { erro: "" };
+  revalidatePath("/", "layout");
+  // Quem manda para o funil (ou fecha a janela) é o formulário, no cliente:
+  // um redirect aqui mataria o estado antes de o formulário saber que correu bem.
+  return { erro: "", salvo: (estadoAnterior?.salvo ?? 0) + 1 };
 }
 
 export async function salvarAnotacao(dados) {
@@ -60,10 +61,10 @@ export async function salvarAnotacao(dados) {
 
   const texto = dados.get("texto")?.trim();
   const contatoId = Number(dados.get("contato_id"));
-  if (!texto || !contatoId || texto.length > LIMITES.anotacao) return;
+  if (!idValido(contatoId) || !texto || texto.length > LIMITES.anotacao) return;
 
   await supabase.from("anotacoes").insert({ contato_id: contatoId, texto });
-  revalidatePath("/");
+  revalidatePath("/", "layout");
 }
 
 export async function editarAnotacao(dados) {
@@ -71,27 +72,27 @@ export async function editarAnotacao(dados) {
 
   const id = Number(dados.get("id"));
   const texto = dados.get("texto")?.trim();
-  if (!id || !texto || texto.length > LIMITES.anotacao) return;
+  if (!idValido(id) || !texto || texto.length > LIMITES.anotacao) return;
 
   await supabase.from("anotacoes").update({ texto }).eq("id", id);
-  revalidatePath("/");
+  revalidatePath("/", "layout");
 }
 
 export async function excluirAnotacao(dados) {
   await exigirSessao();
 
   const id = Number(dados.get("id"));
-  if (!id) return;
+  if (!idValido(id)) return;
 
   await supabase.from("anotacoes").delete().eq("id", id);
-  revalidatePath("/");
+  revalidatePath("/", "layout");
 }
 
 export async function gerarFollowUp(estadoAnterior, dados) {
   await exigirSessao();
 
   const contatoId = Number(dados.get("contato_id"));
-  if (!contatoId) return { erro: "Contato não encontrado." };
+  if (!idValido(contatoId)) return { erro: "Contato não encontrado." };
 
   // Os dados vêm do banco, não do navegador: ninguém injeta um contato falso.
   const { data: contato } = await supabase
@@ -116,7 +117,19 @@ export async function gerarFollowUp(estadoAnterior, dados) {
     });
 
     if (!mensagem) return { erro: "A IA não devolveu nenhuma mensagem. Tente de novo." };
-    return { mensagem };
+
+    // Guardado com data: a mensagem passa a poder ser relida mais tarde.
+    const { error } = await supabase
+      .from("follow_ups")
+      .insert({ contato_id: contatoId, texto: mensagem });
+
+    if (error) {
+      console.error("Falha a guardar follow-up:", error);
+      return { erro: "A mensagem foi escrita, mas não deu para guardar. Tente de novo." };
+    }
+
+    revalidatePath("/", "layout");
+    return { erro: "" };
   } catch (erro) {
     // O detalhe técnico fica no servidor; na tela vai só o essencial.
     console.error("Falha a gerar follow-up:", erro);
@@ -124,14 +137,18 @@ export async function gerarFollowUp(estadoAnterior, dados) {
   }
 }
 
-export async function mudarEtapa(dados) {
+// Chamada direto do kanban, que já tem o id e a etapa em mãos.
+// Devolve { ok } para o cartão saber se ficou mesmo guardado.
+export async function mudarEtapa(idCru, etapa) {
   await exigirSessao();
 
-  const id = Number(dados.get("contato_id"));
-  const etapa = dados.get("etapa");
+  const id = Number(idCru);
   // O banco também recusa etapas inválidas, mas assim nem chegamos a tentar.
-  if (!id || !ETAPAS.includes(etapa)) return;
+  if (!idValido(id) || !ETAPAS.includes(etapa)) return { ok: false };
 
-  await supabase.from("contatos").update({ etapa }).eq("id", id);
-  revalidatePath("/");
+  const { error } = await supabase.from("contatos").update({ etapa }).eq("id", id);
+  if (error) return { ok: false };
+
+  revalidatePath("/", "layout");
+  return { ok: true };
 }

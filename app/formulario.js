@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { salvarContato } from "./actions";
 import { INDICATIVOS } from "./indicativos";
 import { LIMITES } from "../lib/validacao";
@@ -8,12 +9,25 @@ import { LIMITES } from "../lib/validacao";
 // País pré-selecionado no seletor de indicativo.
 const PADRAO = "+351";
 
-export default function Formulario() {
+// aoSalvar: opcional, para quem mostra este formulário dentro de uma janela
+// e precisa de a fechar quando o contato ficou guardado.
+export default function Formulario({ aoSalvar }) {
   const [estado, acao, salvando] = useActionState(salvarContato, { erro: "" });
   // Guarda o país escolhido para adaptar a validação do número.
   // Ao salvar, o React limpa o formulário: o onReset abaixo devolve
   // este estado ao mesmo país que o select volta a mostrar.
   const [indicativo, setIndicativo] = useState(PADRAO);
+
+  // A action devolve um contador que sobe a cada gravação bem sucedida.
+  // Sem aoSalvar, o destino é o funil — é lá que o contato novo aparece.
+  const router = useRouter();
+  const ultimo = useRef(0);
+  useEffect(() => {
+    if (!estado.salvo || estado.salvo === ultimo.current) return;
+    ultimo.current = estado.salvo;
+    if (aoSalvar) aoSalvar();
+    else router.push("/funil");
+  }, [estado.salvo, aoSalvar, router]);
 
   const portugues = indicativo === "+351";
 

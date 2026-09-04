@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { supabase } from "../lib/supabase";
 import { criarHash, senhaConfere } from "../lib/senha";
 import { criarSessao, lerSessao, NOME_COOKIE, DURACAO_SEGUNDOS } from "../lib/sessao";
-import { LIMITES, emailValido } from "../lib/validacao";
+import { LIMITES, emailValido, idValido } from "../lib/validacao";
 
 const SENHA_MINIMA = 8;
 
@@ -96,7 +96,7 @@ export async function aprovarUtilizador(dados) {
   await exigirAdmin();
 
   const id = Number(dados.get("id"));
-  if (!id) return;
+  if (!idValido(id)) return;
 
   await supabase.from("usuarios").update({ estado: "aprovado" }).eq("id", id);
   revalidatePath("/usuarios");
@@ -108,7 +108,7 @@ export async function recusarUtilizador(dados) {
 
   const id = Number(dados.get("id"));
   // Nunca sobre a própria conta: senão o admin trancava-se fora do sistema.
-  if (!id || id === admin.id) return;
+  if (!idValido(id) || id === admin.id) return;
 
   await supabase.from("usuarios").delete().eq("id", id);
   revalidatePath("/usuarios");
@@ -120,7 +120,7 @@ export async function removerAcesso(dados) {
   const admin = await exigirAdmin();
 
   const id = Number(dados.get("id"));
-  if (!id || id === admin.id) return;
+  if (!idValido(id) || id === admin.id) return;
 
   await supabase.from("usuarios").update({ estado: "pendente" }).eq("id", id);
   revalidatePath("/usuarios");
@@ -130,7 +130,7 @@ export async function promoverAdmin(dados) {
   const admin = await exigirAdmin();
 
   const id = Number(dados.get("id"));
-  if (!id || id === admin.id) return;
+  if (!idValido(id) || id === admin.id) return;
 
   await supabase.from("usuarios").update({ papel: "admin" }).eq("id", id);
   revalidatePath("/usuarios");
@@ -140,7 +140,7 @@ export async function despromoverAdmin(dados) {
   const admin = await exigirAdmin();
 
   const id = Number(dados.get("id"));
-  if (!id || id === admin.id) return;
+  if (!idValido(id) || id === admin.id) return;
 
   await supabase.from("usuarios").update({ papel: "usuario" }).eq("id", id);
   revalidatePath("/usuarios");
