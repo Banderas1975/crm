@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 const AREAS = [
   { nome: "Dashboard", caminho: "/" },
   { nome: "Funil", caminho: "/funil" },
+  { nome: "Tarefas", caminho: "/tarefas" },
   { nome: "Contatos", caminho: "/contatos" },
   { nome: "Usuários", caminho: "/usuarios", soAdmin: true },
 ];
@@ -18,7 +19,7 @@ function Pendente() {
   return pending ? <span className="nav-pendente" aria-label="a carregar" /> : null;
 }
 
-export default function NavLateral({ admin }) {
+export default function NavLateral({ admin, aFazer = 0 }) {
   const caminho = usePathname();
 
   // A página de um contato vive dentro da área Contatos, e deve acendê-la.
@@ -37,8 +38,15 @@ export default function NavLateral({ admin }) {
             className={atual(area.caminho) ? "nav-item ativo" : "nav-item"}
             aria-current={atual(area.caminho) ? "page" : undefined}
           >
-            {area.nome}
-            <Pendente />
+            <span>{area.nome}</span>
+            <span className="nav-direita">
+              {area.caminho === "/tarefas" && aFazer > 0 && (
+                <span className="nav-conta" title="atrasadas e de hoje">
+                  {aFazer}
+                </span>
+              )}
+              <Pendente />
+            </span>
           </Link>
         ))}
       </div>

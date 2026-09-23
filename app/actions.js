@@ -5,7 +5,9 @@ import { supabase } from "../lib/supabase";
 import { exigirSessao } from "./sessao-actions";
 import { escreverFollowUp } from "../lib/ia";
 import { ETAPAS } from "./etapas";
-import { LIMITES, emailValido, idValido } from "../lib/validacao";
+import { REPETICOES, proximaData } from "./tarefas";
+import { hojeEmLisboa } from "./tempo";
+import { LIMITES, emailValido, idValido, dataValida } from "../lib/validacao";
 
 // Junta indicativo + número num telefone só. Devolve { telefone } ou { erro }.
 // Regra E.164: no máximo 15 dígitos somando indicativo e número.
@@ -135,6 +137,74 @@ export async function gerarFollowUp(estadoAnterior, dados) {
     console.error("Falha a gerar follow-up:", erro);
     return { erro: "Não foi possível gerar o follow-up agora. Tente de novo daqui a pouco." };
   }
+}
+
+export async function criarTarefa(estadoAnterior, dados) {
+  await exigirSessao();
+
+  const contatoId = Number(dados.get("contato_id"));
+  if (!idValido(contatoId)) return { erro: "Contato não encontrado." };
+
+  const titulo = dados.get("titulo")?.trim();
+  if (!titulo) return { erro: "Escreva o que é para fazer." };
+  if (titulo.length > LIMITES.tarefa) {
+    return { erro: `A tarefa é muito comprida (máximo ${LIMITES.tarefa} caracteres).` };
+  }
+
+  const venceEm = dados.get("vence_em") || null;
+  if (venceEm && !dataValida(venceEm)) return { erro: "Essa data não existe." };
+
+  const repete = dados.get("repete") || null;
+  if (repete && !(repete in REPETICOES)) return { erro: "Repetição inválida." };
+  // Sem data não há de onde contar a seguinte: a repetição ficaria parada.
+  if (repete && !venceEm) return { erro: "Uma tarefa que se repete precisa de data." };
+
+  const { error } = await supabase
+    .from("tarefas")
+    .insert({ contato_id: contatoId, titulo, vence_em: venceEm, repete });
+
+  if (error) return { erro: "Não foi possível guardar a tarefa. Tente de novo." };
+
+  revalidatePath("/", "layout");
+  return { erro: "", salvo: (estadoAnterior?.salvo ?? 0) + 1 };
+}
+
+export async function concluirTarefa(idCru) {
+  await exigirSessao();
+
+  const id = Number(idCru);
+  if (!idValido(id)) return { ok: false };
+
+  // O "concluida_em is null" faz parte do próprio UPDATE: é o banco que decide,
+  // numa operação só, quem foi o primeiro. Dois cliques seguidos, ou dois
+  // separadores abertos, e o segundo não muda linha nenhuma — daí não sair
+  // repetição a dobrar nem segunda entrada no histórico.
+  const { data: concluidas, error } = await supabase
+    .from("tarefas")
+    .update({ concluida_em: new Date().toISOString() })
+    .eq("id", id)
+    .is("concluida_em", null)
+    .select("contato_id, titulo, vence_em, repete");
+
+  if (error) return { ok: false };
+
+  const tarefa = concluidas?.[0];
+  // Já estava concluída: o trabalho está feito, não há nada a corrigir.
+  if (!tarefa) return { ok: true };
+
+  // Só nasce a seguinte quando esta fecha, uma de cada vez. Nunca existe fila
+  // à espera no banco, por isso não há como acumular tarefas sem fim.
+  if (tarefa.repete && tarefa.vence_em) {
+    await supabase.from("tarefas").insert({
+      contato_id: tarefa.contato_id,
+      titulo: tarefa.titulo,
+      vence_em: proximaData(tarefa.vence_em, tarefa.repete, hojeEmLisboa()),
+      repete: tarefa.repete,
+    });
+  }
+
+  revalidatePath("/", "layout");
+  return { ok: true };
 }
 
 // Chamada direto do kanban, que já tem o id e a etapa em mãos.

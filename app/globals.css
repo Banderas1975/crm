@@ -57,7 +57,8 @@ a:hover { color: var(--destaque-hover); }
 .cartao-linha,
 .cartao-etapa,
 .grafico-nome,
-.grafico-valor {
+.grafico-valor,
+.nav-conta {
   font-family: var(--fonte-mono), ui-monospace, monospace;
   font-feature-settings: "tnum";
 }
@@ -119,7 +120,23 @@ a:hover { color: var(--destaque-hover); }
 
 .nav-item.ativo:hover { color: var(--destaque-hover); }
 
-/* Ponto que aparece no item enquanto a area nova nao chega. */
+.nav-direita {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Quantas tarefas pedem atenção: atrasadas mais as de hoje. */
+.nav-conta {
+  padding: 1px 7px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--fundo);
+  background: var(--destaque);
+  border-radius: 999px;
+}
+
+/* Ponto que aparece no item enquanto a área nova não chega. */
 .nav-pendente {
   width: 7px;
   height: 7px;
@@ -470,6 +487,98 @@ a:hover { color: var(--destaque-hover); }
   font-size: 15px;
   white-space: pre-wrap;
 }
+
+/* ---- tarefas ---- */
+
+.tarefas {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tarefa {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--elevado);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+}
+
+/* Enquanto o servidor confirma, a tarefa já se mostra em saída. */
+.tarefa.a-concluir { opacity: 0.5; }
+
+.tarefa-marca {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  padding: 0;
+  background: var(--fundo);
+  border: 1px solid var(--texto-apoio);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button.tarefa-marca:hover { border-color: var(--destaque); }
+
+button.tarefa-marca:focus-visible {
+  outline: 2px solid var(--destaque);
+  outline-offset: 2px;
+}
+
+button.tarefa-marca:disabled { cursor: default; }
+
+.tarefa-marca.marcada {
+  background: var(--texto-apoio);
+  border-color: var(--texto-apoio);
+}
+
+.tarefa-texto { min-width: 0; }
+
+.tarefa-titulo {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.tarefa-detalhes {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--texto-apoio);
+}
+
+.tarefa .erro { margin: 8px 0 0; }
+
+.tarefa.feita .tarefa-titulo {
+  color: var(--texto-apoio);
+  text-decoration: line-through;
+}
+
+.nova-tarefa { margin-top: 20px; }
+.nova-tarefa .campo { margin-bottom: 16px; }
+.nova-tarefa .ajuda { margin: -4px 0 16px; }
+
+.tarefa-campos { display: flex; gap: 12px; flex-wrap: wrap; }
+.tarefa-campos .campo { flex: 1 1 180px; margin-bottom: 16px; }
+
+.feitas { margin-top: 20px; }
+
+.feitas summary {
+  width: fit-content;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--destaque);
+  cursor: pointer;
+}
+
+.feitas summary:hover { color: var(--destaque-hover); }
+.feitas[open] summary { margin-bottom: 14px; }
 
 /* ---- gráfico do funil ---- */
 

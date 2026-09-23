@@ -62,10 +62,34 @@ O gráfico é HTML e CSS, sem biblioteca. As barras são medidas contra a etapa 
 - [ ] Com a base vazia, ou com uma etapa a zero, o gráfico não quebra: mostra o vazio de forma legível
 - [ ] Numa janela estreita o painel e o gráfico continuam legíveis, sem a página rolar para o lado
 
-## Fora da v2 (fica pra v3)
+## Versão 3
+
+### 1. Tarefas — CONCLUÍDO
+
+O que tem de ser feito, e com quem. Cada tarefa pertence sempre a um contato: é criada na página dele e some com ele se o contato for apagado (`on delete cascade`, decidido pelo banco).
+
+A área **Tarefas** mostra quatro secções, nesta ordem: **Atrasadas · Hoje · Esta semana · Sem data**. Todos os dias são contados em `Europe/Lisbon`, e a data de vencimento é guardada como dia (`date`), não como instante — assim não há fuso para converter na leitura.
+
+Três decisões que respondem a restrições dadas:
+
+- **Nunca há tarefas infinitas.** Uma tarefa repetida só gera a seguinte no momento em que a atual é concluída, uma de cada vez. Não existe fila à espera no banco.
+- **Nunca há avisos duplicados.** O único aviso é o contador ao lado de "Tarefas" na navegação, com as atrasadas mais as de hoje. É contado no banco a cada visita e não fica guardado — não há estado que possa duplicar. O CRM continua a não enviar email nem WhatsApp.
+- **Concluir é atómico.** O "ainda não está concluída" faz parte do próprio UPDATE, por isso dois cliques seguidos (ou dois separadores abertos) não geram duas repetições nem duas entradas no histórico.
+
+Tarefas concluídas saem das quatro secções e ficam no histórico da página do contato, com a data.
+
+**PRONTO QUANDO**
+
+- [ ] Crio uma tarefa na página de um contato e ela aparece na secção certa da área Tarefas
+- [ ] O contador ao lado de "Tarefas" conta as atrasadas mais as de hoje, e muda quando concluo uma
+- [ ] Concluo uma tarefa que se repete e nasce **exatamente uma** seguinte, com a data adiantada
+- [ ] Concluo a mesma tarefa duas vezes seguidas e continua a haver só uma seguinte
+- [ ] Apago um contato no Supabase e as tarefas dele desaparecem com ele
+
+### O que fica para depois
 
 - Permissões avançadas: dono por contato, metas por usuário
-- Automações e lembretes agendados
+- Automações e lembretes agendados (email, WhatsApp)
 - Integrações com outros sistemas
 - Aplicativo de celular
 
@@ -80,5 +104,5 @@ O gráfico é HTML e CSS, sem biblioteca. As barras são medidas contra a etapa 
 - Aplicativo para celular (a web responsiva resolve)
 - Relatórios avançados, metas e comissões
 - Cobrança, planos e assinaturas
-- Agenda, tarefas e lembretes automáticos
+- Agenda e lembretes automáticos (as tarefas entraram na v3; agenda e lembretes continuam fora)
 - Anexos e arquivos por contato

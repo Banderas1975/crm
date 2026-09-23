@@ -1,3 +1,7 @@
+// Todo o sistema conta os dias em Lisboa. Sem isto, quem abrisse a app noutro
+// fuso via as tarefas no dia errado — "hoje" mudaria de sítio para sítio.
+const FUSO = "Europe/Lisbon";
+
 const RELATIVO = new Intl.RelativeTimeFormat("pt-PT", { numeric: "auto" });
 
 const UNIDADES = [
@@ -25,5 +29,35 @@ export function haQuantoTempo(criadoEm) {
 export const FORMATO_DATA = new Intl.DateTimeFormat("pt-PT", {
   dateStyle: "long",
   timeStyle: "short",
-  timeZone: "Europe/Lisbon",
+  timeZone: FUSO,
 });
+
+// "en-CA" devolve a data já no formato AAAA-MM-DD, que é o mesmo que o banco
+// guarda na coluna de vencimento — assim comparam-se como texto, sem contas.
+const DIA_ISO = new Intl.DateTimeFormat("en-CA", {
+  timeZone: FUSO,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+export const hojeEmLisboa = () => DIA_ISO.format(new Date());
+
+// Domingo desta semana. Se hoje já for domingo, devolve hoje: nessa altura
+// não sobra semana nenhuma à frente, e a secção "Esta semana" fica vazia.
+export function fimDaSemana(hoje) {
+  const dia = new Date(`${hoje}T00:00:00Z`);
+  const faltam = (7 - dia.getUTCDay()) % 7;
+  dia.setUTCDate(dia.getUTCDate() + faltam);
+  return dia.toISOString().slice(0, 10);
+}
+
+const DIA_CURTO = new Intl.DateTimeFormat("pt-PT", {
+  day: "2-digit",
+  month: "short",
+  timeZone: FUSO,
+});
+
+// Lisboa nunca está atrás de UTC (é UTC+0 ou UTC+1), por isso a meia-noite
+// UTC cai sempre no mesmo dia cá — não há risco de mostrar o dia anterior.
+export const formatarDia = (iso) => DIA_CURTO.format(new Date(`${iso}T00:00:00Z`));

@@ -4,9 +4,11 @@ import Anotacao from "../../../anotacao";
 import Copiar from "../../../copiar";
 import EtapaContato from "../../../etapa-contato";
 import FollowUp from "../../../follow-up";
+import NovaTarefa from "../../../nova-tarefa";
+import TarefaItem from "../../../tarefa-item";
 import { salvarAnotacao } from "../../../actions";
 import { exigirSessao } from "../../../sessao-actions";
-import { haQuantoTempo, FORMATO_DATA } from "../../../tempo";
+import { haQuantoTempo, FORMATO_DATA, formatarDia } from "../../../tempo";
 import { LIMITES, idValido } from "../../../../lib/validacao";
 
 export const dynamic = "force-dynamic";
@@ -54,8 +56,26 @@ export default async function PaginaContato({ params }) {
     .eq("contato_id", id)
     .order("criado_em", { ascending: false });
 
+  const { data: tarefas } = await supabase
+    .from("tarefas")
+    .select("id, titulo, vence_em, repete, concluida_em")
+    .eq("contato_id", id)
+    .order("vence_em", { ascending: true });
+
   const notas = anotacoes ?? [];
   const mensagens = followUps ?? [];
+
+  const porFazer = (tarefas ?? [])
+    .filter((tarefa) => !tarefa.concluida_em)
+    .map((tarefa) => ({
+      ...tarefa,
+      dia: tarefa.vence_em ? formatarDia(tarefa.vence_em) : null,
+    }));
+
+  // O histórico do que já foi feito por este cliente, do mais recente para trás.
+  const feitas = (tarefas ?? [])
+    .filter((tarefa) => tarefa.concluida_em)
+    .sort((a, b) => b.concluida_em.localeCompare(a.concluida_em));
 
   return (
     <>
@@ -76,6 +96,45 @@ export default async function PaginaContato({ params }) {
           <p className="ficha-rotulo">Seu contato</p>
           <p className="ficha-valor mono">{haQuantoTempo(contato.criado_em)}</p>
         </div>
+      </section>
+
+      <section className="cartao">
+        <h2 className="titulo-secao">
+          Tarefas {porFazer.length > 0 && <span className="mono">({porFazer.length})</span>}
+        </h2>
+
+        {porFazer.length === 0 ? (
+          <p className="apoio">Nenhuma tarefa por fazer.</p>
+        ) : (
+          <ul className="tarefas">
+            {porFazer.map((tarefa) => (
+              <TarefaItem key={tarefa.id} tarefa={tarefa} />
+            ))}
+          </ul>
+        )}
+
+        <NovaTarefa contatoId={contato.id} />
+
+        {feitas.length > 0 && (
+          <details className="feitas">
+            <summary>
+              Já feitas <span className="mono">({feitas.length})</span>
+            </summary>
+            <ul className="tarefas">
+              {feitas.map((tarefa) => (
+                <li key={tarefa.id} className="tarefa feita">
+                  <span className="tarefa-marca marcada" aria-hidden="true" />
+                  <div className="tarefa-texto">
+                    <p className="tarefa-titulo">{tarefa.titulo}</p>
+                    <p className="tarefa-detalhes mono">
+                      {FORMATO_DATA.format(new Date(tarefa.concluida_em))}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </details>
+        )}
       </section>
 
       <section className="cartao">
