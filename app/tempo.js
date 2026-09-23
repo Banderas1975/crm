@@ -43,13 +43,19 @@ const DIA_ISO = new Intl.DateTimeFormat("en-CA", {
 
 export const hojeEmLisboa = () => DIA_ISO.format(new Date());
 
+// Contas feitas em UTC sobre o dia já escolhido em Lisboa: o dia é só um
+// rótulo AAAA-MM-DD, e somar-lhe dias nunca o faz saltar de fuso.
+export function somarDias(iso, quantos) {
+  const dia = new Date(`${iso}T00:00:00Z`);
+  dia.setUTCDate(dia.getUTCDate() + quantos);
+  return dia.toISOString().slice(0, 10);
+}
+
 // Domingo desta semana. Se hoje já for domingo, devolve hoje: nessa altura
 // não sobra semana nenhuma à frente, e a secção "Esta semana" fica vazia.
 export function fimDaSemana(hoje) {
   const dia = new Date(`${hoje}T00:00:00Z`);
-  const faltam = (7 - dia.getUTCDay()) % 7;
-  dia.setUTCDate(dia.getUTCDate() + faltam);
-  return dia.toISOString().slice(0, 10);
+  return somarDias(hoje, (7 - dia.getUTCDay()) % 7);
 }
 
 const DIA_CURTO = new Intl.DateTimeFormat("pt-PT", {

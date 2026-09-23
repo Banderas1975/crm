@@ -1,7 +1,7 @@
 import { supabase } from "../../../lib/supabase";
 import TarefaItem from "../../tarefa-item";
 import { exigirSessao } from "../../sessao-actions";
-import { hojeEmLisboa, fimDaSemana, formatarDia } from "../../tempo";
+import { hojeEmLisboa, fimDaSemana, somarDias, formatarDia } from "../../tempo";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Tarefas — Meu CRM" };
@@ -11,6 +11,8 @@ export default async function Tarefas() {
 
   const hoje = hojeEmLisboa();
   const domingo = fimDaSemana(hoje);
+  // A semana seguinte acaba sete dias depois do domingo desta.
+  const domingoSeguinte = somarDias(domingo, 7);
 
   const { data: tarefas, error } = await supabase
     .from("tarefas")
@@ -40,6 +42,11 @@ export default async function Tarefas() {
       nome: "Esta semana",
       vazio: "Nada até domingo.",
       itens: lista.filter((t) => t.vence_em > hoje && t.vence_em <= domingo),
+    },
+    {
+      nome: "Próxima semana",
+      vazio: "Nada na semana que vem.",
+      itens: lista.filter((t) => t.vence_em > domingo && t.vence_em <= domingoSeguinte),
     },
     {
       nome: "Sem data",

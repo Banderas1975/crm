@@ -68,7 +68,9 @@ O gráfico é HTML e CSS, sem biblioteca. As barras são medidas contra a etapa 
 
 O que tem de ser feito, e com quem. Cada tarefa pertence sempre a um contato: é criada na página dele e some com ele se o contato for apagado (`on delete cascade`, decidido pelo banco).
 
-A área **Tarefas** mostra quatro secções, nesta ordem: **Atrasadas · Hoje · Esta semana · Sem data**. Todos os dias são contados em `Europe/Lisbon`, e a data de vencimento é guardada como dia (`date`), não como instante — assim não há fuso para converter na leitura.
+A área **Tarefas** mostra cinco secções, nesta ordem: **Atrasadas · Hoje · Esta semana · Próxima semana · Sem data**. Todos os dias são contados em `Europe/Lisbon`, e a data de vencimento é guardada como dia (`date`), não como instante — assim não há fuso para converter na leitura.
+
+"Esta semana" vai de amanhã até domingo; "Próxima semana" é a semana seguinte inteira, de segunda ao domingo a seguir. Uma tarefa marcada para depois disso ainda não aparece na agenda — vê-se na página do contato, e entra quando a data se aproximar.
 
 Três decisões que respondem a restrições dadas:
 
@@ -81,6 +83,7 @@ Tarefas concluídas saem das quatro secções e ficam no histórico da página d
 **PRONTO QUANDO**
 
 - [ ] Crio uma tarefa na página de um contato e ela aparece na secção certa da área Tarefas
+- [ ] Uma tarefa marcada para a semana seguinte aparece em "Próxima semana", e não em "Esta semana"
 - [ ] O contador ao lado de "Tarefas" conta as atrasadas mais as de hoje, e muda quando concluo uma
 - [ ] Concluo uma tarefa que se repete e nasce **exatamente uma** seguinte, com a data adiantada
 - [ ] Concluo a mesma tarefa duas vezes seguidas e continua a haver só uma seguinte

@@ -1,16 +1,14 @@
 // As repetições que uma tarefa pode ter. Repetir é opcional: sem isto, a
 // tarefa acontece uma vez e acabou.
+// Com extensão para este ficheiro continuar a correr no Node simples,
+// fora do Next — é o que deixa a matemática das datas testável à parte.
+import { somarDias } from "./tempo.js";
+
 export const REPETICOES = {
   diaria: "todos os dias",
   semanal: "todas as semanas",
   mensal: "todos os meses",
 };
-
-function somarDias(iso, quantos) {
-  const dia = new Date(`${iso}T00:00:00Z`);
-  dia.setUTCDate(dia.getUTCDate() + quantos);
-  return dia.toISOString().slice(0, 10);
-}
 
 // Somar um mês a 31 de janeiro não pode dar 3 de março: o dia encolhe para o
 // último que o mês de destino tem.
