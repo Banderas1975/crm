@@ -9,6 +9,7 @@ const AREAS = [
   { nome: "Dashboard", caminho: "/" },
   { nome: "Funil", caminho: "/funil" },
   { nome: "Tarefas", caminho: "/tarefas" },
+  { nome: "Calendário", caminho: "/calendario" },
   { nome: "Contatos", caminho: "/contatos" },
   { nome: "Usuários", caminho: "/usuarios", soAdmin: true },
 ];

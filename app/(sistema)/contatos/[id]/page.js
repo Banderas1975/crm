@@ -5,17 +5,32 @@ import Copiar from "../../../copiar";
 import EtapaContato from "../../../etapa-contato";
 import FollowUp from "../../../follow-up";
 import NovaProposta from "../../../nova-proposta";
+import NovaReuniao from "../../../nova-reuniao";
 import NovaTarefa from "../../../nova-tarefa";
 import TarefaItem from "../../../tarefa-item";
 import { salvarAnotacao, marcarGanho } from "../../../actions";
 import { exigirSessao } from "../../../sessao-actions";
-import { haQuantoTempo, FORMATO_DATA, formatarDia } from "../../../tempo";
+import {
+  haQuantoTempo,
+  FORMATO_DATA,
+  formatarDia,
+  emLisboa,
+  formatarHora,
+} from "../../../tempo";
 import { LIMITES, idValido } from "../../../../lib/validacao";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Contato — Meu CRM" };
 
 const EUROS = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });
+
+const DIA_REUNIAO = new Intl.DateTimeFormat("pt-PT", {
+  weekday: "short",
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "Europe/Lisbon",
+});
 
 const tamanho = (bytes) =>
   bytes < 1024 * 1024
@@ -77,6 +92,51 @@ export default async function PaginaContato({ params }) {
     .order("criado_em", { ascending: false });
 
   const listaPropostas = propostas ?? [];
+
+  // Reuniões deste contato: as que são dele e aquelas em que é só participante.
+  const { data: comoParticipante } = await supabase
+    .from("reuniao_contatos")
+    .select("reuniao_id")
+    .eq("contato_id", id);
+  const outrasIds = (comoParticipante ?? []).map((r) => r.reuniao_id);
+
+  const { data: reunioes } = await supabase
+    .from("reunioes")
+    .select(
+      "id, titulo, inicio, duracao_min, local, contato_id, contatos!reunioes_contato_fk(nome), reuniao_contatos(contatos(id, nome)), reuniao_usuarios(usuarios(email))"
+    )
+    .or(outrasIds.length ? `contato_id.eq.${id},id.in.(${outrasIds.join(",")})` : `contato_id.eq.${id}`)
+    .order("inicio", { ascending: true });
+
+  const agora = Date.now();
+  const listaReunioes = (reunioes ?? []).map((r) => {
+    const { minutos } = emLisboa(r.inicio);
+    return {
+      ...r,
+      quando: `${DIA_REUNIAO.format(new Date(r.inicio))} · ${formatarHora(minutos)}–${formatarHora(minutos + r.duracao_min)}`,
+      participantes: [
+        r.contatos?.nome,
+        ...r.reuniao_contatos.map((p) => p.contatos?.nome),
+        ...r.reuniao_usuarios.map((p) => p.usuarios?.email),
+      ].filter(Boolean),
+      acabou: new Date(r.inicio).getTime() + r.duracao_min * 60000 < agora,
+    };
+  });
+  const proximas = listaReunioes.filter((r) => !r.acabou);
+  const passadas = listaReunioes.filter((r) => r.acabou).reverse();
+
+  // Quem pode ser escolhido como participante.
+  const { data: outrosContatos } = await supabase
+    .from("contatos")
+    .select("id, nome")
+    .neq("id", id)
+    .order("nome", { ascending: true });
+
+  const { data: equipa } = await supabase
+    .from("usuarios")
+    .select("id, email")
+    .eq("estado", "aprovado")
+    .order("email", { ascending: true });
   const ganha = listaPropostas.find((proposta) => proposta.id === contato.proposta_ganha_id);
 
   const notas = anotacoes ?? [];
@@ -93,6 +153,25 @@ export default async function PaginaContato({ params }) {
   const feitas = (tarefas ?? [])
     .filter((tarefa) => tarefa.concluida_em)
     .sort((a, b) => b.concluida_em.localeCompare(a.concluida_em));
+
+
+  const itemReuniao = (reuniao) => (
+    <li key={reuniao.id} className={reuniao.acabou ? "tarefa feita" : "tarefa"}>
+      <div className="tarefa-texto">
+        <p className="tarefa-titulo">{reuniao.titulo}</p>
+        <p className="tarefa-detalhes mono">
+          {reuniao.quando} · {reuniao.duracao_min} min
+        </p>
+        {reuniao.local && <p className="reuniao-local">Local: {reuniao.local}</p>}
+        <p className="reuniao-participantes">Participantes: {reuniao.participantes.join(", ")}</p>
+        {reuniao.contato_id !== contato.id && (
+          <p className="reuniao-participantes">
+            Marcada em <Link href={`/contatos/${reuniao.contato_id}`}>{reuniao.contatos?.nome}</Link>
+          </p>
+        )}
+      </div>
+    </li>
+  );
 
   return (
     <>
@@ -156,6 +235,34 @@ export default async function PaginaContato({ params }) {
                 </li>
               ))}
             </ul>
+          </details>
+        )}
+      </section>
+
+      <section className="cartao">
+        <h2 className="titulo-secao">
+          Reuniões {proximas.length > 0 && <span className="mono">({proximas.length})</span>}
+        </h2>
+
+        {proximas.length === 0 ? (
+          <p className="apoio">Nenhuma reunião marcada.</p>
+        ) : (
+          <ul className="tarefas">{proximas.map(itemReuniao)}</ul>
+        )}
+
+        <NovaReuniao
+          contatoId={contato.id}
+          nome={contato.nome}
+          contatos={outrosContatos ?? []}
+          usuarios={equipa ?? []}
+        />
+
+        {passadas.length > 0 && (
+          <details className="feitas">
+            <summary>
+              Já realizadas <span className="mono">({passadas.length})</span>
+            </summary>
+            <ul className="tarefas">{passadas.map(itemReuniao)}</ul>
           </details>
         )}
       </section>

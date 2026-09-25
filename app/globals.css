@@ -877,3 +877,192 @@ button.tarefa-marca:disabled { cursor: default; }
 .proposta .tarefa-titulo a { color: var(--texto); }
 .proposta .tarefa-titulo a:hover { color: var(--destaque); }
 .proposta form { flex: 0 0 auto; }
+
+/* ---- calendário ---- */
+
+.conteudo:has(.cal-rolar) { max-width: 1200px; }
+
+.cal-barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cal-nav { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.cal-titulo {
+  margin: 0 0 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.botao-contorno,
+.cal-vista {
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--texto);
+  text-decoration: none;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+}
+
+.botao-contorno:hover,
+.cal-vista:hover { border-color: var(--destaque); color: var(--destaque-hover); }
+
+.cal-vistas { display: flex; gap: 6px; }
+
+.cal-vista.ativa { color: var(--destaque); border-color: var(--destaque); background: var(--elevado); }
+
+/* Rola por dentro, nunca a página inteira para o lado. */
+.cal-rolar {
+  overflow-x: auto;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+}
+
+.cal-mes {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(110px, 1fr));
+  min-width: 770px;
+}
+
+.cal-cabeca {
+  margin: 0;
+  padding: 10px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--texto-apoio);
+  border-bottom: 1px solid var(--borda);
+}
+
+.cal-cabeca.hoje { color: var(--destaque); }
+
+.cal-celula {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 112px;
+  padding: 6px;
+  border-right: 1px solid var(--borda);
+  border-bottom: 1px solid var(--borda);
+}
+
+.cal-celula:nth-child(7n) { border-right: 0; }
+
+.cal-celula.fora .cal-numero { color: var(--borda); }
+
+.cal-celula.alvo,
+.cal-dia-todo.alvo,
+.cal-coluna.alvo { background: var(--elevado); outline: 1px solid var(--destaque); outline-offset: -1px; }
+
+.cal-numero { margin: 0; font-size: 12px; font-weight: 700; color: var(--texto-apoio); }
+
+.hoje .cal-numero { color: var(--destaque); }
+
+.cal-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 4px 6px;
+  font-size: 12px;
+  color: var(--texto);
+  text-decoration: none;
+  background: var(--elevado);
+  border: 1px solid var(--borda);
+  border-radius: 6px;
+  cursor: grab;
+}
+
+.cal-item:hover { border-color: var(--texto-apoio); }
+
+.cal-item:focus-visible { outline: 2px solid var(--destaque); outline-offset: 1px; }
+
+.cal-reuniao { border-left: 3px solid var(--destaque); }
+
+.cal-marca {
+  flex: 0 0 auto;
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--texto-apoio);
+  border-radius: 3px;
+}
+
+.cal-hora { flex: 0 0 auto; font-size: 11px; color: var(--texto-apoio); }
+
+.cal-texto { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* semana e dia */
+
+.cal-semana {
+  display: grid;
+  grid-template-columns: 56px repeat(var(--colunas), minmax(110px, 1fr));
+  min-width: calc(56px + var(--colunas) * 110px);
+}
+
+.cal-canto { border-bottom: 1px solid var(--borda); }
+
+.cal-rotulo {
+  margin: 0;
+  padding: 8px 6px;
+  font-size: 10px;
+  color: var(--texto-apoio);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid var(--borda);
+}
+
+.cal-dia-todo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 40px;
+  padding: 6px;
+  border-left: 1px solid var(--borda);
+  border-bottom: 1px solid var(--borda);
+}
+
+.cal-grelha { max-height: 620px; overflow-y: auto; }
+
+.cal-hora-rotulo {
+  margin: 0;
+  padding: 2px 6px 0 0;
+  font-size: 10px;
+  text-align: right;
+  color: var(--texto-apoio);
+  box-sizing: border-box;
+}
+
+.cal-coluna {
+  position: relative;
+  border-left: 1px solid var(--borda);
+}
+
+/* Uma linha por hora. */
+.cal-slot { height: 44px; border-top: 1px solid var(--borda); box-sizing: border-box; }
+
+.cal-coluna.hoje { background-color: rgb(77 141 255 / 0.04); }
+
+.cal-bloco {
+  position: absolute;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+/* ---- reuniões do contato ---- */
+
+.reuniao-local,
+.reuniao-participantes { margin: 4px 0 0; font-size: 13px; color: var(--texto-apoio); overflow-wrap: anywhere; }
+
+.nova-reuniao select[multiple] { min-height: 110px; padding: 6px; }

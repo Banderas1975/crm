@@ -7,7 +7,7 @@ import { exigirSessao } from "./sessao-actions";
 import { escreverFollowUp } from "../lib/ia";
 import { ETAPAS } from "./etapas";
 import { REPETICOES, proximaData } from "./tarefas";
-import { hojeEmLisboa } from "./tempo";
+import { hojeEmLisboa, deLisboa } from "./tempo";
 import {
   LIMITES,
   emailValido,
@@ -17,6 +17,8 @@ import {
   TIPOS_PROPOSTA,
   tipoDaProposta,
   lerValor,
+  DURACOES,
+  lerHora,
 } from "../lib/validacao";
 
 // Junta indicativo + número num telefone só. Devolve { telefone } ou { erro }.
@@ -318,4 +320,122 @@ export async function marcarGanho(dados) {
     .eq("id", proposta.contato_id);
 
   revalidatePath("/", "layout");
+}
+
+// Ids escolhidos numa lista de seleção múltipla. Só inteiros positivos, sem
+// repetidos, e no máximo LIMITES.participantes — o resto é recusado inteiro.
+function lerIds(valores) {
+  const ids = [...new Set(valores.map(Number))];
+  if (ids.length > LIMITES.participantes || !ids.every(idValido)) return null;
+  return ids;
+}
+
+export async function criarReuniao(estadoAnterior, dados) {
+  await exigirSessao();
+
+  const contatoId = Number(dados.get("contato_id"));
+  if (!idValido(contatoId)) return { erro: "Contato não encontrado." };
+
+  const titulo = dados.get("titulo")?.trim();
+  if (!titulo) return { erro: "Escreva o assunto da reunião." };
+  if (titulo.length > LIMITES.reuniao) {
+    return { erro: `O assunto é muito comprido (máximo ${LIMITES.reuniao} caracteres).` };
+  }
+
+  const dia = dados.get("dia");
+  if (!dataValida(dia || "")) return { erro: "Escolha o dia da reunião." };
+
+  const minutos = lerHora(dados.get("hora"));
+  if (minutos === null) return { erro: "Escolha a hora da reunião." };
+
+  const duracao = Number(dados.get("duracao"));
+  if (!DURACOES.includes(duracao)) return { erro: "Duração inválida." };
+
+  const local = dados.get("local")?.trim() || null;
+  if (local && local.length > LIMITES.local) {
+    return { erro: `O local é muito comprido (máximo ${LIMITES.local} caracteres).` };
+  }
+
+  // O contato principal já participa; se vier também na lista, sai dela.
+  const contatos = lerIds(dados.getAll("contatos"));
+  const usuarios = lerIds(dados.getAll("usuarios"));
+  if (!contatos || !usuarios) {
+    return { erro: `Escolha no máximo ${LIMITES.participantes} participantes de cada lista.` };
+  }
+  const outros = contatos.filter((id) => id !== contatoId);
+
+  const { data: criada, error } = await supabase
+    .from("reunioes")
+    .insert({
+      contato_id: contatoId,
+      titulo,
+      inicio: deLisboa(dia, minutos),
+      duracao_min: duracao,
+      local,
+    })
+    .select("id")
+    .single();
+
+  if (error || !criada) return { erro: "Não foi possível guardar a reunião. Tente de novo." };
+
+  // O banco recusa ids que não existem (chaves estrangeiras). Se falhar,
+  // a reunião sai também: melhor nada do que uma reunião com participantes a menos.
+  const falhas = await Promise.all([
+    outros.length &&
+      supabase
+        .from("reuniao_contatos")
+        .insert(outros.map((id) => ({ reuniao_id: criada.id, contato_id: id }))),
+    usuarios.length &&
+      supabase
+        .from("reuniao_usuarios")
+        .insert(usuarios.map((id) => ({ reuniao_id: criada.id, usuario_id: id }))),
+  ]);
+
+  if (falhas.some((resultado) => resultado?.error)) {
+    await supabase.from("reunioes").delete().eq("id", criada.id);
+    return { erro: "Um dos participantes já não existe. Recarregue a página e tente de novo." };
+  }
+
+  revalidatePath("/", "layout");
+  return { erro: "", salvo: (estadoAnterior?.salvo ?? 0) + 1 };
+}
+
+// Chamadas pelo calendário ao arrastar (ou pelas setas do teclado).
+// Devolvem { ok } para o cartão saber se ficou mesmo guardado.
+
+export async function moverTarefa(idCru, dia) {
+  await exigirSessao();
+
+  const id = Number(idCru);
+  if (!idValido(id) || !dataValida(dia || "")) return { ok: false };
+
+  // Só tarefas por fazer: as concluídas já não estão no calendário.
+  const { error } = await supabase
+    .from("tarefas")
+    .update({ vence_em: dia })
+    .eq("id", id)
+    .is("concluida_em", null);
+  if (error) return { ok: false };
+
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+// O dia e a hora chegam como se leem no calendário, em Lisboa; a conversão
+// para o instante a gravar é feita aqui, nunca no navegador.
+export async function moverReuniao(idCru, dia, minutos) {
+  await exigirSessao();
+
+  const id = Number(idCru);
+  if (!idValido(id) || !dataValida(dia || "")) return { ok: false };
+  if (!Number.isInteger(minutos) || minutos < 0 || minutos > 1439) return { ok: false };
+
+  const { error } = await supabase
+    .from("reunioes")
+    .update({ inicio: deLisboa(dia, minutos) })
+    .eq("id", id);
+  if (error) return { ok: false };
+
+  revalidatePath("/", "layout");
+  return { ok: true };
 }

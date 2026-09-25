@@ -89,7 +89,7 @@ O CRM não é uma página comprida. É um **sistema com áreas**, dentro de um s
 ```
 
 - **Navegação lateral fixa à esquerda**, sempre visível, com as áreas do sistema:
-  **Dashboard**, **Funil**, **Contatos** e **Usuários** (este só aparece para admin).
+  **Dashboard**, **Funil**, **Tarefas**, **Calendário**, **Contatos** e **Usuários** (este só aparece para admin).
   A lista é feita para crescer: itens novos entram na mesma coluna.
 - **Cabeçalho** no topo da área de conteúdo, com o nome do CRM, quem está logado
   e o botão **Sair**.
@@ -115,8 +115,17 @@ com a mesma identidade (mesmas cores, mesmas formas, mesma tipografia).
 | --- | --- | --- |
 | Dashboard | `/` | O painel com os números do funil |
 | Funil | `/funil` | A lista de contatos: etapa, anotações e follow-up |
+| Calendário | `/calendario` | Tarefas e reuniões por mês, semana ou dia, arrastáveis |
 | Contatos | `/contatos` | O cadastro de um contato novo |
 | Usuários | `/usuarios` | Quem pode entrar (só admin) |
+
+### Calendário
+
+- Reuniões com uma barra fina à esquerda na cor de destaque; tarefas neutras, com o
+  quadrado de tarefa. Nenhuma cor nova.
+- Horas e números de dia em JetBrains Mono.
+- O dia de hoje com o número na cor de destaque.
+- Em telas estreitas o calendário rola para o lado **por dentro da sua caixa**; a página não.
 
 ## Proibido
 
