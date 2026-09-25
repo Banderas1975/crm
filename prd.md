@@ -208,6 +208,15 @@ Corrigido o que a revisão do código encontrou:
 - **Recusar apagava qualquer conta.** Passou a apagar só contas à espera de aprovação.
 - **Funções de verificação expostas.** `exigirSessao` e `exigirAdmin` estavam num ficheiro de ações do servidor, onde cada função exportada é um endereço que se pode chamar de fora. Mudaram para `app/acesso.js`, só de servidor.
 
+### 3. Ver a senha no login — CONCLUÍDO
+
+No login, o campo Senha tem um botão **Mostrar** / **Ocultar** para conferir o que se escreveu. Começa sempre escondida, funciona com rato e com teclado, e o que já foi escrito não se perde ao alternar.
+
+**PRONTO QUANDO**
+
+- [ ] Escrevo a senha no login, carrego em "Mostrar" e vejo-a; carrego em "Ocultar" e volta aos pontos
+- [ ] Chego ao botão com Tab e alterno com Enter, sem enviar o formulário
+
 ### O que fica para depois
 
 - Permissões avançadas: partilhar contatos entre utilizadores, metas por usuário
