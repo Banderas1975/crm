@@ -69,7 +69,9 @@ export default async function PaginaCalendario({ searchParams }) {
     await Promise.all([
       supabase
         .from("tarefas")
-        .select("id, titulo, vence_em, contato_id, contatos(nome)")
+        // Com o nome da ligação: desde a v6 há duas entre tarefas e contatos
+        // (a simples e a de dono), e sem ele o banco não sabe qual usar.
+        .select("id, titulo, vence_em, contato_id, contatos!tarefas_contato_dono(nome)")
         .eq("dono_id", eu.id)
         .is("concluida_em", null)
         .gte("vence_em", primeiro)

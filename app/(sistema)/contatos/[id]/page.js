@@ -110,7 +110,7 @@ export default async function PaginaContato({ params }) {
   const { data: reunioes } = await supabase
     .from("reunioes")
     .select(
-      "id, titulo, inicio, duracao_min, local, contato_id, contatos!reunioes_contato_fk(nome), reuniao_contatos(contatos(id, nome)), reuniao_usuarios(usuarios(email))"
+      "id, titulo, inicio, duracao_min, local, contato_id, contatos!reunioes_contato_fk(nome), reuniao_contatos!reuniao_contatos_reuniao_dono(contatos!reuniao_contatos_contato_dono(id, nome)), reuniao_usuarios(usuarios(email))"
     )
     .eq("dono_id", eu.id)
     .or(outrasIds.length ? `contato_id.eq.${id},id.in.(${outrasIds.join(",")})` : `contato_id.eq.${id}`)
