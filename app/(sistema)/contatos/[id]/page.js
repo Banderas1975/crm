@@ -4,15 +4,23 @@ import Anotacao from "../../../anotacao";
 import Copiar from "../../../copiar";
 import EtapaContato from "../../../etapa-contato";
 import FollowUp from "../../../follow-up";
+import NovaProposta from "../../../nova-proposta";
 import NovaTarefa from "../../../nova-tarefa";
 import TarefaItem from "../../../tarefa-item";
-import { salvarAnotacao } from "../../../actions";
+import { salvarAnotacao, marcarGanho } from "../../../actions";
 import { exigirSessao } from "../../../sessao-actions";
 import { haQuantoTempo, FORMATO_DATA, formatarDia } from "../../../tempo";
 import { LIMITES, idValido } from "../../../../lib/validacao";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Contato — Meu CRM" };
+
+const EUROS = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });
+
+const tamanho = (bytes) =>
+  bytes < 1024 * 1024
+    ? `${Math.max(1, Math.round(bytes / 1024))} KB`
+    : `${(bytes / (1024 * 1024)).toFixed(1).replace(".", ",")} MB`;
 
 export default async function PaginaContato({ params }) {
   await exigirSessao();
@@ -23,7 +31,7 @@ export default async function PaginaContato({ params }) {
   const { data: contato } = idValido(id)
     ? await supabase
         .from("contatos")
-        .select("id, nome, email, telefone, etapa, criado_em")
+        .select("id, nome, email, telefone, etapa, criado_em, proposta_ganha_id")
         .eq("id", id)
         .single()
     : { data: null };
@@ -62,6 +70,15 @@ export default async function PaginaContato({ params }) {
     .eq("contato_id", id)
     .order("vence_em", { ascending: true });
 
+  const { data: propostas } = await supabase
+    .from("propostas")
+    .select("id, nome, tamanho, valor, criado_em")
+    .eq("contato_id", id)
+    .order("criado_em", { ascending: false });
+
+  const listaPropostas = propostas ?? [];
+  const ganha = listaPropostas.find((proposta) => proposta.id === contato.proposta_ganha_id);
+
   const notas = anotacoes ?? [];
   const mensagens = followUps ?? [];
 
@@ -96,6 +113,12 @@ export default async function PaginaContato({ params }) {
           <p className="ficha-rotulo">Seu contato</p>
           <p className="ficha-valor mono">{haQuantoTempo(contato.criado_em)}</p>
         </div>
+        {ganha && (
+          <div>
+            <p className="ficha-rotulo">Ganho</p>
+            <p className="ficha-valor mono">{EUROS.format(ganha.valor)}</p>
+          </div>
+        )}
       </section>
 
       <section className="cartao">
@@ -135,6 +158,44 @@ export default async function PaginaContato({ params }) {
             </ul>
           </details>
         )}
+      </section>
+
+      <section className="cartao">
+        <h2 className="titulo-secao">
+          Propostas{" "}
+          {listaPropostas.length > 0 && <span className="mono">({listaPropostas.length})</span>}
+        </h2>
+
+        {listaPropostas.length === 0 ? (
+          <p className="apoio">Nenhuma proposta anexada.</p>
+        ) : (
+          <ul className="tarefas">
+            {listaPropostas.map((proposta) => (
+              <li key={proposta.id} className="tarefa proposta">
+                <div className="tarefa-texto">
+                  <p className="tarefa-titulo">
+                    <a href={`/propostas/${proposta.id}`}>{proposta.nome}</a>
+                  </p>
+                  <p className="tarefa-detalhes mono">
+                    {EUROS.format(proposta.valor)} · {tamanho(proposta.tamanho)} ·{" "}
+                    {FORMATO_DATA.format(new Date(proposta.criado_em))}
+                  </p>
+                </div>
+
+                {proposta.id === contato.proposta_ganha_id ? (
+                  <span className="etiqueta etiqueta-ganha mono">ganha</span>
+                ) : (
+                  <form action={marcarGanho}>
+                    <input type="hidden" name="id" value={proposta.id} />
+                    <button className="botao-texto">Marcar como ganho</button>
+                  </form>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <NovaProposta contatoId={contato.id} />
       </section>
 
       <section className="cartao">

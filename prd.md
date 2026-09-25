@@ -89,6 +89,45 @@ Tarefas concluídas saem das quatro secções e ficam no histórico da página d
 - [ ] Concluo a mesma tarefa duas vezes seguidas e continua a haver só uma seguinte
 - [ ] Apago um contato no Supabase e as tarefas dele desaparecem com ele
 
+## Versão 4
+
+### 1. Propostas — CONCLUÍDO
+
+As propostas enviadas a cada contato, guardadas na página dele. Cada proposta é um ficheiro com um valor em euros, e o negócio pode ser marcado como ganho com o valor de uma delas.
+
+O CRM não tem "negócio" à parte: o contato é o negócio. **Ganho é estar na etapa "cliente".** O funil continua com as mesmas quatro etapas e as mesmas cores.
+
+Regras dadas:
+
+- **Até 4,5 MB por proposta.** Conferido no navegador (para avisar antes de enviar), na action e no próprio bucket do Supabase.
+- **Só PDF, DOCX e XLSX.** Não basta a extensão: o servidor olha para os primeiros bytes do ficheiro, e um `.pdf` que não é PDF é recusado.
+- **Acrescentar, nunca apagar.** Anexar uma proposta nova não toca nas anteriores: cada envio é uma linha nova e um ficheiro novo, com nome próprio, e o envio não substitui nada (`upsert` desligado). A app não tem botão para apagar nem trocar propostas.
+- **Ganho com o valor da proposta.** Anexar não fecha nada — enviar uma proposta não é ganhá-la. Cada proposta tem "Marcar como ganho": o contato passa a "cliente" e a página mostra o valor ganho, lido dessa proposta. Se mais tarde o contato sair de "cliente", o ganho desfaz-se.
+
+**Proteção de dados (RGPD).** Uma proposta traz dados pessoais e comerciais do contato; nada dela pode sair do CRM:
+
+- O bucket `propostas` é **privado**. Não há links públicos nem links assinados que se possam reencaminhar.
+- A única forma de abrir uma proposta é `/propostas/<id>`, que exige sessão de utilizador **aprovado**, verificada no banco a cada pedido.
+- No Storage o ficheiro chama-se por um código aleatório (`<id do contato>/<código>.pdf`): nenhum nome de pessoa ou empresa aparece em caminhos, links ou logs. O nome original fica só no banco.
+- O download sai sempre como anexo, com `no-store` (nem o navegador nem servidores pelo meio guardam cópia), `nosniff` e sem `Referer`.
+- A tabela tem RLS ligado e sem políticas: só o servidor, com a chave secreta, lê e grava. A chave nunca sai do servidor.
+- Os logs do servidor registam só a mensagem de erro, nunca o conteúdo nem o nome do ficheiro.
+- Como no resto do CRM, todos os utilizadores aprovados veem as propostas de todos os contatos.
+- **Direito ao apagamento:** apagar um contato no Supabase apaga as linhas das propostas, mas não os ficheiros. Para apagar tudo de uma pessoa: primeiro, em Storage, a pasta `propostas/<id do contato>`; depois o contato.
+
+As mudanças de banco estão em `sql/propostas.sql`: a tabela `propostas`, a coluna `contatos.proposta_ganha_id` e o bucket.
+
+**PRONTO QUANDO**
+
+- [ ] Na página de um contato anexo um PDF, um DOCX e um XLSX, cada um com valor, e os três aparecem na lista com nome, valor, tamanho e data
+- [ ] Anexo uma segunda proposta a um contato que já tinha uma e as duas continuam lá
+- [ ] Tento anexar um ficheiro com mais de 4,5 MB e recebo um aviso claro, sem nada guardado
+- [ ] Tento anexar um `.png`, ou um ficheiro renomeado para `.pdf` que não é PDF, e é recusado
+- [ ] Carrego em "Marcar como ganho" numa proposta: o contato passa a "cliente", a página mostra "Ganho" com o valor dela, e o Funil e o Dashboard mudam junto
+- [ ] Clico no nome de uma proposta e ela descarrega com o nome original
+- [ ] Numa janela sem sessão, abro o endereço `/propostas/<id>` e caio no login, sem ficheiro
+- [ ] No Supabase o bucket `propostas` está marcado como privado e os ficheiros não têm nomes de pessoas
+
 ### O que fica para depois
 
 - Permissões avançadas: dono por contato, metas por usuário
@@ -108,4 +147,4 @@ Tarefas concluídas saem das quatro secções e ficam no histórico da página d
 - Relatórios avançados, metas e comissões
 - Cobrança, planos e assinaturas
 - Agenda e lembretes automáticos (as tarefas entraram na v3; agenda e lembretes continuam fora)
-- Anexos e arquivos por contato
+- Anexos e arquivos por contato, além das propostas (que entraram na v4)
