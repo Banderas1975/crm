@@ -166,6 +166,16 @@ As mudanças de banco estão em `sql/reunioes.sql`: tabelas `reunioes`, `reuniao
 - [ ] Erro a senha 5 vezes e aparece a mensagem de bloqueio; à 6.ª, mesmo com a senha certa, continua bloqueado
 - [ ] Passados 15 minutos entro com a senha certa
 
+### 3. Lista de todos os contatos — CONCLUÍDO
+
+Para quem não se lembra do nome: na área Contatos, a seguir ao cartão "Novo contato", a lista de todos os contatos por ordem alfabética, 50 por página, com Anterior/Seguinte. Cada nome leva à página do contato. Mudar de página não apaga a busca que estiver feita.
+
+**PRONTO QUANDO**
+
+- [ ] Abro Contatos e vejo, depois do "Novo contato", os primeiros 50 contatos por ordem alfabética e o total
+- [ ] Com mais de 50 contatos, "Seguinte" mostra os próximos 50, e "página X de Y" diz onde estou
+- [ ] Clico num nome da lista e abro a página desse contato
+
 ### O que fica para depois
 
 - Permissões avançadas: dono por contato, metas por usuário
