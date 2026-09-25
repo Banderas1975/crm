@@ -128,6 +128,44 @@ As mudanças de banco estão em `sql/propostas.sql`: a tabela `propostas`, a col
 - [ ] Numa janela sem sessão, abro o endereço `/propostas/<id>` e caio no login, sem ficheiro
 - [ ] No Supabase o bucket `propostas` está marcado como privado e os ficheiros não têm nomes de pessoas
 
+## Versão 5
+
+### 1. Calendário e reuniões — CONCLUÍDO
+
+A área **Calendário** mostra tarefas e reuniões em três vistas: **mês**, **semana** e **dia**. As semanas começam à segunda. Tudo é mostrado e gravado em hora de **Lisboa** (`Europe/Lisbon`), esteja o computador de quem usa noutro fuso ou não: o navegador recebe as horas já convertidas e nunca faz contas de fuso.
+
+**Reunião** é uma entidade nova: assunto, dia e hora de início, duração (15 min a 4 h), local (opcional) e participantes. Pertence sempre a um contato — o principal — e some com ele (`on delete cascade`). Os outros participantes escolhem-se de duas listas: **outros contatos** do CRM e **utilizadores da equipa**. Não há participantes escritos à mão.
+
+- Na **página do contato**, a secção **Reuniões** marca reuniões novas e mostra todos os detalhes: dia, hora de início e de fim, duração, local e participantes. As que já acabaram ficam em "Já realizadas". Um contato que é só participante vê a reunião, com o link para o contato onde foi marcada.
+- No **Calendário**, tarefas e reuniões **arrastam-se**. No mês, largar num dia muda o dia (a reunião mantém a hora). Na semana e no dia, largar na grelha muda o dia e a hora da reunião, em passos de 30 minutos. As tarefas continuam a ter só dia, sem hora.
+- **Sem rato:** selecionar com Tab e usar ← → para mudar o dia; ↑ ↓ mudam a hora da reunião (30 min) ou a semana da tarefa.
+- Como no Funil, o cartão muda de sítio logo; se o servidor recusar, volta sozinho e aparece o aviso.
+- Uma reunião marcada numa hora que não existe (entre a 1h e as 2h do dia em que se muda para a hora de verão) fica uma hora mais tarde.
+
+As mudanças de banco estão em `sql/reunioes.sql`: tabelas `reunioes`, `reuniao_contatos`, `reuniao_usuarios` e `tentativas_login`, todas com RLS ligado e sem políticas.
+
+**PRONTO QUANDO**
+
+- [ ] Abro o Calendário e vejo o mês atual, com as tarefas por fazer e as reuniões nos dias certos
+- [ ] Mudo entre mês, semana e dia, e as setas levam ao mês, semana ou dia anterior e seguinte; "Hoje" volta a hoje
+- [ ] Marco uma reunião na página de um contato, com outro contato e um utilizador como participantes, e vejo os detalhes todos
+- [ ] A reunião aparece no Calendário à hora que escrevi, e na página do outro contato como participante
+- [ ] Arrasto uma tarefa para outro dia, recarrego, e ela continua no dia novo
+- [ ] Arrasto uma reunião na vista semana para outra hora, recarrego, e ela continua na hora nova
+- [ ] Mudo uma reunião de dia e hora só com o teclado
+- [ ] Com o computador noutro fuso horário, as horas continuam a ser as de Lisboa
+
+### 2. Segurança — CONCLUÍDO
+
+- **Cabeçalhos de segurança em todas as páginas.** A CSP (Content Security Policy) só deixa correr os scripts do próprio CRM que tragam o código (nonce) daquele pedido: um script escondido num nome de contato ou numa anotação não corre. Há também anti-moldura (`X-Frame-Options: DENY` e `frame-ancestors 'none'`), HSTS (só HTTPS), `nosniff`, `Referrer-Policy`, e câmara, microfone e localização desligados. O Next deixa de anunciar que é Next (`X-Powered-By`).
+- **Travão no login.** 5 senhas erradas seguidas para o mesmo email bloqueiam esse email durante 15 minutos. Enquanto está bloqueado, nem a senha certa entra. Conta por email, exista a conta ou não, para o bloqueio não revelar que emails estão registados. A senha certa recomeça a contagem.
+
+**PRONTO QUANDO**
+
+- [ ] Nas ferramentas do navegador (Rede), qualquer página do CRM traz `Content-Security-Policy`, `X-Frame-Options`, `Strict-Transport-Security` e não traz `X-Powered-By`
+- [ ] Erro a senha 5 vezes e aparece a mensagem de bloqueio; à 6.ª, mesmo com a senha certa, continua bloqueado
+- [ ] Passados 15 minutos entro com a senha certa
+
 ### O que fica para depois
 
 - Permissões avançadas: dono por contato, metas por usuário
@@ -146,5 +184,5 @@ As mudanças de banco estão em `sql/propostas.sql`: a tabela `propostas`, a col
 - Aplicativo para celular (a web responsiva resolve)
 - Relatórios avançados, metas e comissões
 - Cobrança, planos e assinaturas
-- Agenda e lembretes automáticos (as tarefas entraram na v3; agenda e lembretes continuam fora)
+- Lembretes automáticos (as tarefas entraram na v3 e o calendário com reuniões na v5; lembretes continuam fora — o CRM não envia convites nem avisos de reunião)
 - Anexos e arquivos por contato, além das propostas (que entraram na v4)

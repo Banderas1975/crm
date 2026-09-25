@@ -10,6 +10,12 @@ import { LIMITES, emailValido, idValido } from "../lib/validacao";
 
 const SENHA_MINIMA = 8;
 
+// Travão contra quem tenta adivinhar senhas: 5 falhas seguidas bloqueiam
+// esse email durante 15 minutos. Conta-se por email, exista a conta ou não,
+// para o bloqueio não revelar que emails têm conta.
+const MAX_FALHAS = 5;
+const BLOQUEIO_MS = 15 * 60 * 1000;
+
 // Devolve o utilizador da sessão, ou manda para o login.
 // Chamada no topo de tudo o que lê ou escreve dados.
 export async function exigirSessao() {
@@ -43,6 +49,17 @@ export async function entrar(dados) {
     redirect("/login?erro=invalido");
   }
 
+  const { data: tentativa } = await supabase
+    .from("tentativas_login")
+    .select("falhas, bloqueado_ate")
+    .eq("email", email)
+    .maybeSingle();
+
+  // Bloqueado: nem se confere a senha, mesmo que agora viesse certa.
+  if (tentativa?.bloqueado_ate && new Date(tentativa.bloqueado_ate) > new Date()) {
+    redirect("/login?erro=bloqueado");
+  }
+
   const { data: utilizador } = await supabase
     .from("usuarios")
     .select("id, senha_hash, estado")
@@ -51,8 +68,18 @@ export async function entrar(dados) {
 
   // Uma mensagem só: não dizemos se falhou o email ou a senha.
   if (!utilizador || !(await senhaConfere(senha, utilizador.senha_hash))) {
-    redirect("/login?erro=invalido");
+    const falhas = (tentativa?.falhas ?? 0) + 1;
+    const bloqueia = falhas >= MAX_FALHAS;
+    await supabase.from("tentativas_login").upsert({
+      email,
+      falhas: bloqueia ? 0 : falhas,
+      bloqueado_ate: bloqueia ? new Date(Date.now() + BLOQUEIO_MS).toISOString() : null,
+    });
+    redirect(bloqueia ? "/login?erro=bloqueado" : "/login?erro=invalido");
   }
+
+  // Senha certa: a contagem recomeça do zero.
+  if (tentativa) await supabase.from("tentativas_login").delete().eq("email", email);
 
   if (utilizador.estado !== "aprovado") redirect("/login?erro=pendente");
 
