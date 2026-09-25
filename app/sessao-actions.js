@@ -5,7 +5,8 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { supabase } from "../lib/supabase";
 import { criarHash, senhaConfere } from "../lib/senha";
-import { criarSessao, lerSessao, NOME_COOKIE, DURACAO_SEGUNDOS } from "../lib/sessao";
+import { criarSessao, NOME_COOKIE, DURACAO_SEGUNDOS } from "../lib/sessao";
+import { exigirAdmin } from "./acesso";
 import { LIMITES, emailValido, idValido } from "../lib/validacao";
 
 const SENHA_MINIMA = 8;
@@ -16,29 +17,11 @@ const SENHA_MINIMA = 8;
 const MAX_FALHAS = 5;
 const BLOQUEIO_MS = 15 * 60 * 1000;
 
-// Devolve o utilizador da sessão, ou manda para o login.
-// Chamada no topo de tudo o que lê ou escreve dados.
-export async function exigirSessao() {
-  const id = await lerSessao((await cookies()).get(NOME_COOKIE)?.value);
-  if (!id) redirect("/login");
-
-  const { data: utilizador } = await supabase
-    .from("usuarios")
-    .select("id, email, papel, estado")
-    .eq("id", id)
-    .single();
-
-  // Conta apagada ou desaprovada entretanto: a sessão deixa de valer.
-  if (!utilizador || utilizador.estado !== "aprovado") redirect("/login");
-
-  return utilizador;
-}
-
-export async function exigirAdmin() {
-  const utilizador = await exigirSessao();
-  if (utilizador.papel !== "admin") redirect("/");
-  return utilizador;
-}
+// Um hash que não abre conta nenhuma. Conferir a senha contra ele quando o
+// email não existe gasta o mesmo tempo que uma conta real: assim a demora da
+// resposta não denuncia que emails estão registados.
+let hashFalso;
+const obterHashFalso = () => (hashFalso ??= criarHash(crypto.randomUUID()));
 
 export async function entrar(dados) {
   const email = (dados.get("email") ?? "").trim().toLowerCase();
@@ -66,8 +49,10 @@ export async function entrar(dados) {
     .eq("email", email)
     .single();
 
+  const certa = await senhaConfere(senha, utilizador?.senha_hash ?? (await obterHashFalso()));
+
   // Uma mensagem só: não dizemos se falhou o email ou a senha.
-  if (!utilizador || !(await senhaConfere(senha, utilizador.senha_hash))) {
+  if (!utilizador || !certa) {
     const falhas = (tentativa?.falhas ?? 0) + 1;
     const bloqueia = falhas >= MAX_FALHAS;
     await supabase.from("tentativas_login").upsert({
@@ -130,6 +115,9 @@ export async function aprovarUtilizador(dados) {
 }
 
 // Recusa uma conta à espera: apaga-a. A pessoa pode registar-se de novo.
+// Só contas à espera: uma conta aprovada nunca se apaga por aqui. E uma conta
+// que já tem contatos não se apaga de todo — o banco recusa (on delete restrict),
+// para os dados de ninguém desaparecerem por um clique.
 export async function recusarUtilizador(dados) {
   const admin = await exigirAdmin();
 
@@ -137,7 +125,7 @@ export async function recusarUtilizador(dados) {
   // Nunca sobre a própria conta: senão o admin trancava-se fora do sistema.
   if (!idValido(id) || id === admin.id) return;
 
-  await supabase.from("usuarios").delete().eq("id", id);
+  await supabase.from("usuarios").delete().eq("id", id).eq("estado", "pendente");
   revalidatePath("/usuarios");
 }
 

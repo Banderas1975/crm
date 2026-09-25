@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { supabase } from "../../../lib/supabase";
 import Calendario from "../../calendario";
-import { exigirSessao } from "../../sessao-actions";
+import { exigirSessao } from "../../acesso";
 import { hojeEmLisboa, somarDias, inicioDaSemana, emLisboa, deLisboa } from "../../tempo";
 import { dataValida } from "../../../lib/validacao";
 
@@ -32,7 +32,7 @@ function mesVizinho(iso, passo) {
 }
 
 export default async function PaginaCalendario({ searchParams }) {
-  await exigirSessao();
+  const eu = await exigirSessao();
 
   const pedido = await searchParams;
   const vista = pedido.vista in VISTAS ? pedido.vista : "mes";
@@ -70,6 +70,7 @@ export default async function PaginaCalendario({ searchParams }) {
       supabase
         .from("tarefas")
         .select("id, titulo, vence_em, contato_id, contatos(nome)")
+        .eq("dono_id", eu.id)
         .is("concluida_em", null)
         .gte("vence_em", primeiro)
         .lte("vence_em", ultimo),
@@ -77,6 +78,7 @@ export default async function PaginaCalendario({ searchParams }) {
       supabase
         .from("reunioes")
         .select("id, titulo, inicio, duracao_min, local, contato_id, contatos!reunioes_contato_fk(nome)")
+        .eq("dono_id", eu.id)
         .gte("inicio", deLisboa(primeiro, 0))
         .lt("inicio", deLisboa(somarDias(ultimo, 1), 0))
         .order("inicio", { ascending: true }),

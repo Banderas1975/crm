@@ -112,7 +112,7 @@ Regras dadas:
 - O download sai sempre como anexo, com `no-store` (nem o navegador nem servidores pelo meio guardam cópia), `nosniff` e sem `Referer`.
 - A tabela tem RLS ligado e sem políticas: só o servidor, com a chave secreta, lê e grava. A chave nunca sai do servidor.
 - Os logs do servidor registam só a mensagem de erro, nunca o conteúdo nem o nome do ficheiro.
-- Como no resto do CRM, todos os utilizadores aprovados veem as propostas de todos os contatos.
+- Desde a v6, cada utilizador só vê e descarrega as propostas dos seus contatos.
 - **Direito ao apagamento:** apagar um contato no Supabase apaga as linhas das propostas, mas não os ficheiros. Para apagar tudo de uma pessoa: primeiro, em Storage, a pasta `propostas/<id do contato>`; depois o contato.
 
 As mudanças de banco estão em `sql/propostas.sql`: a tabela `propostas`, a coluna `contatos.proposta_ganha_id` e o bucket.
@@ -176,16 +176,57 @@ Para quem não se lembra do nome: na área Contatos, a seguir ao cartão "Novo c
 - [ ] Com mais de 50 contatos, "Seguinte" mostra os próximos 50, e "página X de Y" diz onde estou
 - [ ] Clico num nome da lista e abro a página desse contato
 
+## Versão 6
+
+### 1. Cada utilizador só vê o que é seu — CONCLUÍDO
+
+Cada contato tem um **dono** (`dono_id`), e tudo o que pende dele também: anotações, follow-ups, tarefas, propostas, reuniões e participantes. Cada utilizador vê e mexe só no que é seu, em todas as áreas: Dashboard, Funil, Tarefas, Calendário, Contatos (busca e lista) e página do contato.
+
+- Os contatos que existiam antes passaram para o **administrador principal** (o admin aprovado mais antigo). Todos os outros utilizadores, atuais e novos, começam com o CRM **em branco**.
+- O administrador também só vê os seus contatos. Ser admin serve para gerir contas (aprovar, recusar, tirar acesso, papéis), não para ver os dados dos outros.
+- Abrir o endereço de um contato, ou de uma proposta, que é de outro utilizador dá "não encontrado", igual a um que não existe, sem pistas.
+- Na reunião, "Outros contatos" mostra só os contatos do próprio. "Da equipa" continua a listar os emails de todos os utilizadores aprovados; marcá-los como participantes não lhes dá acesso à reunião.
+- Uma conta que tem contatos **não pode ser apagada** (o banco recusa): os dados de ninguém desaparecem por um clique. "Recusar" só apaga contas à espera de aprovação.
+
+**Dupla barreira.** Cada consulta no servidor filtra pelo dono de quem pede. Além disso, o próprio banco recusa ligar dados de donos diferentes: uma tarefa, anotação, proposta ou reunião só pode apontar para um contato do mesmo dono (chave estrangeira composta contato + dono), e um participante tem de ser do mesmo dono que a reunião. Mesmo um erro futuro no código não consegue cruzar dados entre utilizadores.
+
+As mudanças de banco estão em `sql/donos.sql`, que corre tudo de uma vez ou nada (e mostra no fim quantos contatos ficou a ter cada utilizador).
+
+**PRONTO QUANDO**
+
+- [ ] Depois do SQL, o administrador principal continua a ver todos os contatos de antes, com tarefas, reuniões e propostas
+- [ ] Crio e aprovo uma conta nova, entro com ela e o Dashboard, o Funil, as Tarefas, o Calendário e os Contatos estão vazios
+- [ ] Com a conta nova crio um contato; o administrador não o vê, nem na busca nem pelo endereço
+- [ ] Com a conta nova, abro o endereço de um contato ou de uma proposta do administrador e recebo "não encontrado"
+
+### 2. Auditoria de segurança — CONCLUÍDO
+
+Corrigido o que a revisão do código encontrou:
+
+- **Ações sem dono.** Editar e apagar anotações, concluir e mover tarefas, mover reuniões, mudar a etapa, marcar ganho e descarregar propostas aceitavam qualquer id, sem confirmar a quem pertencia. Agora todas confirmam o dono.
+- **Login denunciava contas.** Com um email que não existe, a resposta vinha mais depressa (não havia senha para conferir). Agora confere-se sempre uma senha, e o tempo é igual.
+- **Recusar apagava qualquer conta.** Passou a apagar só contas à espera de aprovação.
+- **Funções de verificação expostas.** `exigirSessao` e `exigirAdmin` estavam num ficheiro de ações do servidor, onde cada função exportada é um endereço que se pode chamar de fora. Mudaram para `app/acesso.js`, só de servidor.
+
+### 3. Ver a senha no login — CONCLUÍDO
+
+No login, o campo Senha tem um botão **Mostrar** / **Ocultar** para conferir o que se escreveu. Começa sempre escondida, funciona com rato e com teclado, e o que já foi escrito não se perde ao alternar.
+
+**PRONTO QUANDO**
+
+- [ ] Escrevo a senha no login, carrego em "Mostrar" e vejo-a; carrego em "Ocultar" e volta aos pontos
+- [ ] Chego ao botão com Tab e alterno com Enter, sem enviar o formulário
+
 ### O que fica para depois
 
-- Permissões avançadas: dono por contato, metas por usuário
+- Permissões avançadas: partilhar contatos entre utilizadores, metas por usuário
 - Automações e lembretes agendados (email, WhatsApp)
 - Integrações com outros sistemas
 - Aplicativo de celular
 
 ## O que NÃO entra na primeira versão
 
-- Times: todos os usuários aprovados veem os mesmos contatos, sem divisão por dono ou equipe
+- Times: desde a v6 cada utilizador só vê os seus contatos; não há equipas nem contatos partilhados
 - Importação/exportação (CSV, planilha, contatos do celular)
 - Envio de e-mail ou WhatsApp pelo sistema
 - Integrações com outras ferramentas

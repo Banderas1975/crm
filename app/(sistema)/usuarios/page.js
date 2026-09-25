@@ -1,13 +1,13 @@
 import AcaoConfirmada from "../../acao-confirmada";
 import { supabase } from "../../../lib/supabase";
 import {
-  exigirAdmin,
   aprovarUtilizador,
   recusarUtilizador,
   removerAcesso,
   promoverAdmin,
   despromoverAdmin,
 } from "../../sessao-actions";
+import { exigirAdmin } from "../../acesso";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Usuários — Meu CRM" };

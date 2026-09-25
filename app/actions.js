@@ -3,7 +3,7 @@
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { supabase } from "../lib/supabase";
-import { exigirSessao } from "./sessao-actions";
+import { exigirSessao } from "./acesso";
 import { escreverFollowUp } from "../lib/ia";
 import { ETAPAS } from "./etapas";
 import { REPETICOES, proximaData } from "./tarefas";
@@ -44,7 +44,7 @@ function montarTelefone(indicativo, numeroCru) {
 }
 
 export async function salvarContato(estadoAnterior, dados) {
-  await exigirSessao();
+  const eu = await exigirSessao();
 
   const nome = dados.get("nome")?.trim();
   if (!nome) return { erro: "Escreva o nome do contato para salvar." };
@@ -61,7 +61,9 @@ export async function salvarContato(estadoAnterior, dados) {
   const { telefone, erro } = montarTelefone(dados.get("indicativo"), dados.get("telefone"));
   if (erro) return { erro };
 
-  const { error } = await supabase.from("contatos").insert({ nome, email, telefone });
+  const { error } = await supabase
+    .from("contatos")
+    .insert({ nome, email, telefone, dono_id: eu.id });
   if (error) return { erro: "Não foi possível salvar. Tente de novo." };
 
   revalidatePath("/", "layout");
@@ -71,39 +73,40 @@ export async function salvarContato(estadoAnterior, dados) {
 }
 
 export async function salvarAnotacao(dados) {
-  await exigirSessao();
+  const eu = await exigirSessao();
 
   const texto = dados.get("texto")?.trim();
   const contatoId = Number(dados.get("contato_id"));
   if (!idValido(contatoId) || !texto || texto.length > LIMITES.anotacao) return;
 
-  await supabase.from("anotacoes").insert({ contato_id: contatoId, texto });
+  // O banco recusa se o contato não for de quem escreve (chave dono + contato).
+  await supabase.from("anotacoes").insert({ contato_id: contatoId, texto, dono_id: eu.id });
   revalidatePath("/", "layout");
 }
 
 export async function editarAnotacao(dados) {
-  await exigirSessao();
+  const eu = await exigirSessao();
 
   const id = Number(dados.get("id"));
   const texto = dados.get("texto")?.trim();
   if (!idValido(id) || !texto || texto.length > LIMITES.anotacao) return;
 
-  await supabase.from("anotacoes").update({ texto }).eq("id", id);
+  await supabase.from("anotacoes").update({ texto }).eq("id", id).eq("dono_id", eu.id);
   revalidatePath("/", "layout");
 }
 
 export async function excluirAnotacao(dados) {
-  await exigirSessao();
+  const eu = await exigirSessao();
 
   const id = Number(dados.get("id"));
   if (!idValido(id)) return;
 
-  await supabase.from("anotacoes").delete().eq("id", id);
+  await supabase.from("anotacoes").delete().eq("id", id).eq("dono_id", eu.id);
   revalidatePath("/", "layout");
 }
 
 export async function gerarFollowUp(estadoAnterior, dados) {
-  await exigirSessao();
+  const eu = await exigirSessao();
 
   const contatoId = Number(dados.get("contato_id"));
   if (!idValido(contatoId)) return { erro: "Contato não encontrado." };
@@ -113,6 +116,7 @@ export async function gerarFollowUp(estadoAnterior, dados) {
     .from("contatos")
     .select("nome, etapa")
     .eq("id", contatoId)
+    .eq("dono_id", eu.id)
     .single();
 
   if (!contato) return { erro: "Contato não encontrado." };
@@ -121,6 +125,7 @@ export async function gerarFollowUp(estadoAnterior, dados) {
     .from("anotacoes")
     .select("texto")
     .eq("contato_id", contatoId)
+    .eq("dono_id", eu.id)
     .order("criado_em", { ascending: false });
 
   try {
@@ -135,7 +140,7 @@ export async function gerarFollowUp(estadoAnterior, dados) {
     // Guardado com data: a mensagem passa a poder ser relida mais tarde.
     const { error } = await supabase
       .from("follow_ups")
-      .insert({ contato_id: contatoId, texto: mensagem });
+      .insert({ contato_id: contatoId, texto: mensagem, dono_id: eu.id });
 
     if (error) {
       console.error("Falha a guardar follow-up:", error);
@@ -152,7 +157,7 @@ export async function gerarFollowUp(estadoAnterior, dados) {
 }
 
 export async function criarTarefa(estadoAnterior, dados) {
-  await exigirSessao();
+  const eu = await exigirSessao();
 
   const contatoId = Number(dados.get("contato_id"));
   if (!idValido(contatoId)) return { erro: "Contato não encontrado." };
@@ -173,7 +178,7 @@ export async function criarTarefa(estadoAnterior, dados) {
 
   const { error } = await supabase
     .from("tarefas")
-    .insert({ contato_id: contatoId, titulo, vence_em: venceEm, repete });
+    .insert({ contato_id: contatoId, titulo, vence_em: venceEm, repete, dono_id: eu.id });
 
   if (error) return { erro: "Não foi possível guardar a tarefa. Tente de novo." };
 
@@ -182,7 +187,7 @@ export async function criarTarefa(estadoAnterior, dados) {
 }
 
 export async function concluirTarefa(idCru) {
-  await exigirSessao();
+  const eu = await exigirSessao();
 
   const id = Number(idCru);
   if (!idValido(id)) return { ok: false };
@@ -195,6 +200,7 @@ export async function concluirTarefa(idCru) {
     .from("tarefas")
     .update({ concluida_em: new Date().toISOString() })
     .eq("id", id)
+    .eq("dono_id", eu.id)
     .is("concluida_em", null)
     .select("contato_id, titulo, vence_em, repete");
 
@@ -212,6 +218,7 @@ export async function concluirTarefa(idCru) {
       titulo: tarefa.titulo,
       vence_em: proximaData(tarefa.vence_em, tarefa.repete, hojeEmLisboa()),
       repete: tarefa.repete,
+      dono_id: eu.id,
     });
   }
 
@@ -222,7 +229,7 @@ export async function concluirTarefa(idCru) {
 // Chamada direto do kanban, que já tem o id e a etapa em mãos.
 // Devolve { ok } para o cartão saber se ficou mesmo guardado.
 export async function mudarEtapa(idCru, etapa) {
-  await exigirSessao();
+  const eu = await exigirSessao();
 
   const id = Number(idCru);
   // O banco também recusa etapas inválidas, mas assim nem chegamos a tentar.
@@ -232,8 +239,15 @@ export async function mudarEtapa(idCru, etapa) {
   // continuava a mostrar um valor ganho num negócio que já não está fechado.
   const mudanca = etapa === "cliente" ? { etapa } : { etapa, proposta_ganha_id: null };
 
-  const { error } = await supabase.from("contatos").update(mudanca).eq("id", id);
-  if (error) return { ok: false };
+  // O .select diz quantas linhas mudaram: zero quer dizer que o contato não é
+  // de quem pede (ou já não existe), e o cartão tem de voltar para trás.
+  const { data, error } = await supabase
+    .from("contatos")
+    .update(mudanca)
+    .eq("id", id)
+    .eq("dono_id", eu.id)
+    .select("id");
+  if (error || !data?.length) return { ok: false };
 
   revalidatePath("/", "layout");
   return { ok: true };
@@ -242,7 +256,7 @@ export async function mudarEtapa(idCru, etapa) {
 // Cada envio é uma proposta nova: nome no Storage sempre novo e upsert
 // desligado. Nada do que já lá está é substituído nem apagado.
 export async function anexarProposta(estadoAnterior, dados) {
-  await exigirSessao();
+  const eu = await exigirSessao();
 
   const contatoId = Number(dados.get("contato_id"));
   if (!idValido(contatoId)) return { erro: "Contato não encontrado." };
@@ -266,6 +280,7 @@ export async function anexarProposta(estadoAnterior, dados) {
     .from("contatos")
     .select("id")
     .eq("id", contatoId)
+    .eq("dono_id", eu.id)
     .single();
   if (!contato) return { erro: "Contato não encontrado." };
 
@@ -286,7 +301,7 @@ export async function anexarProposta(estadoAnterior, dados) {
 
   const { error } = await supabase
     .from("propostas")
-    .insert({ contato_id: contatoId, nome, caminho, tamanho: ficheiro.size, valor });
+    .insert({ contato_id: contatoId, nome, caminho, tamanho: ficheiro.size, valor, dono_id: eu.id });
 
   if (error) {
     // Sem linha no banco ninguém chegaria a este ficheiro: tiramo-lo, para não
@@ -302,7 +317,7 @@ export async function anexarProposta(estadoAnterior, dados) {
 // O negócio fica ganho com o valor desta proposta: o contato passa a "cliente"
 // e aponta para ela. O valor não é copiado — lê-se sempre da proposta.
 export async function marcarGanho(dados) {
-  await exigirSessao();
+  const eu = await exigirSessao();
 
   const id = Number(dados.get("id"));
   if (!idValido(id)) return;
@@ -311,13 +326,15 @@ export async function marcarGanho(dados) {
     .from("propostas")
     .select("id, contato_id")
     .eq("id", id)
+    .eq("dono_id", eu.id)
     .single();
   if (!proposta) return;
 
   await supabase
     .from("contatos")
     .update({ etapa: "cliente", proposta_ganha_id: proposta.id })
-    .eq("id", proposta.contato_id);
+    .eq("id", proposta.contato_id)
+    .eq("dono_id", eu.id);
 
   revalidatePath("/", "layout");
 }
@@ -331,7 +348,7 @@ function lerIds(valores) {
 }
 
 export async function criarReuniao(estadoAnterior, dados) {
-  await exigirSessao();
+  const eu = await exigirSessao();
 
   const contatoId = Number(dados.get("contato_id"));
   if (!idValido(contatoId)) return { erro: "Contato não encontrado." };
@@ -364,6 +381,19 @@ export async function criarReuniao(estadoAnterior, dados) {
   }
   const outros = contatos.filter((id) => id !== contatoId);
 
+  // Da equipa, só contas aprovadas. Os outros contatos têm de ser de quem marca:
+  // isso o banco garante sozinho (chave dono + contato em reuniao_contatos).
+  if (usuarios.length) {
+    const { count } = await supabase
+      .from("usuarios")
+      .select("id", { count: "exact", head: true })
+      .in("id", usuarios)
+      .eq("estado", "aprovado");
+    if (count !== usuarios.length) {
+      return { erro: "Um dos participantes já não está disponível. Recarregue a página e tente de novo." };
+    }
+  }
+
   const { data: criada, error } = await supabase
     .from("reunioes")
     .insert({
@@ -372,6 +402,7 @@ export async function criarReuniao(estadoAnterior, dados) {
       inicio: deLisboa(dia, minutos),
       duracao_min: duracao,
       local,
+      dono_id: eu.id,
     })
     .select("id")
     .single();
@@ -384,7 +415,7 @@ export async function criarReuniao(estadoAnterior, dados) {
     outros.length &&
       supabase
         .from("reuniao_contatos")
-        .insert(outros.map((id) => ({ reuniao_id: criada.id, contato_id: id }))),
+        .insert(outros.map((id) => ({ reuniao_id: criada.id, contato_id: id, dono_id: eu.id }))),
     usuarios.length &&
       supabase
         .from("reuniao_usuarios")
@@ -392,8 +423,8 @@ export async function criarReuniao(estadoAnterior, dados) {
   ]);
 
   if (falhas.some((resultado) => resultado?.error)) {
-    await supabase.from("reunioes").delete().eq("id", criada.id);
-    return { erro: "Um dos participantes já não existe. Recarregue a página e tente de novo." };
+    await supabase.from("reunioes").delete().eq("id", criada.id).eq("dono_id", eu.id);
+    return { erro: "Um dos participantes já não está disponível. Recarregue a página e tente de novo." };
   }
 
   revalidatePath("/", "layout");
@@ -404,18 +435,20 @@ export async function criarReuniao(estadoAnterior, dados) {
 // Devolvem { ok } para o cartão saber se ficou mesmo guardado.
 
 export async function moverTarefa(idCru, dia) {
-  await exigirSessao();
+  const eu = await exigirSessao();
 
   const id = Number(idCru);
   if (!idValido(id) || !dataValida(dia || "")) return { ok: false };
 
   // Só tarefas por fazer: as concluídas já não estão no calendário.
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("tarefas")
     .update({ vence_em: dia })
     .eq("id", id)
-    .is("concluida_em", null);
-  if (error) return { ok: false };
+    .eq("dono_id", eu.id)
+    .is("concluida_em", null)
+    .select("id");
+  if (error || !data?.length) return { ok: false };
 
   revalidatePath("/", "layout");
   return { ok: true };
@@ -424,17 +457,19 @@ export async function moverTarefa(idCru, dia) {
 // O dia e a hora chegam como se leem no calendário, em Lisboa; a conversão
 // para o instante a gravar é feita aqui, nunca no navegador.
 export async function moverReuniao(idCru, dia, minutos) {
-  await exigirSessao();
+  const eu = await exigirSessao();
 
   const id = Number(idCru);
   if (!idValido(id) || !dataValida(dia || "")) return { ok: false };
   if (!Number.isInteger(minutos) || minutos < 0 || minutos > 1439) return { ok: false };
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("reunioes")
     .update({ inicio: deLisboa(dia, minutos) })
-    .eq("id", id);
-  if (error) return { ok: false };
+    .eq("id", id)
+    .eq("dono_id", eu.id)
+    .select("id");
+  if (error || !data?.length) return { ok: false };
 
   revalidatePath("/", "layout");
   return { ok: true };

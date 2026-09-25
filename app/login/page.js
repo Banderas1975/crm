@@ -1,4 +1,5 @@
 import Link from "next/link";
+import CampoSenha from "../campo-senha";
 import { entrar } from "../sessao-actions";
 import { LIMITES } from "../../lib/validacao";
 
@@ -29,7 +30,7 @@ export default async function Login({ searchParams }) {
 
           <div className="campo">
             <label htmlFor="senha">Senha</label>
-            <input id="senha" name="senha" type="password" required maxLength={LIMITES.senha} autoComplete="current-password" />
+            <CampoSenha id="senha" name="senha" maxLength={LIMITES.senha} autoComplete="current-password" />
           </div>
 
           {registado && (
