@@ -16,7 +16,7 @@ export default async function Tarefas() {
 
   const { data: tarefas, error } = await supabase
     .from("tarefas")
-    .select("id, titulo, vence_em, repete, contato_id, contatos(nome)")
+    .select("id, titulo, vence_em, repete, contato_id, contatos!tarefas_contato_dono(nome)")
     .eq("dono_id", eu.id)
     .is("concluida_em", null)
     .order("vence_em", { ascending: true });
