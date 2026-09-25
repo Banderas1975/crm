@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Formulario from "../../formulario";
 import { supabase } from "../../../lib/supabase";
-import { exigirSessao } from "../../sessao-actions";
+import { exigirSessao } from "../../acesso";
 import { CORES_ETAPA } from "../../etapas";
 
 export const dynamic = "force-dynamic";
@@ -17,7 +17,7 @@ function limparTermo(cru) {
 }
 
 export default async function Contatos({ searchParams }) {
-  await exigirSessao();
+  const eu = await exigirSessao();
 
   const { q, pagina: paginaCrua } = await searchParams;
   const termo = limparTermo(q);
@@ -26,13 +26,17 @@ export default async function Contatos({ searchParams }) {
     ? await supabase
         .from("contatos")
         .select("id, nome, email, etapa")
+        .eq("dono_id", eu.id)
         .or(`nome.ilike.%${termo}%,email.ilike.%${termo}%`)
         .order("nome")
         .limit(20)
     : { data: null };
 
   // A lista completa, por ordem alfabética, aos bocados de 50.
-  const { count } = await supabase.from("contatos").select("id", { count: "exact", head: true });
+  const { count } = await supabase
+    .from("contatos")
+    .select("id", { count: "exact", head: true })
+    .eq("dono_id", eu.id);
   const paginas = Math.max(1, Math.ceil((count ?? 0) / POR_PAGINA));
   // Só aceita números inteiros dentro do intervalo; o resto cai na primeira ou na última.
   const pagina = Math.min(paginas, Math.max(1, Number.parseInt(paginaCrua, 10) || 1));
@@ -41,6 +45,7 @@ export default async function Contatos({ searchParams }) {
   const { data: todos } = await supabase
     .from("contatos")
     .select("id, nome, email, etapa")
+    .eq("dono_id", eu.id)
     .order("nome")
     .order("id")
     .range(inicio, inicio + POR_PAGINA - 1);

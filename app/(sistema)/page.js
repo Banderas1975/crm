@@ -1,18 +1,19 @@
 import Link from "next/link";
 import { supabase } from "../../lib/supabase";
-import { exigirSessao } from "../sessao-actions";
+import { exigirSessao } from "../acesso";
 import { ETAPAS, CORES_ETAPA } from "../etapas";
 import { haQuantoTempo } from "../tempo";
 
 export const dynamic = "force-dynamic";
 
 export default async function Dashboard() {
-  await exigirSessao();
+  const eu = await exigirSessao();
 
   // Uma busca só serve os três blocos: os números, o gráfico e os recentes.
   const { data: contatos, error } = await supabase
     .from("contatos")
     .select("id, nome, etapa, criado_em")
+    .eq("dono_id", eu.id)
     .order("criado_em", { ascending: false });
 
   const lista = contatos ?? [];

@@ -9,7 +9,7 @@ import NovaReuniao from "../../../nova-reuniao";
 import NovaTarefa from "../../../nova-tarefa";
 import TarefaItem from "../../../tarefa-item";
 import { salvarAnotacao, marcarGanho } from "../../../actions";
-import { exigirSessao } from "../../../sessao-actions";
+import { exigirSessao } from "../../../acesso";
 import {
   haQuantoTempo,
   FORMATO_DATA,
@@ -38,7 +38,7 @@ const tamanho = (bytes) =>
     : `${(bytes / (1024 * 1024)).toFixed(1).replace(".", ",")} MB`;
 
 export default async function PaginaContato({ params }) {
-  await exigirSessao();
+  const eu = await exigirSessao();
 
   const { id: idCru } = await params;
   const id = Number(idCru);
@@ -48,6 +48,8 @@ export default async function PaginaContato({ params }) {
         .from("contatos")
         .select("id, nome, email, telefone, etapa, criado_em, proposta_ganha_id")
         .eq("id", id)
+        // De outro utilizador é como se não existisse: a mesma resposta, sem pistas.
+        .eq("dono_id", eu.id)
         .single()
     : { data: null };
 
@@ -71,24 +73,28 @@ export default async function PaginaContato({ params }) {
     .from("anotacoes")
     .select("id, texto, criado_em")
     .eq("contato_id", id)
+    .eq("dono_id", eu.id)
     .order("criado_em", { ascending: false });
 
   const { data: followUps } = await supabase
     .from("follow_ups")
     .select("id, texto, criado_em")
     .eq("contato_id", id)
+    .eq("dono_id", eu.id)
     .order("criado_em", { ascending: false });
 
   const { data: tarefas } = await supabase
     .from("tarefas")
     .select("id, titulo, vence_em, repete, concluida_em")
     .eq("contato_id", id)
+    .eq("dono_id", eu.id)
     .order("vence_em", { ascending: true });
 
   const { data: propostas } = await supabase
     .from("propostas")
     .select("id, nome, tamanho, valor, criado_em")
     .eq("contato_id", id)
+    .eq("dono_id", eu.id)
     .order("criado_em", { ascending: false });
 
   const listaPropostas = propostas ?? [];
@@ -97,7 +103,8 @@ export default async function PaginaContato({ params }) {
   const { data: comoParticipante } = await supabase
     .from("reuniao_contatos")
     .select("reuniao_id")
-    .eq("contato_id", id);
+    .eq("contato_id", id)
+    .eq("dono_id", eu.id);
   const outrasIds = (comoParticipante ?? []).map((r) => r.reuniao_id);
 
   const { data: reunioes } = await supabase
@@ -105,6 +112,7 @@ export default async function PaginaContato({ params }) {
     .select(
       "id, titulo, inicio, duracao_min, local, contato_id, contatos!reunioes_contato_fk(nome), reuniao_contatos(contatos(id, nome)), reuniao_usuarios(usuarios(email))"
     )
+    .eq("dono_id", eu.id)
     .or(outrasIds.length ? `contato_id.eq.${id},id.in.(${outrasIds.join(",")})` : `contato_id.eq.${id}`)
     .order("inicio", { ascending: true });
 
@@ -129,6 +137,7 @@ export default async function PaginaContato({ params }) {
   const { data: outrosContatos } = await supabase
     .from("contatos")
     .select("id, nome")
+    .eq("dono_id", eu.id)
     .neq("id", id)
     .order("nome", { ascending: true });
 

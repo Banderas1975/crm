@@ -1,6 +1,7 @@
 import NavLateral from "../nav-lateral";
 import { supabase } from "../../lib/supabase";
-import { exigirSessao, sair } from "../sessao-actions";
+import { sair } from "../sessao-actions";
+import { exigirSessao } from "../acesso";
 import { hojeEmLisboa } from "../tempo";
 
 // Shell de aplicação: navegação lateral fixa + cabeçalho.
@@ -14,6 +15,7 @@ export default async function Sistema({ children }) {
   const { count } = await supabase
     .from("tarefas")
     .select("id", { count: "exact", head: true })
+    .eq("dono_id", utilizador.id)
     .is("concluida_em", null)
     .not("vence_em", "is", null)
     .lte("vence_em", hojeEmLisboa());

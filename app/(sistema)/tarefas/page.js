@@ -1,13 +1,13 @@
 import { supabase } from "../../../lib/supabase";
 import TarefaItem from "../../tarefa-item";
-import { exigirSessao } from "../../sessao-actions";
+import { exigirSessao } from "../../acesso";
 import { hojeEmLisboa, fimDaSemana, somarDias, formatarDia } from "../../tempo";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Tarefas — Meu CRM" };
 
 export default async function Tarefas() {
-  await exigirSessao();
+  const eu = await exigirSessao();
 
   const hoje = hojeEmLisboa();
   const domingo = fimDaSemana(hoje);
@@ -17,6 +17,7 @@ export default async function Tarefas() {
   const { data: tarefas, error } = await supabase
     .from("tarefas")
     .select("id, titulo, vence_em, repete, contato_id, contatos(nome)")
+    .eq("dono_id", eu.id)
     .is("concluida_em", null)
     .order("vence_em", { ascending: true });
 

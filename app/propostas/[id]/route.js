@@ -1,12 +1,12 @@
 import { supabase } from "../../../lib/supabase";
-import { exigirSessao } from "../../sessao-actions";
+import { exigirSessao } from "../../acesso";
 import { TIPOS_PROPOSTA, idValido } from "../../../lib/validacao";
 
 // A única porta para abrir uma proposta. O bucket é privado e não há links
 // públicos nem links assinados: cada download passa por aqui, com sessão
 // aprovada verificada no banco no momento do pedido.
 export async function GET(pedido, { params }) {
-  await exigirSessao();
+  const eu = await exigirSessao();
 
   const { id: idCru } = await params;
   const id = Number(idCru);
@@ -16,6 +16,7 @@ export async function GET(pedido, { params }) {
     .from("propostas")
     .select("nome, caminho")
     .eq("id", id)
+    .eq("dono_id", eu.id)
     .single();
   if (!proposta) return new Response("Proposta não encontrada.", { status: 404 });
 
