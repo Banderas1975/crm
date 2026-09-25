@@ -1,5 +1,6 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { supabase } from "../lib/supabase";
 import { exigirSessao } from "./sessao-actions";
@@ -7,7 +8,16 @@ import { escreverFollowUp } from "../lib/ia";
 import { ETAPAS } from "./etapas";
 import { REPETICOES, proximaData } from "./tarefas";
 import { hojeEmLisboa } from "./tempo";
-import { LIMITES, emailValido, idValido, dataValida } from "../lib/validacao";
+import {
+  LIMITES,
+  emailValido,
+  idValido,
+  dataValida,
+  TAMANHO_MAX_PROPOSTA,
+  TIPOS_PROPOSTA,
+  tipoDaProposta,
+  lerValor,
+} from "../lib/validacao";
 
 // Junta indicativo + número num telefone só. Devolve { telefone } ou { erro }.
 // Regra E.164: no máximo 15 dígitos somando indicativo e número.
@@ -216,9 +226,96 @@ export async function mudarEtapa(idCru, etapa) {
   // O banco também recusa etapas inválidas, mas assim nem chegamos a tentar.
   if (!idValido(id) || !ETAPAS.includes(etapa)) return { ok: false };
 
-  const { error } = await supabase.from("contatos").update({ etapa }).eq("id", id);
+  // Ganho é estar em "cliente". Sair de lá desfaz o ganho, senão a página
+  // continuava a mostrar um valor ganho num negócio que já não está fechado.
+  const mudanca = etapa === "cliente" ? { etapa } : { etapa, proposta_ganha_id: null };
+
+  const { error } = await supabase.from("contatos").update(mudanca).eq("id", id);
   if (error) return { ok: false };
 
   revalidatePath("/", "layout");
   return { ok: true };
+}
+
+// Cada envio é uma proposta nova: nome no Storage sempre novo e upsert
+// desligado. Nada do que já lá está é substituído nem apagado.
+export async function anexarProposta(estadoAnterior, dados) {
+  await exigirSessao();
+
+  const contatoId = Number(dados.get("contato_id"));
+  if (!idValido(contatoId)) return { erro: "Contato não encontrado." };
+
+  const ficheiro = dados.get("ficheiro");
+  if (!(ficheiro instanceof File) || ficheiro.size === 0) {
+    return { erro: "Escolha o ficheiro da proposta." };
+  }
+  if (ficheiro.size > TAMANHO_MAX_PROPOSTA) {
+    return { erro: "A proposta é grande demais (máximo 4,5 MB)." };
+  }
+
+  const bytes = Buffer.from(await ficheiro.arrayBuffer());
+  const tipo = tipoDaProposta(ficheiro.name, bytes);
+  if (!tipo) return { erro: "Só são aceites ficheiros PDF, DOCX ou XLSX." };
+
+  const valor = lerValor(dados.get("valor"));
+  if (valor === null) return { erro: "Escreva o valor da proposta em euros, por exemplo 12500,00." };
+
+  const { data: contato } = await supabase
+    .from("contatos")
+    .select("id")
+    .eq("id", contatoId)
+    .single();
+  if (!contato) return { erro: "Contato não encontrado." };
+
+  // O nome original só vive no banco, para mostrar na lista. No Storage o
+  // ficheiro chama-se por um código aleatório: nenhum nome de pessoa ou
+  // empresa fica à vista num caminho, num log ou num link.
+  const nome = ficheiro.name.replace(/[\x00-\x1f\x7f/\\]/g, "").slice(-200) || `proposta.${tipo}`;
+  const caminho = `${contatoId}/${randomUUID()}.${tipo}`;
+
+  const { error: erroEnvio } = await supabase.storage
+    .from("propostas")
+    .upload(caminho, bytes, { contentType: TIPOS_PROPOSTA[tipo], upsert: false });
+
+  if (erroEnvio) {
+    console.error("Falha a enviar proposta:", erroEnvio.message);
+    return { erro: "Não foi possível guardar a proposta. Tente de novo." };
+  }
+
+  const { error } = await supabase
+    .from("propostas")
+    .insert({ contato_id: contatoId, nome, caminho, tamanho: ficheiro.size, valor });
+
+  if (error) {
+    // Sem linha no banco ninguém chegaria a este ficheiro: tiramo-lo, para não
+    // ficarem dados pessoais esquecidos no Storage.
+    await supabase.storage.from("propostas").remove([caminho]);
+    return { erro: "Não foi possível guardar a proposta. Tente de novo." };
+  }
+
+  revalidatePath("/", "layout");
+  return { erro: "", salvo: (estadoAnterior?.salvo ?? 0) + 1 };
+}
+
+// O negócio fica ganho com o valor desta proposta: o contato passa a "cliente"
+// e aponta para ela. O valor não é copiado — lê-se sempre da proposta.
+export async function marcarGanho(dados) {
+  await exigirSessao();
+
+  const id = Number(dados.get("id"));
+  if (!idValido(id)) return;
+
+  const { data: proposta } = await supabase
+    .from("propostas")
+    .select("id, contato_id")
+    .eq("id", id)
+    .single();
+  if (!proposta) return;
+
+  await supabase
+    .from("contatos")
+    .update({ etapa: "cliente", proposta_ganha_id: proposta.id })
+    .eq("id", proposta.contato_id);
+
+  revalidatePath("/", "layout");
 }

@@ -470,7 +470,8 @@ a:hover { color: var(--destaque-hover); }
   border-top: 1px solid var(--borda);
 }
 
-.etiqueta-admin { color: var(--destaque); border-color: var(--destaque); }
+.etiqueta-admin,
+.etiqueta-ganha { color: var(--destaque); border-color: var(--destaque); }
 
 /* o form dos botões de texto não deve criar caixa própria, senão desalinha */
 .acoes-nota form { display: contents; }
@@ -869,3 +870,10 @@ button.tarefa-marca:disabled { cursor: default; }
 }
 
 .janela-topo .titulo-secao { margin: 0; }
+
+/* ---- propostas do contato ---- */
+
+.proposta { align-items: center; justify-content: space-between; }
+.proposta .tarefa-titulo a { color: var(--texto); }
+.proposta .tarefa-titulo a:hover { color: var(--destaque); }
+.proposta form { flex: 0 0 auto; }
