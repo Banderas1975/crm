@@ -1066,3 +1066,17 @@ button.tarefa-marca:disabled { cursor: default; }
 .reuniao-participantes { margin: 4px 0 0; font-size: 13px; color: var(--texto-apoio); overflow-wrap: anywhere; }
 
 .nova-reuniao select[multiple] { min-height: 110px; padding: 6px; }
+
+/* ---- lista de todos os contatos ---- */
+
+.paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--borda);
+}
+
+.paginacao .apoio { margin: 0; font-size: 13px; }
