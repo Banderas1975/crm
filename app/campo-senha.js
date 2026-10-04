@@ -4,7 +4,7 @@ import { useState } from "react";
 
 // Campo de senha com botão para ver o que se escreveu. Começa sempre escondido:
 // quem está ao lado não vê nada sem a pessoa pedir.
-export default function CampoSenha({ id, name, maxLength, autoComplete }) {
+export default function CampoSenha({ id, name, maxLength, autoComplete, required = true, placeholder }) {
   const [visivel, setVisivel] = useState(false);
 
   return (
@@ -13,7 +13,8 @@ export default function CampoSenha({ id, name, maxLength, autoComplete }) {
         id={id}
         name={name}
         type={visivel ? "text" : "password"}
-        required
+        required={required}
+        placeholder={placeholder}
         maxLength={maxLength}
         autoComplete={autoComplete}
         // Sem correções nem maiúsculas automáticas quando a senha está à vista.

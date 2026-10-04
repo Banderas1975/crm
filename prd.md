@@ -437,10 +437,35 @@ Mudança de banco: `sql/leads-empresa-opcional.sql`.
 - [ ] Sem telefone, o formulário não é enviado
 - [ ] Sem empresa, o formulário é enviado
 
+## Versão 15
+
+### 1. Backend: email SMTP de cada utilizador (primeira parte) — CONCLUÍDO
+
+Área nova **Backend** na barra lateral, a penúltima (antes de Usuários; para quem não é admin, é a última). Todos os utilizadores a veem, cada um só com a sua configuração.
+
+Cada pessoa configura a caixa de email de onde, mais tarde, vão sair os emails que enviar pelo CRM: **nome e email do remetente, servidor SMTP, porta (465 SSL/TLS, 587, 25 ou 2525 com STARTTLS), utilizador e password**. Há um botão **"Enviar email de teste"**, que envia pela caixa configurada para o email da conta e mostra se correu bem ou o motivo da falha, em português. Também se pode apagar a configuração.
+
+Nesta primeira parte é **só configurar e testar**: nenhum email passa ainda a sair da caixa de cada pessoa. Os emails do sistema — avisos de tarefas e reuniões, leads para o administrador, recuperação de password — continuam a sair de crm@firstmedia.pt, sem mudanças.
+
+**Segurança:**
+
+- A password SMTP fica **cifrada** (AES-256-GCM) com a chave `SMTP_CHAVE` do `.env` da VPS. Quem lesse a base de dados só via texto ilegível. A password nunca volta ao ecrã: para a mudar, escreve-se uma nova; vazia, mantém a guardada.
+- O servidor SMTP tem de ser da internet: endereços internos (a própria VPS, rede local) são recusados, para ninguém usar o CRM para espreitar serviços internos.
+- Um teste de cada vez, com 20 segundos entre testes.
+
+Mudanças de banco em `sql/smtp-utilizadores.sql`. Precisa de `SMTP_CHAVE` no `.env` (gerada com `openssl rand -hex 32`).
+
+**PRONTO QUANDO**
+
+- [ ] Vejo "Backend" na barra lateral, antes de "Usuários"
+- [ ] Preencho a configuração da minha caixa, guardo, e o email de teste chega à minha caixa de entrada
+- [ ] Com a password errada, o teste diz "O servidor recusou o utilizador ou a password"
+- [ ] Outro utilizador não vê a minha configuração
+
 ### O que fica para depois
 
 - Permissões avançadas: partilhar contatos entre utilizadores; relatórios da equipa por responsável
-- Automações e lembretes por WhatsApp; emails para os contatos; enviar a partir da caixa de cada utilizador (os avisos por email aos utilizadores entraram na v9)
+- Automações e lembretes por WhatsApp; emails para os contatos, a sair da caixa de cada utilizador (a configuração dessa caixa entrou na v15; os avisos por email aos utilizadores entraram na v9)
 - Integrações com outros sistemas
 - Aplicativo de celular
 

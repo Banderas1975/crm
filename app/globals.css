@@ -1284,3 +1284,13 @@ button.tarefa-marca:disabled { cursor: default; }
 
 .botao-tema:hover { color: var(--destaque); border-color: var(--destaque); }
 .botao-tema:focus-visible { outline: 2px solid var(--destaque); outline-offset: 2px; }
+
+/* ---- backend: email da caixa de cada utilizador ---- */
+
+.smtp-explica { margin: -8px 0 24px; max-width: 640px; }
+.smtp-grelha { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+.smtp-apagar { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--borda); }
+
+@media (max-width: 640px) {
+  .smtp-grelha { grid-template-columns: 1fr; }
+}
