@@ -21,7 +21,7 @@ import {
 import { LIMITES, idValido } from "../../../../lib/validacao";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Contato — Meu CRM" };
+export const metadata = { title: "Contato — First Media CRM" };
 
 const EUROS = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });
 

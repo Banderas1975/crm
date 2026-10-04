@@ -6,7 +6,7 @@ import { CORES_ETAPA } from "../../etapas";
 import { TAMANHO_LOTE } from "../../../lib/validacao";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Contatos — Meu CRM" };
+export const metadata = { title: "Contatos — First Media CRM" };
 
 const POR_PAGINA = 50;
 

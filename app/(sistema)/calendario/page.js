@@ -6,7 +6,7 @@ import { hojeEmLisboa, somarDias, inicioDaSemana, emLisboa, deLisboa } from "../
 import { dataValida, lerHora } from "../../../lib/validacao";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Calendário — Meu CRM" };
+export const metadata = { title: "Calendário — First Media CRM" };
 
 const VISTAS = { mes: "Mês", semana: "Semana", dia: "Dia" };
 

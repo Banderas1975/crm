@@ -10,7 +10,7 @@ import {
 import { exigirAdmin } from "../../acesso";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Usuários — Meu CRM" };
+export const metadata = { title: "Usuários — First Media CRM" };
 
 const FORMATO_DATA = new Intl.DateTimeFormat("pt-PT", {
   dateStyle: "long",

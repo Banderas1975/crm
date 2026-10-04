@@ -5,7 +5,7 @@ const manrope = Manrope({ subsets: ["latin"], variable: "--fonte" });
 // Só nos números, contadores e etiquetas técnicas — ver design.md.
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--fonte-mono" });
 
-export const metadata = { title: "Meu CRM" };
+export const metadata = { title: "First Media CRM" };
 
 export default function Layout({ children }) {
   return (

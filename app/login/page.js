@@ -3,7 +3,7 @@ import CampoSenha from "../campo-senha";
 import { entrar } from "../sessao-actions";
 import { LIMITES } from "../../lib/validacao";
 
-export const metadata = { title: "Entrar — Meu CRM" };
+export const metadata = { title: "Entrar — First Media CRM" };
 
 const ERROS = {
   invalido: "Usuário ou senha inválidos.",
@@ -17,7 +17,7 @@ export default async function Login({ searchParams }) {
   return (
     <main className="pagina pagina-login">
       <header className="cabecalho">
-        <h1>Meu CRM</h1>
+        <h1>First Media CRM</h1>
         <p className="apoio">Entre para ver os seus contatos.</p>
       </header>
 
