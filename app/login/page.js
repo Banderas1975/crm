@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
+import BotaoTema from "../botao-tema";
 import CampoSenha from "../campo-senha";
 import { entrar } from "../sessao-actions";
 import { LIMITES } from "../../lib/validacao";
@@ -14,8 +16,13 @@ const ERROS = {
 export default async function Login({ searchParams }) {
   const { erro, registado, senha } = await searchParams;
 
+  const tema = (await cookies()).get("tema")?.value === "claro" ? "claro" : "escuro";
+
   return (
     <main className="pagina pagina-login">
+      <div className="tema-entrada">
+        <BotaoTema inicial={tema} />
+      </div>
       <header className="cabecalho">
         <h1>First Media CRM</h1>
         <p className="apoio">Entre para ver os seus contatos.</p>

@@ -373,13 +373,14 @@ Mudanças de banco em `sql/recuperar-senha.sql`: `usuarios.senha_alterada_em`, a
 
 ### 1. Tema claro — CONCLUÍDO
 
-No canto superior direito, ao lado do email, há um botão **Claro / Escuro** (sol/lua). Muda o CRM inteiro para o tema claro e de volta. O escuro continua a ser o padrão. A escolha fica guardada no browser (um cookie, durante um ano) e a página já abre no tema escolhido. Cores em `design.md`, secção "Tema claro". No telemóvel o botão mostra só o ícone. Sem mudanças de banco.
+No canto superior direito, ao lado do email, há um botão **Claro / Escuro** (sol/lua). O mesmo botão está no canto superior direito do ecrã de login. Muda o CRM inteiro para o tema claro e de volta. O escuro continua a ser o padrão. A escolha fica guardada no browser (um cookie, durante um ano) e a página já abre no tema escolhido. Cores em `design.md`, secção "Tema claro". No telemóvel o botão mostra só o ícone. Sem mudanças de banco.
 
 **PRONTO QUANDO**
 
 - [ ] Carrego em "Claro" e o CRM fica claro em todas as áreas
 - [ ] Recarrego a página ou fecho e volto a abrir o browser e continua claro
 - [ ] Carrego em "Escuro" e volta ao tema escuro
+- [ ] No ecrã de login também há o botão, e a escolha feita lá mantém-se depois de entrar
 
 ### O que fica para depois
 

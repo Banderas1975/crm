@@ -145,7 +145,8 @@ com a mesma identidade (mesmas cores, mesmas formas, mesma tipografia).
 
 ### Tema claro
 
-Opção de cada pessoa, no canto superior direito. Mesmas regras, mesma estrutura, mesmo
+Opção de cada pessoa, no canto superior direito (no cabeçalho do sistema e também
+no ecrã de login). Mesmas regras, mesma estrutura, mesmo
 azul — só trocam as cores de base. A escolha fica guardada no browser e a página já
 abre no tema certo, sem piscar.
 
