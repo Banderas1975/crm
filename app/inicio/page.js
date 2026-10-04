@@ -198,7 +198,7 @@ export default function Inicio() {
               <span>Preencha o formulário no fim desta página.</span>
             </li>
             <li>
-              <strong>Preencha o formulário abaixo</strong>
+              <strong>Entre e registe-se</strong>
               <span>Rapidamente lhe damos acesso ao software</span>
             </li>
             <li>
