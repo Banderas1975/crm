@@ -6,7 +6,11 @@ const manrope = Manrope({ subsets: ["latin"], variable: "--fonte" });
 // Só nos números, contadores e etiquetas técnicas — ver design.md.
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--fonte-mono" });
 
-export const metadata = { title: "First Media CRM" };
+export const metadata = {
+  title: "CRM para PME em Portugal | First Media CRM",
+  description:
+    "Pipeline de vendas, contactos e tarefas num CRM simples e em português. Nunca mais perca um follow-up. Conheça o First Media CRM.",
+};
 
 // O tema vem do cookie que o botão grava: a página já sai do servidor no tema
 // escolhido. Sem cookie, fica o escuro do design.md.

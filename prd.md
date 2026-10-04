@@ -382,6 +382,20 @@ No canto superior direito, ao lado do email, há um botão **Claro / Escuro** (s
 - [ ] Carrego em "Escuro" e volta ao tema escuro
 - [ ] No ecrã de login também há o botão, e a escolha feita lá mantém-se depois de entrar
 
+### 2. Título e descrição para o Google — CONCLUÍDO
+
+A página pública (o login, para onde vai quem abre o endereço do CRM) tem:
+
+- **Título:** CRM para PME em Portugal | First Media CRM
+- **Descrição:** Pipeline de vendas, contactos e tarefas num CRM simples e em português. Nunca mais perca um follow-up. Conheça o First Media CRM.
+
+A descrição vale para todas as páginas; as páginas de dentro mantêm o seu próprio título ("Funil — First Media CRM", etc.).
+
+**PRONTO QUANDO**
+
+- [ ] O separador do browser no login mostra "CRM para PME em Portugal | First Media CRM"
+- [ ] O código da página do login traz a descrição acima
+
 ### O que fica para depois
 
 - Permissões avançadas: partilhar contatos entre utilizadores; relatórios da equipa por responsável
