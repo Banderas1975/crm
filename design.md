@@ -90,7 +90,7 @@ O CRM não é uma página comprida. É um **sistema com áreas**, dentro de um s
 ```
 
 - **Navegação lateral fixa à esquerda**, sempre visível, com as áreas do sistema:
-  **Dashboard**, **Funil**, **Tarefas**, **Calendário**, **Contatos** e **Usuários** (este só aparece para admin).
+  **Dashboard**, **Funil**, **Tarefas**, **Calendário**, **Contatos**, **Emails** e **Usuários** (este só aparece para admin).
   A lista é feita para crescer: itens novos entram na mesma coluna.
 - **Cabeçalho** no topo da área de conteúdo, com o nome do CRM, quem está logado
   e o botão **Sair**.
@@ -118,6 +118,7 @@ com a mesma identidade (mesmas cores, mesmas formas, mesma tipografia).
 | Funil | `/funil` | A lista de contatos: etapa, anotações e follow-up |
 | Calendário | `/calendario` | Tarefas e reuniões por mês, semana ou dia, arrastáveis |
 | Contatos | `/contatos` | O cadastro de um contato novo |
+| Emails | `/emails` | Preferências dos avisos por email e histórico do que foi enviado |
 | Usuários | `/usuarios` | Quem pode entrar (só admin) |
 
 ### Calendário
@@ -137,6 +138,12 @@ com a mesma identidade (mesmas cores, mesmas formas, mesma tipografia).
 - O número vai sempre em texto ao lado da barra, em JetBrains Mono: a cor nunca é
   a única forma de ler um valor.
 - Tabelas rolam para o lado por dentro do cartão; a página não.
+
+### Emails enviados
+
+Os emails de aviso não usam o tema escuro: são texto simples num fundo claro, com
+um título, as linhas do aviso e um link "Abrir no CRM". Programas de email
+tratam mal fundos escuros e fontes externas — o que importa é ler-se em todo o lado.
 
 ## Proibido
 

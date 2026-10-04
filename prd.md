@@ -75,7 +75,7 @@ A área **Tarefas** mostra cinco secções, nesta ordem: **Atrasadas · Hoje · 
 Três decisões que respondem a restrições dadas:
 
 - **Nunca há tarefas infinitas.** Uma tarefa repetida só gera a seguinte no momento em que a atual é concluída, uma de cada vez. Não existe fila à espera no banco.
-- **Nunca há avisos duplicados.** O único aviso é o contador ao lado de "Tarefas" na navegação, com as atrasadas mais as de hoje. É contado no banco a cada visita e não fica guardado — não há estado que possa duplicar. O CRM continua a não enviar email nem WhatsApp.
+- **Nunca há avisos duplicados.** O único aviso é o contador ao lado de "Tarefas" na navegação, com as atrasadas mais as de hoje. É contado no banco a cada visita e não fica guardado — não há estado que possa duplicar. (Desde a v9 há também emails de aviso, com a mesma regra de nunca duplicar.)
 - **Concluir é atómico.** O "ainda não está concluída" faz parte do próprio UPDATE, por isso dois cliques seguidos (ou dois separadores abertos) não geram duas repetições nem duas entradas no histórico.
 
 Tarefas concluídas saem das quatro secções e ficam no histórico da página do contato, com a data.
@@ -271,10 +271,44 @@ O Funil passou a ter cinco colunas, mais estreitas, para caberem num ecrã norma
 - [ ] Exporto cada relatório e o Excel abre o ficheiro com os mesmos números do ecrã
 - [ ] Com outra conta, os relatórios mostram só os números dessa conta
 
+## Versão 9
+
+### 1. Emails de aviso — CONCLUÍDO
+
+O CRM passa a enviar emails, a partir de **crm@firstmedia.pt**, para avisar cada utilizador das suas tarefas e reuniões. Só envia avisos aos utilizadores do CRM — nunca escreve aos contatos.
+
+**Três avisos:**
+
+- **Resumo das tarefas**, todos os dias a partir das **8h** (Lisboa): as tarefas atrasadas e as de hoje. Só sai se houver alguma.
+- **Reunião daqui a uma hora**: para o dono da reunião e para os utilizadores da equipa que participam.
+- **Reunião marcada ou mudada**: quando uma reunião é marcada, ou muda de hora (incluindo arrastar no Calendário), os utilizadores participantes recebem os detalhes. O dono não recebe — foi ele que a marcou. As reuniões que já existiam antes da v9 não geram este aviso.
+
+**Área Emails** (na navegação): cada utilizador escolhe o **email onde recebe** os avisos (por omissão, o da conta), liga ou desliga cada um dos três avisos, envia um **email de teste**, e vê o **histórico** dos emails que lhe foram enviados (até 50), com o estado — e o motivo, se falhou.
+
+**Nunca há avisos duplicados.** Cada aviso tem uma chave única no banco (que aviso, para quem, de quando). Antes de enviar, o CRM grava a chave; se ela já existir, o email não sai outra vez — mesmo que o envio corra duas vezes ao mesmo tempo. Um envio que falha é tentado de novo, no máximo 3 vezes; um que fique preso "a enviar" mais de 15 minutos também.
+
+**Como funciona por baixo:**
+
+- O envio usa o **SMTP da caixa crm@firstmedia.pt**. As credenciais ficam só no `.env.local` da VPS: `SMTP_HOST`, `SMTP_PORT` (465), `SMTP_USER`, `SMTP_PASS`, e opcionalmente `EMAIL_REMETENTE` (o "De:") e `CRM_URL` (para os links nos emails).
+- Na VPS, um **cron** chama `POST /emails/enviar` a cada 5 minutos. Esse endereço não usa sessão: exige o segredo `CRON_SEGREDO` (32+ caracteres, no `.env.local`), comparado em tempo constante.
+- Ligações ao SMTP com limites de espera (15 s para ligar, 30 s sem resposta): um servidor de email lento nunca prende o envio.
+- **Preparado para cada um usar o seu email:** o envio já aceita um remetente por mensagem. Ligar a caixa de cada utilizador é um passo seguinte, que não entra na v9.
+
+Mudanças de banco em `sql/emails.sql`: preferências em `usuarios`, `reunioes.alterada_em` (gravado por trigger) e a tabela `emails_enviados`.
+
+**PRONTO QUANDO**
+
+- [ ] Na área Emails carrego em "Enviar email de teste" e o email chega, vindo de crm@firstmedia.pt
+- [ ] Com tarefas atrasadas ou de hoje, recebo o resumo uma vez por dia, depois das 8h
+- [ ] Recebo um aviso uma hora antes de uma reunião minha, e os participantes da equipa também
+- [ ] Marco uma reunião com um colega como participante e ele recebe "Reunião marcada"; arrasto-a para outra hora e ele recebe "Reunião mudada"
+- [ ] Desligo um aviso na área Emails e esse aviso deixa de chegar
+- [ ] O histórico mostra cada email, e nenhum aparece em duplicado
+
 ### O que fica para depois
 
 - Permissões avançadas: partilhar contatos entre utilizadores; relatórios da equipa por responsável
-- Automações e lembretes agendados (email, WhatsApp)
+- Automações e lembretes por WhatsApp; emails para os contatos; enviar a partir da caixa de cada utilizador (os avisos por email aos utilizadores entraram na v9)
 - Integrações com outros sistemas
 - Aplicativo de celular
 
@@ -282,7 +316,7 @@ O Funil passou a ter cinco colunas, mais estreitas, para caberem num ecrã norma
 
 - Times: desde a v6 cada utilizador só vê os seus contatos; não há equipas nem contatos partilhados
 - Importação de contatos (CSV, planilha, contatos do celular). A exportação para .xlsx entrou na v7.
-- Envio de e-mail ou WhatsApp pelo sistema
+- Envio de e-mail aos contatos, ou WhatsApp, pelo sistema (os avisos por email aos utilizadores entraram na v9)
 - Integrações com outras ferramentas
 - Campos personalizados e etapas de funil configuráveis (a v8 acrescentou campos e a etapa "perdido", fixos)
 - Histórico de alterações e auditoria (só as mudanças de etapa ficam registadas, desde a v8)

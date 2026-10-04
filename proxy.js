@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { NOME_COOKIE, sessaoValida } from "./lib/sessao";
 
-// As únicas páginas que se veem sem sessão.
-const PUBLICAS = new Set(["/login", "/registo"]);
+// As únicas páginas que se veem sem sessão. /emails/enviar é o cron da VPS:
+// não tem sessão, mas exige o segredo CRON_SEGREDO (verificado lá dentro).
+const PUBLICAS = new Set(["/login", "/registo", "/emails/enviar"]);
 
 // Regras de conteúdo (CSP): o navegador só corre scripts do próprio CRM que
 // tragam o código (nonce) deste pedido. Um script injetado — num nome de

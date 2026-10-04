@@ -1216,3 +1216,20 @@ button.tarefa-marca:disabled { cursor: default; }
 /* Ritmo e projeção é uma frase: pode partir em duas linhas. */
 .rel-tabela td.rel-pequeno { white-space: normal; min-width: 200px; text-align: left; }
 .rel-tabela th.rel-esquerda { text-align: left; }
+
+/* ---- emails ---- */
+
+.escolhas { margin: 0 0 20px; padding: 0; border: 0; }
+.escolhas legend { margin-bottom: 10px; font-size: 14px; font-weight: 600; }
+.escolhas label { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; font-size: 15px; cursor: pointer; }
+.escolhas input { margin-top: 5px; accent-color: var(--destaque); }
+
+.teste-email { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--borda); }
+.teste-email .erro,
+.teste-email .aviso { margin: 12px 0 0; }
+
+/* Histórico de emails: tudo pode partir de linha, para a tabela caber no cartão. */
+.tabela-emails td { white-space: normal; }
+.rel-tabela td.email-assunto { min-width: 160px; }
+.rel-tabela td.mono.email-para { text-align: left; overflow-wrap: anywhere; min-width: 120px; }
+.email-falhou { color: var(--erro); white-space: normal; }
