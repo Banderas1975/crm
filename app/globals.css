@@ -1233,3 +1233,5 @@ button.tarefa-marca:disabled { cursor: default; }
 .rel-tabela td.email-assunto { min-width: 160px; }
 .rel-tabela td.mono.email-para { text-align: left; overflow-wrap: anywhere; min-width: 120px; }
 .email-falhou { color: var(--erro); white-space: normal; }
+
+.link-recuperar { margin-top: 16px; }

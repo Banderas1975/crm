@@ -3,7 +3,9 @@ import { NOME_COOKIE, sessaoValida } from "./lib/sessao";
 
 // As únicas páginas que se veem sem sessão. /emails/enviar é o cron da VPS:
 // não tem sessão, mas exige o segredo CRON_SEGREDO (verificado lá dentro).
-const PUBLICAS = new Set(["/login", "/registo", "/emails/enviar"]);
+// /recuperar/<código> é o link do email de recuperação de senha.
+const PUBLICAS = new Set(["/login", "/registo", "/recuperar", "/emails/enviar"]);
+const PUBLICAS_PREFIXO = ["/recuperar/"];
 
 // Regras de conteúdo (CSP): o navegador só corre scripts do próprio CRM que
 // tragam o código (nonce) deste pedido. Um script injetado — num nome de
@@ -32,7 +34,7 @@ function regras(nonce) {
 export async function proxy(request) {
   const { pathname } = request.nextUrl;
 
-  const publica = PUBLICAS.has(pathname);
+  const publica = PUBLICAS.has(pathname) || PUBLICAS_PREFIXO.some((p) => pathname.startsWith(p));
   const cookie = request.cookies.get(NOME_COOKIE)?.value;
 
   // Rota exata: "startsWith" deixaria passar caminhos como /login-qualquer-coisa.

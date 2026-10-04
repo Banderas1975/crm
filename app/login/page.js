@@ -12,7 +12,7 @@ const ERROS = {
 };
 
 export default async function Login({ searchParams }) {
-  const { erro, registado } = await searchParams;
+  const { erro, registado, senha } = await searchParams;
 
   return (
     <main className="pagina pagina-login">
@@ -33,6 +33,12 @@ export default async function Login({ searchParams }) {
             <CampoSenha id="senha" name="senha" maxLength={LIMITES.senha} autoComplete="current-password" />
           </div>
 
+          {senha === "alterada" && (
+            <p className="aviso" aria-live="polite">
+              Password mudada. Entre com a password nova.
+            </p>
+          )}
+
           {registado && (
             <p className="aviso" aria-live="polite">
               Conta criada. Só pode entrar depois de o administrador aprovar.
@@ -46,6 +52,9 @@ export default async function Login({ searchParams }) {
           )}
 
           <button className="botao">Entrar</button>
+          <p className="ajuda link-recuperar">
+            <Link href="/recuperar">Esqueci-me da password</Link>
+          </p>
         </form>
 
         <p className="apoio rodape-form">
