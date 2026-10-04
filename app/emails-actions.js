@@ -20,6 +20,7 @@ export async function guardarPreferencias(estadoAnterior, dados) {
     .update({
       email_avisos: emailAvisos,
       aviso_tarefas: dados.get("aviso_tarefas") === "on",
+      aviso_tarefa_antes: dados.get("aviso_tarefa_antes") === "on",
       aviso_reuniao_antes: dados.get("aviso_reuniao_antes") === "on",
       aviso_reuniao_alterada: dados.get("aviso_reuniao_alterada") === "on",
     })

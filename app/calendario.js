@@ -16,10 +16,13 @@ const numeroDia = (iso) => Number(iso.slice(8));
 
 const chave = (tipo, id) => `${tipo}:${id}`;
 
-// Reuniões que se sobrepõem ficam lado a lado, cada uma na sua faixa.
-function porFaixas(reunioes) {
+// Uma tarefa com hora ocupa meia hora na grelha.
+const DURACAO_TAREFA = 30;
+
+// Reuniões e tarefas que se sobrepõem ficam lado a lado, cada uma na sua faixa.
+function porFaixas(itens) {
   const fins = [];
-  const colocadas = reunioes
+  const colocadas = itens
     .toSorted((a, b) => a.minutos - b.minutos)
     .map((reuniao) => {
       let faixa = fins.findIndex((fim) => fim <= reuniao.minutos);
@@ -44,7 +47,9 @@ export default function Calendario({ vista, dias, mes, hoje, tarefas, reunioes }
     mudanca.tipo === "tarefa"
       ? {
           ...atual,
-          tarefas: atual.tarefas.map((t) => (t.id === mudanca.id ? { ...t, dia: mudanca.dia } : t)),
+          tarefas: atual.tarefas.map((t) =>
+            t.id === mudanca.id ? { ...t, dia: mudanca.dia, minutos: mudanca.minutos ?? t.minutos } : t
+          ),
         }
       : {
           ...atual,
@@ -68,7 +73,7 @@ export default function Calendario({ vista, dias, mes, hoje, tarefas, reunioes }
     const { tipo, id, dia, minutos } = mudanca;
     if (tipo === "tarefa") {
       const tarefa = lista.tarefas.find((t) => t.id === id);
-      if (!tarefa || tarefa.dia === dia) return;
+      if (!tarefa || (tarefa.dia === dia && (minutos ?? tarefa.minutos) === tarefa.minutos)) return;
     } else {
       const reuniao = lista.reunioes.find((r) => r.id === id);
       if (!reuniao || (reuniao.dia === dia && reuniao.minutos === minutos)) return;
@@ -78,7 +83,7 @@ export default function Calendario({ vista, dias, mes, hoje, tarefas, reunioes }
     comecar(async () => {
       aplicarJa(mudanca);
       const { ok } =
-        tipo === "tarefa" ? await moverTarefa(id, dia) : await moverReuniao(id, dia, minutos);
+        tipo === "tarefa" ? await moverTarefa(id, dia, minutos ?? null) : await moverReuniao(id, dia, minutos);
       if (!ok) setErro("Não foi possível mudar a data. O cartão voltou para onde estava.");
     });
   }
@@ -91,13 +96,12 @@ export default function Calendario({ vista, dias, mes, hoje, tarefas, reunioes }
     const [tipo, idCru, pegaCru] = e.dataTransfer.getData("text/plain").split(":");
     const id = Number(idCru);
 
-    if (tipo === "tarefa") return mover({ tipo, id, dia });
-    if (tipo !== "reuniao") return;
+    if (tipo !== "tarefa" && tipo !== "reuniao") return;
+    const item = (tipo === "tarefa" ? lista.tarefas : lista.reunioes).find((x) => x.id === id);
+    if (!item) return;
 
-    const reuniao = lista.reunioes.find((r) => r.id === id);
-    if (!reuniao) return;
-
-    let minutos = reuniao.minutos;
+    // Fora da grelha (mês, ou a linha "tarefas") muda só o dia e a hora fica.
+    let minutos = item.minutos;
     if (naGrelha) {
       const topo = e.clientY - e.currentTarget.getBoundingClientRect().top - Number(pegaCru || 0);
       minutos = Math.min(47, Math.max(0, Math.round(topo / MEIA_HORA))) * 30;
@@ -116,7 +120,8 @@ export default function Calendario({ vista, dias, mes, hoje, tarefas, reunioes }
   });
 
   // Arrastar não funciona com teclado nem no telemóvel. As setas fazem o mesmo:
-  // ← → mudam o dia; ↑ ↓ mudam a hora de uma reunião, ou a semana de uma tarefa.
+  // ← → mudam o dia; ↑ ↓ mudam a hora (meia em meia hora). Uma tarefa antiga,
+// sem hora, muda de semana com ↑ ↓.
   function teclas(e, tipo, item) {
     const passos = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -1, ArrowDown: 1 };
     if (!(e.key in passos)) return;
@@ -125,7 +130,7 @@ export default function Calendario({ vista, dias, mes, hoje, tarefas, reunioes }
     const lado = e.key === "ArrowLeft" || e.key === "ArrowRight";
     setFoco(chave(tipo, item.id));
 
-    if (tipo === "tarefa") {
+    if (tipo === "tarefa" && item.minutos === null) {
       return mover({ tipo, id: item.id, dia: somarDias(item.dia, lado ? passo : passo * 7) });
     }
     if (lado) return mover({ tipo, id: item.id, dia: somarDias(item.dia, passo), minutos: item.minutos });
@@ -134,25 +139,30 @@ export default function Calendario({ vista, dias, mes, hoje, tarefas, reunioes }
   }
 
   const arrastavel = (tipo, item, e) => {
-    const pega = tipo === "reuniao" ? Math.round(e.clientY - e.currentTarget.getBoundingClientRect().top) : 0;
+    const pega = Math.round(e.clientY - e.currentTarget.getBoundingClientRect().top);
     e.dataTransfer.setData("text/plain", `${chave(tipo, item.id)}:${pega}`);
     e.dataTransfer.effectAllowed = "move";
   };
 
   // Funções simples e não componentes: um componente criado dentro do render
   // seria outro a cada render, e o cartão perdia o foco e o arrastar a meio.
-  const tarefaItem = (tarefa) => (
+  const tarefaItem = (tarefa, estilo) => (
     <Link
       key={chave("tarefa", tarefa.id)}
       href={`/contatos/${tarefa.contatoId}`}
-      className="cal-item cal-tarefa"
+      className={estilo ? "cal-item cal-tarefa cal-bloco" : "cal-item cal-tarefa"}
+      style={estilo}
       data-item={chave("tarefa", tarefa.id)}
       draggable
       onDragStart={(e) => arrastavel("tarefa", tarefa, e)}
       onKeyDown={(e) => teclas(e, "tarefa", tarefa)}
-      title={`Tarefa: ${tarefa.titulo} · ${tarefa.nome}`}
+      title={`Tarefa: ${tarefa.titulo}${tarefa.minutos !== null ? ` · ${formatarHora(tarefa.minutos)}` : ""} · ${tarefa.nome}`}
     >
-      <span className="cal-marca" aria-hidden="true" />
+      {tarefa.minutos !== null ? (
+        <span className="cal-hora mono">{formatarHora(tarefa.minutos)}</span>
+      ) : (
+        <span className="cal-marca" aria-hidden="true" />
+      )}
       <span className="cal-texto">{tarefa.titulo}</span>
     </Link>
   );
@@ -177,8 +187,11 @@ export default function Calendario({ vista, dias, mes, hoje, tarefas, reunioes }
     </Link>
   );
 
+  // Primeiro as que têm hora, por hora; as antigas, sem hora, no fim.
   const doDia = (dia) => ({
-    tarefas: lista.tarefas.filter((t) => t.dia === dia),
+    tarefas: lista.tarefas
+      .filter((t) => t.dia === dia)
+      .toSorted((a, b) => (a.minutos ?? 9999) - (b.minutos ?? 9999)),
     reunioes: lista.reunioes.filter((r) => r.dia === dia).toSorted((a, b) => a.minutos - b.minutos),
   });
 
@@ -209,7 +222,7 @@ export default function Calendario({ vista, dias, mes, hoje, tarefas, reunioes }
                 <div key={dia} className={classeDia(dia, "cal-celula")} {...largavel(dia)}>
                   <p className="cal-numero mono">{numeroDia(dia)}</p>
                   {r.map((reuniao) => reuniaoItem(reuniao))}
-                  {t.map(tarefaItem)}
+                  {t.map((tarefa) => tarefaItem(tarefa))}
                 </div>
               );
             })}
@@ -228,7 +241,9 @@ export default function Calendario({ vista, dias, mes, hoje, tarefas, reunioes }
             <p className="cal-rotulo mono">tarefas</p>
             {dias.map((dia) => (
               <div key={dia} className={classeDia(dia, "cal-dia-todo")} {...largavel(dia)}>
-                {doDia(dia).tarefas.map(tarefaItem)}
+                {doDia(dia)
+                  .tarefas.filter((t) => t.minutos === null)
+                  .map((t) => tarefaItem(t))}
               </div>
             ))}
           </div>
@@ -244,7 +259,13 @@ export default function Calendario({ vista, dias, mes, hoje, tarefas, reunioes }
               </div>
 
               {dias.map((dia) => {
-                const { colocadas, faixas } = porFaixas(doDia(dia).reunioes);
+                const { tarefas: t, reunioes: r } = doDia(dia);
+                const { colocadas, faixas } = porFaixas([
+                  ...r.map((reuniao) => ({ ...reuniao, tipo: "reuniao" })),
+                  ...t
+                    .filter((tarefa) => tarefa.minutos !== null)
+                    .map((tarefa) => ({ ...tarefa, tipo: "tarefa", duracao: DURACAO_TAREFA })),
+                ]);
                 return (
                   <div
                     key={dia}
@@ -254,14 +275,15 @@ export default function Calendario({ vista, dias, mes, hoje, tarefas, reunioes }
                     {HORAS.map((h) => (
                       <div key={h} className="cal-slot" />
                     ))}
-                    {colocadas.map((reuniao) =>
-                      reuniaoItem(reuniao, {
-                        top: (reuniao.minutos / 30) * MEIA_HORA,
-                        height: Math.max(MEIA_HORA, (reuniao.duracao / 30) * MEIA_HORA) - 2,
-                        left: `${(reuniao.faixa / faixas) * 100}%`,
+                    {colocadas.map((item) => {
+                      const estilo = {
+                        top: (item.minutos / 30) * MEIA_HORA,
+                        height: Math.max(MEIA_HORA, (item.duracao / 30) * MEIA_HORA) - 2,
+                        left: `${(item.faixa / faixas) * 100}%`,
                         width: `${100 / faixas}%`,
-                      })
-                    )}
+                      };
+                      return item.tipo === "tarefa" ? tarefaItem(item, estilo) : reuniaoItem(item, estilo);
+                    })}
                   </div>
                 );
               })}
@@ -272,8 +294,7 @@ export default function Calendario({ vista, dias, mes, hoje, tarefas, reunioes }
 
       <p className="ajuda">
         Arraste tarefas e reuniões para mudar o dia{vista !== "mes" && " ou a hora"}. Com o
-        teclado: selecione com Tab e use ← → para mudar o dia, ↑ ↓ para a hora de uma reunião ou a
-        semana de uma tarefa.
+        teclado: selecione com Tab e use ← → para mudar o dia e ↑ ↓ para mudar a hora.
       </p>
     </div>
   );

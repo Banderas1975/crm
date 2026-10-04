@@ -88,10 +88,11 @@ export default async function PaginaContato({ params }) {
 
   const { data: tarefas } = await supabase
     .from("tarefas")
-    .select("id, titulo, vence_em, repete, concluida_em")
+    .select("id, titulo, vence_em, vence_hora, repete, concluida_em")
     .eq("contato_id", id)
     .eq("dono_id", eu.id)
-    .order("vence_em", { ascending: true });
+    .order("vence_em", { ascending: true })
+    .order("vence_hora", { ascending: true, nullsFirst: false });
 
   const { data: propostas } = await supabase
     .from("propostas")
@@ -159,6 +160,7 @@ export default async function PaginaContato({ params }) {
     .map((tarefa) => ({
       ...tarefa,
       dia: tarefa.vence_em ? formatarDia(tarefa.vence_em) : null,
+      hora: tarefa.vence_hora?.slice(0, 5) ?? null,
     }));
 
   // O histórico do que já foi feito por este cliente, do mais recente para trás.
