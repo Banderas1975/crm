@@ -1,0 +1,306 @@
+/* Landing page — cores do logótipo da First Media (laranja e lilás) sobre um
+   fundo azul-noite. Só vale aqui: o CRM por dentro segue o design.md. As
+   variáveis são redefinidas em .lp, por isso .campo, .botao e .erro do
+   globals.css já saem nestas cores. */
+
+.lp {
+  --fundo: #0E1020;
+  --superficie: #161A30;
+  --elevado: #1D2240;
+  --borda: #2A3052;
+  --texto: #EEF0FA;
+  --texto-apoio: #A9AFCF;
+  --destaque: #F15A24;       /* laranja do logótipo */
+  --destaque-hover: #FF7A4D;
+  --lilas: #A4ACE9;          /* lilás do logótipo */
+  --erro: #FF8A80;
+
+  min-height: 100vh;
+  background: var(--fundo);
+  color: var(--texto);
+  line-height: 1.55;
+}
+
+/* O botão laranja leva texto escuro: branco sobre este laranja não se lê bem. */
+.lp .botao { color: #0E1020; text-decoration: none; display: inline-block; }
+
+.lp-largura { width: 100%; max-width: 1120px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
+.lp-estreito { max-width: 760px; }
+
+.lp a { color: var(--lilas); }
+.lp a:focus-visible, .lp summary:focus-visible { outline: 2px solid var(--lilas); outline-offset: 3px; }
+
+/* ---- topo ---- */
+
+.lp-topo {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--fundo);
+  border-bottom: 1px solid var(--borda);
+}
+
+.lp-topo-linha { display: flex; align-items: center; gap: 32px; height: 72px; }
+
+.lp-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.lp-logo img { display: block; height: 40px; width: auto; }
+.lp-logo span {
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--lilas);
+  border: 1px solid var(--lilas);
+  border-radius: 6px;
+}
+
+.lp-nav { display: flex; gap: 24px; margin-right: auto; }
+.lp-nav a { color: var(--texto-apoio); text-decoration: none; font-weight: 600; font-size: 15px; }
+.lp-nav a:hover { color: var(--texto); }
+
+.lp-topo-acoes { display: flex; align-items: center; gap: 16px; }
+.lp-entrar { font-weight: 700; text-decoration: none; }
+.lp-entrar:hover { text-decoration: underline; }
+.lp-botao-topo { padding: 9px 16px; font-size: 15px; }
+
+/* ---- herói ---- */
+
+.lp-heroi {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 56px;
+  align-items: center;
+  padding-top: 96px;
+  padding-bottom: 96px;
+}
+
+.lp-sobretitulo {
+  margin: 0 0 12px;
+  font-family: var(--fonte-mono), ui-monospace, monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--destaque);
+}
+
+.lp h1 {
+  margin: 0 0 20px;
+  font-size: clamp(38px, 5.4vw, 60px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.lp h1 em { font-style: normal; color: var(--lilas); }
+
+.lp h2 {
+  margin: 0 0 32px;
+  font-size: clamp(28px, 3.4vw, 38px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  max-width: 760px;
+}
+
+.lp h3 { margin: 0 0 8px; font-size: 18px; }
+
+.lp-lead { margin: 0 0 32px; font-size: 18px; color: var(--texto-apoio); max-width: 560px; }
+
+.lp-acoes { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+.lp-botao-grande { padding: 15px 28px; font-size: 17px; }
+.lp-secundario { font-weight: 700; }
+
+.lp-nota { margin: 20px 0 0; font-size: 14px; color: var(--texto-apoio); }
+
+/* funil de exemplo */
+.lp-funil {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 16px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: 14px;
+}
+
+.lp-coluna { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+
+.lp-coluna-titulo {
+  margin: 0 0 4px;
+  font-family: var(--fonte-mono), ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lp-cartao-exemplo {
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--elevado);
+  border: 1px solid var(--borda);
+  border-left: 3px solid;
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+
+/* ---- secções ---- */
+
+.lp-seccao { padding-top: 72px; padding-bottom: 72px; border-top: 1px solid var(--borda); scroll-margin-top: 72px; }
+
+.lp-grelha-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+.lp-bloco {
+  padding: 28px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: 14px;
+}
+
+.lp-bloco p { margin: 0; color: var(--texto-apoio); }
+
+.lp-marca {
+  display: block;
+  width: 28px;
+  height: 4px;
+  margin-bottom: 18px;
+  background: var(--destaque);
+  border-radius: 2px;
+}
+
+.lp-passos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: passo;
+}
+
+.lp-passos li { counter-increment: passo; display: flex; flex-direction: column; gap: 6px; }
+.lp-passos li::before {
+  content: counter(passo);
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 10px;
+  font-family: var(--fonte-mono), ui-monospace, monospace;
+  font-weight: 700;
+  color: var(--fundo);
+  background: var(--lilas);
+  border-radius: 50%;
+}
+.lp-passos strong { font-size: 18px; }
+.lp-passos span { color: var(--texto-apoio); }
+
+/* ---- preço ---- */
+
+.lp-preco {
+  max-width: 440px;
+  padding: 36px;
+  background: var(--superficie);
+  border: 2px solid var(--destaque);
+  border-radius: 16px;
+}
+
+.lp-preco-etiqueta {
+  display: inline-block;
+  margin: 0 0 16px;
+  padding: 4px 10px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--fundo);
+  background: var(--lilas);
+  border-radius: 6px;
+}
+
+.lp-preco-valor { margin: 0 0 24px; font-size: 48px; font-weight: 800; letter-spacing: -0.02em; }
+.lp-preco-valor span { font-size: 16px; font-weight: 600; color: var(--texto-apoio); letter-spacing: 0; }
+
+.lp-preco ul { margin: 0 0 28px; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.lp-preco li { padding-left: 28px; position: relative; }
+.lp-preco li::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 6px;
+  width: 10px;
+  height: 6px;
+  border-left: 2px solid var(--lilas);
+  border-bottom: 2px solid var(--lilas);
+  transform: rotate(-45deg);
+}
+
+.lp-preco .botao { width: 100%; text-align: center; }
+
+/* ---- perguntas ---- */
+
+.lp-pergunta { border-bottom: 1px solid var(--borda); }
+.lp-pergunta summary { padding: 18px 0; font-size: 17px; font-weight: 700; cursor: pointer; }
+.lp-pergunta p { margin: 0 0 18px; color: var(--texto-apoio); }
+
+/* ---- formulário ---- */
+
+.lp-caixa-form {
+  padding: 32px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: 16px;
+}
+
+.lp-form-grelha { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+
+.lp textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--texto);
+  background: var(--fundo);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  resize: vertical;
+}
+
+.lp textarea:focus { outline: 2px solid var(--destaque); outline-offset: 1px; border-color: var(--destaque); }
+
+.lp-consentimento { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 20px; font-size: 14px; color: var(--texto-apoio); cursor: pointer; }
+.lp-consentimento input { width: 18px; height: 18px; margin: 2px 0 0; flex: none; accent-color: var(--destaque); }
+
+.lp-escondido { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
+.lp-form .botao { width: 100%; }
+
+.lp-obrigado h3 { color: var(--lilas); font-size: 22px; }
+.lp-obrigado p { margin: 0; color: var(--texto-apoio); }
+
+/* ---- rodapé ---- */
+
+.lp-rodape { border-top: 1px solid var(--borda); }
+.lp-rodape-linha { display: flex; justify-content: space-between; padding-top: 28px; padding-bottom: 28px; font-size: 14px; color: var(--texto-apoio); }
+
+/* ---- telas estreitas ---- */
+
+@media (max-width: 900px) {
+  .lp-heroi { grid-template-columns: 1fr; padding-top: 56px; padding-bottom: 56px; gap: 40px; }
+  .lp-grelha-3, .lp-passos { grid-template-columns: 1fr; }
+  .lp-nav { display: none; }
+  .lp-topo-acoes { margin-left: auto; }
+}
+
+@media (max-width: 560px) {
+  .lp-largura { padding-left: 16px; padding-right: 16px; }
+  .lp-topo-linha { gap: 12px; height: 64px; }
+  .lp-logo img { height: 32px; }
+  .lp-logo span { display: none; }
+  .lp-botao-topo { padding: 8px 12px; font-size: 14px; }
+  .lp-funil { grid-template-columns: repeat(2, 1fr); }
+  .lp-form-grelha { grid-template-columns: 1fr; }
+  .lp-caixa-form, .lp-preco { padding: 24px; }
+  .lp-seccao { padding-top: 56px; padding-bottom: 56px; }
+}

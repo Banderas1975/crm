@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { NOME_COOKIE, sessaoValida } from "./lib/sessao";
 
-// As únicas páginas que se veem sem sessão. /emails/enviar é o cron da VPS:
+// As únicas páginas que se veem sem sessão. /inicio é a landing page (quem abre
+// "/" sem sessão vê-a no mesmo endereço). /emails/enviar é o cron da VPS:
 // não tem sessão, mas exige o segredo CRON_SEGREDO (verificado lá dentro).
 // /recuperar/<código> é o link do email de recuperação de senha.
-const PUBLICAS = new Set(["/login", "/registo", "/recuperar", "/emails/enviar"]);
+const PUBLICAS = new Set(["/inicio", "/logo-first-media.png", "/login", "/registo", "/recuperar", "/emails/enviar"]);
 const PUBLICAS_PREFIXO = ["/recuperar/"];
 
 // Regras de conteúdo (CSP): o navegador só corre scripts do próprio CRM que
@@ -29,7 +30,8 @@ function regras(nonce) {
   ].join("; ");
 }
 
-// Primeira barreira: sem sessão válida, tudo cai no login.
+// Primeira barreira: sem sessão válida, tudo cai no login — menos "/", que
+// mostra a landing page.
 // A verificação séria é repetida na página e em cada ação que toca no banco.
 export async function proxy(request) {
   const { pathname } = request.nextUrl;
@@ -38,8 +40,10 @@ export async function proxy(request) {
   const cookie = request.cookies.get(NOME_COOKIE)?.value;
 
   // Rota exata: "startsWith" deixaria passar caminhos como /login-qualquer-coisa.
+  let landing = false;
   if (!publica && !(await sessaoValida(cookie))) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    if (pathname !== "/") return NextResponse.redirect(new URL("/login", request.url));
+    landing = true;
   }
 
   const nonce = btoa(crypto.randomUUID());
@@ -49,7 +53,9 @@ export async function proxy(request) {
   cabecalhos.set("x-nonce", nonce);
   cabecalhos.set("Content-Security-Policy", csp);
 
-  const resposta = NextResponse.next({ request: { headers: cabecalhos } });
+  const resposta = landing
+    ? NextResponse.rewrite(new URL("/inicio", request.url), { request: { headers: cabecalhos } })
+    : NextResponse.next({ request: { headers: cabecalhos } });
   resposta.headers.set("Content-Security-Policy", csp);
   return resposta;
 }

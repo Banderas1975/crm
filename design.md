@@ -171,6 +171,26 @@ Os emails de aviso não usam o tema escuro: são texto simples num fundo claro, 
 um título, as linhas do aviso e um link "Abrir no CRM". Programas de email
 tratam mal fundos escuros e fontes externas — o que importa é ler-se em todo o lado.
 
+### Landing page
+
+A página pública (`firstmediacrm.online` sem sessão) é a **única exceção** às cores
+acima: usa as cores do logótipo da First Media, para a marca se reconhecer. O CRM
+por dentro não muda.
+
+| Uso | Cor |
+| --- | --- |
+| Fundo | `#0E1020` (azul-noite) |
+| Superfície / elevada | `#161A30` / `#1D2240` |
+| Borda | `#2A3052` |
+| Texto / apoio | `#EEF0FA` / `#A9AFCF` |
+| Laranja do logótipo (botões, destaques) | `#F15A24`, hover `#FF7A4D` |
+| Lilás do logótipo (links, palavras em destaque) | `#A4ACE9` |
+
+- Os botões laranja levam **texto escuro** (`#0E1020`): branco sobre este laranja não
+  chega ao contraste mínimo.
+- Mesmas fontes, mesmas formas, mesmo "proibido" de baixo (sem gradientes, sem emojis).
+- Logótipo em `public/logo-first-media.png`, no topo à esquerda.
+
 ## Proibido
 
 - Gradientes
@@ -178,6 +198,6 @@ tratam mal fundos escuros e fontes externas — o que importa é ler-se em todo 
 - Emojis na interface
 - Sombras exageradas
 - Animações chamativas
-- Qualquer cor de marca além do azul elétrico
+- Qualquer cor de marca além do azul elétrico (exceto na landing page, ver acima)
 
 Se parecer template de IA, está errado.
