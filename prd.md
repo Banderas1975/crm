@@ -395,6 +395,12 @@ O título e a descrição também vão nas etiquetas de partilha (Open Graph e T
 
 **Schema markup** (JSON-LD, os dados estruturados que o Google lê): a landing page descreve a First Media (organização), o site, o **First Media CRM como software** (categoria CRM, funciona no browser, funcionalidades e preço de 29,99 € por utilizador por mês, IVA incluído, com 14 dias grátis) e as **perguntas frequentes**. Só leva o que a página já mostra: sem avaliações nem números inventados.
 
+**Para os bots do Google e das IAs:**
+
+- `/robots.txt` — podem ler a landing page e a política de privacidade; o CRM por dentro (login, funil, contactos, etc.) fica fora. Os bots das IAs (GPTBot, ClaudeBot, PerplexityBot, Google-Extended e outros) aparecem pelo nome, como bem-vindos na parte pública.
+- `/sitemap.xml` — a lista das páginas públicas.
+- `/llms.txt` — um resumo do First Media CRM em texto simples, para as IAs: o que é, funcionalidades, preço, perguntas frequentes e contacto. Quando se muda a landing page, convém mudar também este ficheiro (`public/llms.txt`).
+
 **PRONTO QUANDO**
 
 - [ ] O separador do browser na página pública mostra "Software CRM em Português | First Media CRM"

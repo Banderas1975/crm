@@ -1,0 +1,37 @@
+# First Media CRM
+
+> Software CRM simples e em português (de Portugal), para empresas em Portugal que querem vender mais sem complicar. Junta o pipeline de vendas, os contactos e as tarefas num só lugar. Custa 29,99 € por utilizador por mês, IVA incluído, com 14 dias grátis. Funciona no browser, no computador e no telemóvel, sem instalar nada.
+
+Feito pela First Media. Site: https://firstmediacrm.online
+
+## Funcionalidades
+
+- Funil de vendas: todos os negócios por etapa (novo, em contacto, proposta, cliente, perdido); muda-se de etapa a arrastar.
+- Tarefas com hora: o próximo passo de cada contacto, com aviso por email 1 hora antes.
+- Calendário e reuniões: tarefas e reuniões no mesmo calendário, por mês, semana ou dia.
+- Propostas anexadas: o PDF, Word ou Excel da proposta guardado na ficha do contacto.
+- Relatórios: taxa de conversão, valor ganho, motivos de perda e mais, com filtros.
+- Exportação para Excel: contactos e relatórios.
+- Privacidade entre colegas: cada utilizador vê apenas os seus próprios contactos, tarefas e reuniões.
+
+## Preço
+
+- 29,99 € por utilizador por mês, IVA incluído.
+- 14 dias grátis para experimentar.
+- Exemplo: uma equipa de 3 pessoas paga 3 × 29,99 € por mês.
+
+## Perguntas frequentes
+
+- Como funcionam os 14 dias grátis? Preenche-se o formulário no site, a First Media ativa a conta e usa-se o CRM durante 14 dias sem pagar. No fim decide-se se continua.
+- Preciso de instalar alguma coisa? Não. Funciona no browser, no computador e no telemóvel.
+- Os meus colegas veem os meus contactos? Não. Cada utilizador vê apenas os seus.
+- Posso tirar os meus dados? Sim. Os contactos exportam-se para Excel a qualquer momento.
+
+## Páginas
+
+- [Página principal, com preço e formulário dos 14 dias grátis](https://firstmediacrm.online/)
+- [Política de privacidade](https://firstmediacrm.online/privacidade)
+
+## Contacto
+
+- crm@firstmedia.pt
