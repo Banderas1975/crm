@@ -7,10 +7,31 @@ import "./landing.css";
 // Dinâmica para levar o nonce da CSP (ver proxy.js); estática, os scripts não corriam.
 export const dynamic = "force-dynamic";
 
+const TITULO = "Software CRM em Português | First Media CRM";
+const DESCRICAO =
+  "Pipeline de vendas, contactos e tarefas num CRM simples e em português. Nunca mais perca um follow-up. Conheça o First Media CRM.";
+// O endereço público oficial. Fixo de propósito: é o que o Google guarda.
+const SITE = "https://firstmediacrm.online";
+
+// O título e a descrição vão também nas etiquetas que o Google, o Facebook, o
+// LinkedIn e o WhatsApp leem quando alguém partilha o link. "canonical" diz ao
+// Google qual é o endereço oficial desta página.
 export const metadata = {
-  title: "Software CRM em Português | First Media CRM",
-  description:
-    "Pipeline de vendas, contactos e tarefas num CRM simples e em português. Nunca mais perca um follow-up. Conheça o First Media CRM.",
+  metadataBase: new URL(SITE),
+  title: TITULO,
+  description: DESCRICAO,
+  alternates: { canonical: "/" },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "First Media CRM",
+    locale: "pt_PT",
+    title: TITULO,
+    description: DESCRICAO,
+    images: [{ url: "/logo-first-media.png", width: 526, height: 188, alt: "First Media" }],
+  },
+  twitter: { card: "summary", title: TITULO, description: DESCRICAO, images: ["/logo-first-media.png"] },
 };
 
 const DORES = [

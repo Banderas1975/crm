@@ -14,7 +14,7 @@ export const metadata = { title: "First Media CRM" };
 export default async function Layout({ children }) {
   const tema = (await cookies()).get("tema")?.value === "claro" ? "claro" : undefined;
   return (
-    <html lang="pt-BR" className={`${manrope.variable} ${mono.variable}`} data-tema={tema}>
+    <html lang="pt-PT" className={`${manrope.variable} ${mono.variable}`} data-tema={tema}>
       <body>{children}</body>
     </html>
   );

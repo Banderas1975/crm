@@ -389,7 +389,9 @@ A página pública tem (desde a v14 é a landing page; antes era o login):
 - **Título:** Software CRM em Português | First Media CRM (antes: "CRM para PME em Portugal | First Media CRM")
 - **Descrição:** Pipeline de vendas, contactos e tarefas num CRM simples e em português. Nunca mais perca um follow-up. Conheça o First Media CRM.
 
-A descrição vale para todas as páginas; as páginas de dentro mantêm o seu próprio título ("Funil — First Media CRM", etc.).
+As páginas de dentro mantêm o seu próprio título ("Funil — First Media CRM", etc.).
+
+O título e a descrição também vão nas etiquetas de partilha (Open Graph e Twitter: o que o Facebook, o LinkedIn e o WhatsApp mostram quando se partilha o link), com o logótipo como imagem. O endereço oficial (`canonical`) é `https://firstmediacrm.online` e a página diz ao Google que pode ser indexada. A língua do site está marcada como português de Portugal (`pt-PT`).
 
 **PRONTO QUANDO**
 
