@@ -3,6 +3,7 @@ import Formulario from "../../formulario";
 import { supabase } from "../../../lib/supabase";
 import { exigirSessao } from "../../acesso";
 import { CORES_ETAPA } from "../../etapas";
+import { TAMANHO_LOTE } from "../../../lib/validacao";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Contatos — Meu CRM" };
@@ -117,6 +118,20 @@ export default async function Contatos({ searchParams }) {
         <h2 className="titulo-secao">
           Todos os contatos {count > 0 && <span className="mono">({count})</span>}
         </h2>
+
+        {count > 0 && (
+          // Formulário simples (GET): o navegador descarrega o ficheiro sozinho.
+          <form action="/exportar" className="exportar">
+            <select name="lote" aria-label="Lote a exportar" defaultValue="1">
+              {Array.from({ length: Math.ceil(count / TAMANHO_LOTE) }, (_, i) => (
+                <option key={i} value={i + 1}>
+                  Lote {i + 1} (contatos {i * TAMANHO_LOTE + 1}–{Math.min(count, (i + 1) * TAMANHO_LOTE)})
+                </option>
+              ))}
+            </select>
+            <button className="botao botao-pequeno">Exportar</button>
+          </form>
+        )}
 
         {!todos?.length ? (
           <p className="apoio">Ainda não há contatos.</p>

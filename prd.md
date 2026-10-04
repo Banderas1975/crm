@@ -217,6 +217,24 @@ No login, o campo Senha tem um botão **Mostrar** / **Ocultar** para conferir o 
 - [ ] Escrevo a senha no login, carrego em "Mostrar" e vejo-a; carrego em "Ocultar" e volta aos pontos
 - [ ] Chego ao botão com Tab e alterno com Enter, sem enviar o formulário
 
+## Versão 7
+
+### 1. Exportar contatos para Excel — CONCLUÍDO
+
+Na área Contatos, no cartão "Todos os contatos", escolhe-se o lote e carrega-se em **Exportar**: sai um ficheiro **.xlsx** com até **500 contatos** (Lote 1 = contatos 1 a 500, Lote 2 = 501 a 1000…), pela mesma ordem alfabética da lista.
+
+- Colunas: Nome, Email, Telefone, Etapa, Criado em (hora de Lisboa). Cabeçalho a negrito e fixo ao rolar.
+- **Codificação:** o .xlsx é sempre UTF-8 por dentro — o formato obriga — e o Excel abre-o com os acentos certos sem escolher nada. O Windows-1252 pedido aplica-se a ficheiros .csv; ficou decidido usar .xlsx.
+- O ficheiro é gerado no momento, no servidor, sem biblioteca externa (`lib/xlsx.js`), e não fica guardado em lado nenhum.
+- **Proteção de dados:** cada utilizador só exporta os seus contatos; sem sessão vai para o login; o download vai com `no-store` (sem cópias em cache). Todas as células são texto: um nome começado por "=" não é lido como fórmula quando se abre o ficheiro.
+
+**PRONTO QUANDO**
+
+- [ ] Em Contatos vejo a lista de lotes, com quantos contatos tem cada um, e o botão Exportar
+- [ ] Exporto o Lote 1 e o Excel abre um ficheiro com até 500 contatos, com acentos certos
+- [ ] Com mais de 500 contatos, o Lote 2 traz os seguintes, sem repetir nenhum
+- [ ] Com outra conta, a exportação só traz os contatos dessa conta
+
 ### O que fica para depois
 
 - Permissões avançadas: partilhar contatos entre utilizadores, metas por usuário
@@ -227,7 +245,7 @@ No login, o campo Senha tem um botão **Mostrar** / **Ocultar** para conferir o 
 ## O que NÃO entra na primeira versão
 
 - Times: desde a v6 cada utilizador só vê os seus contatos; não há equipas nem contatos partilhados
-- Importação/exportação (CSV, planilha, contatos do celular)
+- Importação de contatos (CSV, planilha, contatos do celular). A exportação para .xlsx entrou na v7.
 - Envio de e-mail ou WhatsApp pelo sistema
 - Integrações com outras ferramentas
 - Campos personalizados e etapas de funil configuráveis

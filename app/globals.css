@@ -1096,3 +1096,21 @@ button.tarefa-marca:disabled { cursor: default; }
 }
 
 .campo-senha .botao-texto:focus-visible { outline: 2px solid var(--destaque); outline-offset: 2px; }
+
+/* ---- exportar contatos ---- */
+
+.exportar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: -8px 0 24px; }
+
+.exportar select {
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--texto);
+  background: var(--fundo);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+}
+
+.exportar select:focus { outline: 2px solid var(--destaque); outline-offset: 1px; }
+
+.exportar .botao-pequeno { margin-top: 0; }
