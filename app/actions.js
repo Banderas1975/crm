@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { supabase } from "../lib/supabase";
 import { exigirSessao } from "./acesso";
 import { escreverFollowUp } from "../lib/ia";
-import { ETAPAS } from "./etapas";
+import { ETAPAS, ORIGENS, MOTIVOS_PERDA } from "./etapas";
 import { REPETICOES, proximaData } from "./tarefas";
 import { hojeEmLisboa, deLisboa } from "./tempo";
 import {
@@ -61,9 +61,13 @@ export async function salvarContato(estadoAnterior, dados) {
   const { telefone, erro } = montarTelefone(dados.get("indicativo"), dados.get("telefone"));
   if (erro) return { erro };
 
+  // Opcional, mas só da lista fechada: é o que torna o relatório de origem somável.
+  const origem = dados.get("origem") || null;
+  if (origem && !ORIGENS.includes(origem)) return { erro: "Origem inválida." };
+
   const { error } = await supabase
     .from("contatos")
-    .insert({ nome, email, telefone, dono_id: eu.id });
+    .insert({ nome, email, telefone, origem, dono_id: eu.id });
   if (error) return { erro: "Não foi possível salvar. Tente de novo." };
 
   revalidatePath("/", "layout");
@@ -228,16 +232,20 @@ export async function concluirTarefa(idCru) {
 
 // Chamada direto do kanban, que já tem o id e a etapa em mãos.
 // Devolve { ok } para o cartão saber se ficou mesmo guardado.
-export async function mudarEtapa(idCru, etapa) {
+// motivo: só para "perdido", e obrigatório aí — escolhido da lista fechada.
+export async function mudarEtapa(idCru, etapa, motivo = null) {
   const eu = await exigirSessao();
 
   const id = Number(idCru);
   // O banco também recusa etapas inválidas, mas assim nem chegamos a tentar.
   if (!idValido(id) || !ETAPAS.includes(etapa)) return { ok: false };
+  if (etapa === "perdido" && !MOTIVOS_PERDA.includes(motivo)) return { ok: false };
 
   // Ganho é estar em "cliente". Sair de lá desfaz o ganho, senão a página
   // continuava a mostrar um valor ganho num negócio que já não está fechado.
+  // As datas de ganho e de perda, e o histórico, são o banco que as grava.
   const mudanca = etapa === "cliente" ? { etapa } : { etapa, proposta_ganha_id: null };
+  if (etapa === "perdido") mudanca.motivo_perda = motivo;
 
   // O .select diz quantas linhas mudaram: zero quer dizer que o contato não é
   // de quem pede (ou já não existe), e o cartão tem de voltar para trás.
@@ -473,4 +481,49 @@ export async function moverReuniao(idCru, dia, minutos) {
 
   revalidatePath("/", "layout");
   return { ok: true };
+}
+
+// Origem e data de fecho prevista, editadas na ficha do contato.
+export async function guardarNegocio(estadoAnterior, dados) {
+  const eu = await exigirSessao();
+
+  const id = Number(dados.get("contato_id"));
+  if (!idValido(id)) return { erro: "Contato não encontrado." };
+
+  const origem = dados.get("origem") || null;
+  if (origem && !ORIGENS.includes(origem)) return { erro: "Origem inválida." };
+
+  const fecho = dados.get("fecho_previsto") || null;
+  if (fecho && !dataValida(fecho)) return { erro: "Essa data não existe." };
+
+  const { data, error } = await supabase
+    .from("contatos")
+    .update({ origem, fecho_previsto: fecho })
+    .eq("id", id)
+    .eq("dono_id", eu.id)
+    .select("id");
+  if (error || !data?.length) return { erro: "Não foi possível guardar. Tente de novo." };
+
+  revalidatePath("/", "layout");
+  return { erro: "", salvo: (estadoAnterior?.salvo ?? 0) + 1 };
+}
+
+// Meta de receita de um mês. Gravar outra vez o mesmo mês substitui o valor.
+export async function guardarMeta(estadoAnterior, dados) {
+  const eu = await exigirSessao();
+
+  // <input type="month"> manda "2026-10".
+  const mes = dados.get("mes") || "";
+  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(mes)) return { erro: "Escolha o mês." };
+
+  const valor = lerValor(dados.get("valor"));
+  if (valor === null) return { erro: "Escreva a meta em euros, por exemplo 20000." };
+
+  const { error } = await supabase
+    .from("metas")
+    .upsert({ dono_id: eu.id, mes: `${mes}-01`, valor }, { onConflict: "dono_id,mes" });
+  if (error) return { erro: "Não foi possível guardar a meta. Tente de novo." };
+
+  revalidatePath("/", "layout");
+  return { erro: "", salvo: (estadoAnterior?.salvo ?? 0) + 1 };
 }

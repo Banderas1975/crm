@@ -15,6 +15,7 @@
   --etapa-em-contato: #F5A524;
   --etapa-proposta: #A78BFA;
   --etapa-cliente: #34D399;
+  --etapa-perdido: #F87171;
 
   --raio: 10px;
 
@@ -749,7 +750,7 @@ button.tarefa-marca:disabled { cursor: default; }
 .kanban {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(228px, 1fr);
+  grid-auto-columns: minmax(200px, 1fr);
   gap: 16px;
   padding-bottom: 8px;
   overflow-x: auto;
@@ -1114,3 +1115,104 @@ button.tarefa-marca:disabled { cursor: default; }
 .exportar select:focus { outline: 2px solid var(--destaque); outline-offset: 1px; }
 
 .exportar .botao-pequeno { margin-top: 0; }
+
+.acoes-janela { display: flex; align-items: center; gap: 16px; }
+
+/* ---- dados do negócio, na ficha do contato ---- */
+
+.dados-negocio {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  flex-basis: 100%;
+  padding-top: 20px;
+  border-top: 1px solid var(--borda);
+}
+
+.dados-negocio .campo { margin-bottom: 0; flex: 1 1 180px; }
+.dados-negocio .botao-pequeno { margin-top: 0; }
+.dados-negocio .erro,
+.dados-negocio .ajuda { flex-basis: 100%; margin: 0; }
+
+/* ---- relatórios (no Dashboard) ---- */
+
+.titulo-area { margin: 24px 0 0; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+
+.rel-filtros { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.rel-filtros .campo { margin-bottom: 0; flex: 1 1 160px; }
+.rel-filtros .botao-pequeno { margin-top: 0; }
+.rel-filtros .erro { flex-basis: 100%; margin: 0; }
+
+.rel-meta-form { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--borda); }
+
+.rel-topo { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+.rel-topo .botao-contorno { flex: 0 0 auto; white-space: nowrap; }
+
+.rel-titulo { margin: 0; font-size: 20px; font-weight: 700; }
+.rel-numero { color: var(--texto-apoio); font-size: 14px; margin-right: 4px; }
+.rel-subtitulo { margin: 24px 0 12px; font-size: 15px; font-weight: 700; }
+
+.rel-numeros { margin-bottom: 20px; }
+
+/* A tabela rola por dentro; a página nunca rola para o lado. */
+.rel-tabela-rolar { overflow-x: auto; }
+
+.rel-tabela { width: 100%; border-collapse: collapse; font-size: 14px; }
+
+.rel-tabela th {
+  padding: 8px 10px;
+  font-family: var(--fonte-mono), ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: left;
+  white-space: nowrap;
+  color: var(--texto-apoio);
+  border-bottom: 1px solid var(--borda);
+}
+
+.rel-tabela td { padding: 10px; border-bottom: 1px solid var(--borda); white-space: nowrap; }
+.rel-tabela tr:last-child td { border-bottom: 0; }
+.rel-tabela td.mono { text-align: right; }
+.rel-tabela th:not(:first-child):not(.rel-larga):not(.rel-esquerda) { text-align: right; }
+
+.rel-larga { width: 32%; min-width: 120px; }
+
+.rel-etapa {
+  font-family: var(--fonte-mono), ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.rel-barra { height: 10px; }
+
+.rel-meta-barra { position: relative; }
+
+/* A meta: um traço vertical fino por cima da barra da receita. */
+.rel-meta-marca {
+  position: absolute;
+  top: -3px;
+  width: 2px;
+  height: 16px;
+  margin-left: -1px;
+  background: var(--texto);
+}
+
+.rel-nota { color: var(--texto-apoio); font-size: 11px; }
+.rel-pequeno { font-size: 12px; }
+.rel-atrasado { color: var(--erro); }
+
+/* Valores em euros são mais compridos que contagens: caixas mais largas e número menor. */
+.rel-numeros { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+.rel-numeros .painel-numero { font-size: 28px; overflow-wrap: anywhere; }
+
+/* A primeira coluna é o nome da linha: sempre à esquerda, mesmo quando é um mês. */
+.rel-tabela td:first-child { text-align: left; }
+
+/* Ritmo e projeção é uma frase: pode partir em duas linhas. */
+.rel-tabela td.rel-pequeno { white-space: normal; min-width: 200px; text-align: left; }
+.rel-tabela th.rel-esquerda { text-align: left; }

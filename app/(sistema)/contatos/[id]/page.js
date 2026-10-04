@@ -3,6 +3,7 @@ import { supabase } from "../../../../lib/supabase";
 import Anotacao from "../../../anotacao";
 import Copiar from "../../../copiar";
 import EtapaContato from "../../../etapa-contato";
+import DadosNegocio from "../../../dados-negocio";
 import FollowUp from "../../../follow-up";
 import NovaProposta from "../../../nova-proposta";
 import NovaReuniao from "../../../nova-reuniao";
@@ -46,7 +47,9 @@ export default async function PaginaContato({ params }) {
   const { data: contato } = idValido(id)
     ? await supabase
         .from("contatos")
-        .select("id, nome, email, telefone, etapa, criado_em, proposta_ganha_id")
+        .select(
+          "id, nome, email, telefone, etapa, criado_em, proposta_ganha_id, origem, fecho_previsto, motivo_perda"
+        )
         .eq("id", id)
         // De outro utilizador é como se não existisse: a mesma resposta, sem pistas.
         .eq("dono_id", eu.id)
@@ -195,7 +198,7 @@ export default async function PaginaContato({ params }) {
       <section className="cartao ficha">
         <div className="ficha-etapa">
           <p className="ficha-rotulo">Etapa</p>
-          <EtapaContato contatoId={contato.id} etapa={contato.etapa} />
+          <EtapaContato contatoId={contato.id} nome={contato.nome} etapa={contato.etapa} />
         </div>
         <div>
           <p className="ficha-rotulo">Seu contato</p>
@@ -207,6 +210,17 @@ export default async function PaginaContato({ params }) {
             <p className="ficha-valor mono">{EUROS.format(ganha.valor)}</p>
           </div>
         )}
+        {contato.etapa === "perdido" && contato.motivo_perda && (
+          <div>
+            <p className="ficha-rotulo">Motivo da perda</p>
+            <p className="ficha-valor">{contato.motivo_perda}</p>
+          </div>
+        )}
+        <DadosNegocio
+          contatoId={contato.id}
+          origem={contato.origem}
+          fechoPrevisto={contato.fecho_previsto}
+        />
       </section>
 
       <section className="cartao">
