@@ -93,7 +93,7 @@ O CRM não é uma página comprida. É um **sistema com áreas**, dentro de um s
 ```
 
 - **Navegação lateral fixa à esquerda**, sempre visível, com as áreas do sistema:
-  **Dashboard**, **Funil**, **Tarefas**, **Calendário**, **Contatos**, **Emails** e **Usuários** (este só aparece para admin).
+  **Dashboard**, **Funil**, **Tarefas**, **Calendário**, **Contatos**, **Emails**, **Backend** e **Usuários** (este só aparece para admin; o Backend é o penúltimo).
   A lista é feita para crescer: itens novos entram na mesma coluna.
 - **Cabeçalho** no topo da área de conteúdo, com o nome do CRM, o botão do tema
   (sol/lua, "Claro"/"Escuro"), quem está logado e o botão **Sair**.
