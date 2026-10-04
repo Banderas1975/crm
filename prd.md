@@ -99,7 +99,7 @@ O CRM não tem "negócio" à parte: o contato é o negócio. **Ganho é estar na
 
 Regras dadas:
 
-- **Até 4,5 MB por proposta.** Conferido no navegador (para avisar antes de enviar), na action e no próprio bucket do Supabase.
+- **Até 4,5 MB por proposta.** Conferido no navegador (para avisar antes de enviar), na action e no próprio bucket do Supabase. Na VPS, o nginx tem de aceitar pelo menos isso (`client_max_body_size 6m;`, em `/etc/nginx/conf.d/crm-upload.conf`); se um dia recusar um envio, o formulário mostra o aviso por baixo e a página fica onde está, em vez de ir para o ecrã de erro.
 - **Só PDF, DOCX e XLSX.** Não basta a extensão: o servidor olha para os primeiros bytes do ficheiro, e um `.pdf` que não é PDF é recusado.
 - **Acrescentar, nunca apagar.** Anexar uma proposta nova não toca nas anteriores: cada envio é uma linha nova e um ficheiro novo, com nome próprio, e o envio não substitui nada (`upsert` desligado). A app não tem botão para apagar nem trocar propostas.
 - **Ganho com o valor da proposta.** Anexar não fecha nada — enviar uma proposta não é ganhá-la. Cada proposta tem "Marcar como ganho": o contato passa a "cliente" e a página mostra o valor ganho, lido dessa proposta. Se mais tarde o contato sair de "cliente", o ganho desfaz-se.
