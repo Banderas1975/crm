@@ -13,6 +13,9 @@ export default function FormLead() {
       <div className="lp-obrigado" aria-live="polite">
         <h3>Pedido recebido. Obrigado!</h3>
         <p>Vamos entrar em contacto consigo em breve para ativar os seus 14 dias grátis.</p>
+        <p className="lp-obrigado-passo">
+          No canto superior direito clique em entrar e registe-se. Libertaremos posteriormente a sua conta
+        </p>
       </div>
     );
   }
