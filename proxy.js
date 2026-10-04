@@ -7,7 +7,8 @@ import { NOME_COOKIE, sessaoValida } from "./lib/sessao";
 // /recuperar/<código> é o link do email de recuperação de senha. Os ícones
 // (favicon) também têm de se ver sem sessão, no separador do browser, e o
 // robots.txt, o sitemap.xml e o llms.txt são para os bots do Google e das IAs.
-const PUBLICAS = new Set(["/inicio", "/privacidade", "/logo-first-media.png", "/icon.png", "/apple-icon.png", "/robots.txt", "/sitemap.xml", "/llms.txt", "/login", "/registo", "/recuperar", "/emails/enviar"]);
+// googled…html é o ficheiro de verificação do Google Search Console.
+const PUBLICAS = new Set(["/inicio", "/privacidade", "/logo-first-media.png", "/icon.png", "/apple-icon.png", "/robots.txt", "/sitemap.xml", "/llms.txt", "/googled97d09f6bd753b4a.html", "/login", "/registo", "/recuperar", "/emails/enviar"]);
 const PUBLICAS_PREFIXO = ["/recuperar/"];
 
 // Regras de conteúdo (CSP): o navegador só corre scripts do próprio CRM que
