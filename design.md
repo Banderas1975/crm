@@ -190,6 +190,7 @@ por dentro não muda.
   chega ao contraste mínimo.
 - Mesmas fontes, mesmas formas, mesmo "proibido" de baixo (sem gradientes, sem emojis).
 - Logótipo em `public/logo-first-media.png`, no topo à esquerda.
+- **Favicon** (o ícone do separador do browser, em todas as páginas): só o símbolo do logótipo, sem o texto, que a 16 píxeis não se lia. Ficheiros `app/favicon.ico`, `app/icon.png` e `app/apple-icon.png` (ecrã inicial do iPhone).
 
 ## Proibido
 
