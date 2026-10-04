@@ -316,6 +316,24 @@ export function emailRecuperacao(link) {
   return { texto, html };
 }
 
+// Aviso ao administrador: alguém pediu os 14 dias na landing page.
+export function emailLead(lead) {
+  const linhas = [
+    `Nome: ${lead.nome}`,
+    `Email: ${lead.email}`,
+    `Telefone: ${lead.telefone || "—"}`,
+    `Empresa: ${lead.empresa}`,
+    `Utilizadores: ${lead.utilizadores}`,
+    ...(lead.mensagem ? ["", `Mensagem: ${lead.mensagem}`] : []),
+  ];
+  const texto = ["Lead novo: pedido de 14 dias grátis", "", ...linhas].join("\n");
+  const html = `<div style="font-family:Arial,sans-serif;font-size:15px;color:#151B24;line-height:1.5">
+<h2 style="font-size:18px;margin:0 0 12px">Lead novo: pedido de 14 dias grátis</h2>
+${linhas.map((l) => `<p style="margin:0 0 6px">${escapar(l)}</p>`).join("\n")}
+</div>`;
+  return { texto, html };
+}
+
 export function emailDeTeste() {
   return montar({
     titulo: "Email de teste do CRM",

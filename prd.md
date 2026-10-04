@@ -384,7 +384,7 @@ No canto superior direito, ao lado do email, há um botão **Claro / Escuro** (s
 
 ### 2. Título e descrição para o Google — CONCLUÍDO
 
-A página pública (o login, para onde vai quem abre o endereço do CRM) tem:
+A página pública tem (desde a v14 é a landing page; antes era o login):
 
 - **Título:** CRM para PME em Portugal | First Media CRM
 - **Descrição:** Pipeline de vendas, contactos e tarefas num CRM simples e em português. Nunca mais perca um follow-up. Conheça o First Media CRM.
@@ -395,6 +395,32 @@ A descrição vale para todas as páginas; as páginas de dentro mantêm o seu p
 
 - [ ] O separador do browser no login mostra "CRM para PME em Portugal | First Media CRM"
 - [ ] O código da página do login traz a descrição acima
+
+## Versão 14
+
+### 1. Landing page com formulário de leads — CONCLUÍDO
+
+Quem abre `firstmediacrm.online` sem sessão vê a landing page, no mesmo endereço. Quem tem sessão continua a ir direto para o Dashboard; o login fica em `/login` (botão "Entrar" no topo da landing).
+
+A página segue o funil de conversão, de cima para baixo:
+
+1. **Atenção:** "Nunca mais perca um follow-up", com um funil de exemplo e o botão "Experimentar 14 dias grátis".
+2. **Interesse:** as três dores (contactos espalhados, follow-ups esquecidos, vendas às escuras).
+3. **Desejo:** as funcionalidades que o CRM já tem e os 3 passos para começar.
+4. **Ação:** preço — **29,99 € por utilizador por mês, com 14 dias grátis** —, perguntas frequentes e o formulário.
+
+Cores e logótipo da First Media (ver `design.md`, "Landing page").
+
+**Formulário:** nome, email, telefone (opcional), empresa, número de utilizadores, mensagem (opcional) e a caixa obrigatória de consentimento (RGPD). Cada pedido fica guardado na tabela `leads` e sai um email de aviso de crm@firstmedia.pt para cada administrador (para o email de avisos, se tiver um). Contra abusos: um campo escondido que só robôs preenchem, e no máximo 3 pedidos por dia do mesmo email.
+
+Mudanças de banco em `sql/leads.sql`.
+
+**PRONTO QUANDO**
+
+- [ ] Abro `firstmediacrm.online` numa janela privada e vejo a landing page
+- [ ] "Entrar" leva ao login; com sessão, o endereço abre o Dashboard
+- [ ] Preencho o formulário e vejo "Pedido recebido. Obrigado!"
+- [ ] Recebo o email "Lead novo" e o pedido aparece na tabela `leads` do Supabase
 
 ### O que fica para depois
 

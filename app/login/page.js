@@ -5,8 +5,7 @@ import CampoSenha from "../campo-senha";
 import { entrar } from "../sessao-actions";
 import { LIMITES } from "../../lib/validacao";
 
-// O login é a página pública: é a que aparece no Google.
-export const metadata = { title: "CRM para PME em Portugal | First Media CRM" };
+export const metadata = { title: "Entrar — First Media CRM" };
 
 const ERROS = {
   invalido: "Usuário ou senha inválidos.",

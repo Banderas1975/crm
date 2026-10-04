@@ -14,6 +14,7 @@ const TIPOS = {
   reuniao_alterada: "Reunião marcada/mudada",
   teste: "Teste",
   recuperar: "Recuperar password",
+  lead: "Lead novo",
 };
 
 // Curto, para a tabela caber: "04/10, 05:30".
