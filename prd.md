@@ -386,14 +386,14 @@ No canto superior direito, ao lado do email, há um botão **Claro / Escuro** (s
 
 A página pública tem (desde a v14 é a landing page; antes era o login):
 
-- **Título:** CRM para PME em Portugal | First Media CRM
+- **Título:** Software CRM em Português | First Media CRM (antes: "CRM para PME em Portugal | First Media CRM")
 - **Descrição:** Pipeline de vendas, contactos e tarefas num CRM simples e em português. Nunca mais perca um follow-up. Conheça o First Media CRM.
 
 A descrição vale para todas as páginas; as páginas de dentro mantêm o seu próprio título ("Funil — First Media CRM", etc.).
 
 **PRONTO QUANDO**
 
-- [ ] O separador do browser no login mostra "CRM para PME em Portugal | First Media CRM"
+- [ ] O separador do browser na página pública mostra "Software CRM em Português | First Media CRM"
 - [ ] O código da página do login traz a descrição acima
 
 ## Versão 14

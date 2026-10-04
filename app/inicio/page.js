@@ -8,7 +8,7 @@ import "./landing.css";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "CRM para PME em Portugal | First Media CRM",
+  title: "Software CRM em Português | First Media CRM",
   description:
     "Pipeline de vendas, contactos e tarefas num CRM simples e em português. Nunca mais perca um follow-up. Conheça o First Media CRM.",
 };
@@ -111,7 +111,7 @@ export default function Inicio() {
               Nunca mais perca um <em>follow-up</em>.
             </h1>
             <p className="lp-lead">
-              O First Media CRM junta o pipeline de vendas, os contactos e as tarefas num só lugar. Feito para PME em
+              O First Media CRM junta o pipeline de vendas, os contactos e as tarefas num só lugar. Feito para Empresas em
               Portugal que querem vender mais sem complicar.
             </p>
             <div className="lp-acoes">
