@@ -13,6 +13,7 @@ const TIPOS = {
   reuniao_antes: "Reunião em breve",
   reuniao_alterada: "Reunião marcada/mudada",
   teste: "Teste",
+  recuperar: "Recuperar password",
 };
 
 // Curto, para a tabela caber: "04/10, 05:30".

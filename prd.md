@@ -342,6 +342,33 @@ Mudanças de banco em `sql/tarefas-hora.sql`: `tarefas.vence_hora`, `usuarios.av
 - [ ] O `sql/seguranca.sql` termina sem tabelas listadas
 - [ ] Depois de atualizar a VPS, `npm ls next` mostra 16.3.8 e o CRM funciona como antes
 
+## Versão 12
+
+### 1. Esqueci-me da password — CONCLUÍDO
+
+No ecrã de login há o link **"Esqueci-me da password"**. A pessoa escreve o email da conta e recebe, de crm@firstmedia.pt, um link para escolher uma password nova (duas vezes, mínimo 8 caracteres, com o botão Mostrar). Depois volta ao login com a mensagem "Password mudada".
+
+**Segurança:**
+
+- **Não revela que emails têm conta:** a resposta é sempre a mesma, exista a conta ou não, e o email sai em segundo plano para a demora também não o dizer. Só contas aprovadas recebem o link.
+- **Link de uso único, válido 1 hora.** Do código do link só se guarda o hash: quem lesse a base de dados não conseguia usar nenhum link. Gastar o link e mudar a senha é uma operação só — o mesmo link não serve duas vezes.
+- **O link aponta sempre para o `CRM_URL` do `.env`**, nunca para o endereço que vem no pedido: ninguém consegue fazer o email apontar para um site falso.
+- **No máximo 3 pedidos por hora** por conta.
+- **Ao mudar a password, todas as sessões abertas dessa conta deixam de valer** (também uma sessão copiada), e os outros links pendentes também. O bloqueio por tentativas erradas recomeça do zero.
+- O email vai para o email da conta (o de login), não para o email de avisos.
+
+Precisa de `CRM_URL` e do SMTP no `.env` (os mesmos dos emails de aviso). Sem eles, a página diz que a recuperação não está configurada.
+
+Mudanças de banco em `sql/recuperar-senha.sql`: `usuarios.senha_alterada_em`, a tabela `recuperacoes_senha` e o tipo novo no registo de emails.
+
+**PRONTO QUANDO**
+
+- [ ] No login carrego em "Esqueci-me da password", escrevo o meu email e recebo o link
+- [ ] Com um email que não existe, a mensagem é a mesma e não chega email nenhum
+- [ ] Escolho a password nova, volto ao login e entro com ela; a antiga já não entra
+- [ ] O mesmo link, aberto outra vez, diz que já foi usado
+- [ ] Noutro browser onde tinha o CRM aberto, a sessão deixa de valer
+
 ### O que fica para depois
 
 - Permissões avançadas: partilhar contatos entre utilizadores; relatórios da equipa por responsável

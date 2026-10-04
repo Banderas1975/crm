@@ -294,6 +294,28 @@ export async function enviarAvisos() {
   return contagem;
 }
 
+// Email de recuperação de senha. O link chega já completo (com o CRM_URL).
+export function emailRecuperacao(link) {
+  const texto = [
+    "Mudar a password do CRM",
+    "",
+    "Alguém (esperamos que tenha sido você) pediu para mudar a password desta conta.",
+    "Abra este link para escolher uma password nova. Vale durante 1 hora e só uma vez:",
+    "",
+    link,
+    "",
+    "Se não foi você, ignore este email: a password atual continua a funcionar.",
+  ].join("\n");
+  const html = `<div style="font-family:Arial,sans-serif;font-size:15px;color:#151B24;line-height:1.5">
+<h2 style="font-size:18px;margin:0 0 12px">Mudar a password do CRM</h2>
+<p style="margin:0 0 6px">Alguém (esperamos que tenha sido você) pediu para mudar a password desta conta.</p>
+<p style="margin:0 0 16px">O link vale durante 1 hora e só uma vez.</p>
+<p style="margin:0 0 16px"><a href="${escapar(link)}" style="color:#2563EB;font-weight:bold">Escolher uma password nova</a></p>
+<p style="margin:0;font-size:13px;color:#6B7280">Se não foi você, ignore este email: a password atual continua a funcionar.</p>
+</div>`;
+  return { texto, html };
+}
+
 export function emailDeTeste() {
   return montar({
     titulo: "Email de teste do CRM",
