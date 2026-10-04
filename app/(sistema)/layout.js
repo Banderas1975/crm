@@ -1,4 +1,6 @@
+import { cookies } from "next/headers";
 import NavLateral from "../nav-lateral";
+import BotaoTema from "../botao-tema";
 import { supabase } from "../../lib/supabase";
 import { sair } from "../sessao-actions";
 import { exigirSessao } from "../acesso";
@@ -28,6 +30,7 @@ export default async function Sistema({ children }) {
         <header className="cabecalho-app">
           <p className="marca">First Media CRM</p>
           <div className="conta">
+            <BotaoTema inicial={(await cookies()).get("tema")?.value === "claro" ? "claro" : "escuro"} />
             <span className="apoio mono">{utilizador.email}</span>
             <form action={sair}>
               <button className="botao-texto">Sair</button>
