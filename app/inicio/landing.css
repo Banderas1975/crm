@@ -280,6 +280,7 @@
 
 .lp-obrigado h3 { color: var(--lilas); font-size: 22px; }
 .lp-obrigado p { margin: 0; color: var(--texto-apoio); }
+.lp-obrigado .lp-obrigado-passo { margin-top: 12px; }
 
 /* ---- rodapé ---- */
 
