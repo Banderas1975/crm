@@ -8,6 +8,9 @@ dashboard, funil, contatos e usuários. Se uma tela não seguir isto, está erra
 Ferramenta técnica e precisa, escura, de quem trabalha à noite.
 Um produto profissional, não um template.
 
+O escuro é o tema padrão. Quem preferir pode mudar para o **tema claro** no botão
+do cabeçalho (ver "Tema claro" mais abaixo).
+
 ## Cores
 
 ### Base
@@ -92,8 +95,8 @@ O CRM não é uma página comprida. É um **sistema com áreas**, dentro de um s
 - **Navegação lateral fixa à esquerda**, sempre visível, com as áreas do sistema:
   **Dashboard**, **Funil**, **Tarefas**, **Calendário**, **Contatos**, **Emails** e **Usuários** (este só aparece para admin).
   A lista é feita para crescer: itens novos entram na mesma coluna.
-- **Cabeçalho** no topo da área de conteúdo, com o nome do CRM, quem está logado
-  e o botão **Sair**.
+- **Cabeçalho** no topo da área de conteúdo, com o nome do CRM, o botão do tema
+  (sol/lua, "Claro"/"Escuro"), quem está logado e o botão **Sair**.
 - **Área de conteúdo à direita**: cada área é uma tela cheia, com o seu próprio
   título e o seu próprio conteúdo. Nada de empilhar áreas diferentes na mesma página.
 - **O item ativo da navegação** é destacado com a cor de destaque (`#4D8DFF`):
@@ -138,6 +141,28 @@ com a mesma identidade (mesmas cores, mesmas formas, mesma tipografia).
 - O número vai sempre em texto ao lado da barra, em JetBrains Mono: a cor nunca é
   a única forma de ler um valor.
 - Tabelas rolam para o lado por dentro do cartão; a página não.
+- O botão do tema mostra só o ícone (sol/lua), para o cabeçalho caber.
+
+### Tema claro
+
+Opção de cada pessoa, no canto superior direito. Mesmas regras, mesma estrutura, mesmo
+azul — só trocam as cores de base. A escolha fica guardada no browser e a página já
+abre no tema certo, sem piscar.
+
+| Uso | Cor |
+| --- | --- |
+| Fundo | `#F4F6FA` |
+| Superfície | `#FFFFFF` |
+| Superfície elevada | `#EEF2F7` |
+| Borda | `#D5DCE6` |
+| Texto | `#0F172A` |
+| Texto de apoio | `#4B5870` |
+| Destaque / hover | `#2563EB` / `#1D4ED8` |
+| Etapas: novo · em contato · proposta · cliente · perdido | `#5B6B82` · `#9A4A07` · `#7C3AED` · `#047857` · `#B91C1C` |
+| Erro | `#B91C1C` |
+
+As cores das etapas são versões mais escuras das do tema escuro, para continuarem
+legíveis em fundo branco (contraste de pelo menos 4,5:1).
 
 ### Emails enviados
 

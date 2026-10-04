@@ -25,6 +25,30 @@
   --lateral: 232px;
 }
 
+/* Tema claro, à escolha de cada utilizador (botão no cabeçalho). As mesmas
+   regras do escuro: uma só cor de destaque, bordas em vez de sombras. Todas as
+   cores de texto têm contraste de pelo menos 4,5:1 sobre os três fundos. */
+:root[data-tema="claro"] {
+  color-scheme: light;
+
+  --fundo: #F4F6FA;
+  --superficie: #FFFFFF;
+  --elevado: #EEF2F7;
+  --borda: #D5DCE6;
+  --texto: #0F172A;
+  --texto-apoio: #4B5870;
+  --destaque: #2563EB;
+  --destaque-hover: #1D4ED8;
+
+  --etapa-novo: #5B6B82;
+  --etapa-em-contato: #9A4A07;
+  --etapa-proposta: #7C3AED;
+  --etapa-cliente: #047857;
+  --etapa-perdido: #B91C1C;
+
+  --erro: #B91C1C;
+}
+
 * { box-sizing: border-box; }
 
 body {
@@ -221,7 +245,9 @@ a:hover { color: var(--destaque-hover); }
 
   .nav-item.ativo { border-left: 0; border-bottom-color: var(--destaque); }
 
-  .cabecalho-app { padding: 14px 20px; }
+  .cabecalho-app { padding: 14px 20px; gap: 12px; }
+  .conta { gap: 10px; }
+  .botao-tema-texto { display: none; }
   .conteudo { padding: 28px 20px 64px; gap: 24px; }
 }
 
@@ -1235,3 +1261,23 @@ button.tarefa-marca:disabled { cursor: default; }
 .email-falhou { color: var(--erro); white-space: normal; }
 
 .link-recuperar { margin-top: 16px; }
+
+/* ---- botão de tema (cabeçalho) ---- */
+
+.botao-tema {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texto-apoio);
+  background: transparent;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  cursor: pointer;
+}
+
+.botao-tema:hover { color: var(--destaque); border-color: var(--destaque); }
+.botao-tema:focus-visible { outline: 2px solid var(--destaque); outline-offset: 2px; }
