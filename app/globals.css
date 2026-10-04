@@ -264,6 +264,9 @@ a:hover { color: var(--destaque-hover); }
 
 .pagina-login { max-width: 420px; }
 
+/* botão do tema no canto superior direito das telas de entrada */
+.tema-entrada { position: absolute; top: 16px; right: 16px; }
+
 /* ---- blocos ---- */
 
 .cabecalho { margin-bottom: 8px; }
