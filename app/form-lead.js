@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import { pedirExperiencia } from "./leads-actions";
 import { LIMITES } from "../lib/validacao";
@@ -16,34 +17,46 @@ export default function FormLead() {
     );
   }
 
+  const v = estado.valores ?? {};
+
   return (
     <form action={acao} className="lp-form">
       <div className="lp-form-grelha">
         <div className="campo">
-          <label htmlFor="lead-nome">Nome</label>
-          <input id="lead-nome" name="nome" required maxLength={LIMITES.nome} autoComplete="name" />
+          <label htmlFor="lead-nome">
+            Nome <span className="lp-obrigatorio">*</span>
+          </label>
+          <input id="lead-nome" name="nome" defaultValue={v.nome} required maxLength={LIMITES.nome} autoComplete="name" />
         </div>
         <div className="campo">
-          <label htmlFor="lead-email">Email</label>
-          <input id="lead-email" name="email" type="email" required maxLength={LIMITES.email} autoComplete="email" />
+          <label htmlFor="lead-email">
+            Email <span className="lp-obrigatorio">*</span>
+          </label>
+          <input id="lead-email" name="email" defaultValue={v.email} type="email" required maxLength={LIMITES.email} autoComplete="email" />
         </div>
         <div className="campo">
-          <label htmlFor="lead-telefone">Telefone (opcional)</label>
-          <input id="lead-telefone" name="telefone" type="tel" maxLength={40} autoComplete="tel" />
+          <label htmlFor="lead-telefone">
+            Telefone <span className="lp-obrigatorio">*</span>
+          </label>
+          <input id="lead-telefone" name="telefone" defaultValue={v.telefone} type="tel" required maxLength={40} autoComplete="tel" />
         </div>
         <div className="campo">
-          <label htmlFor="lead-empresa">Empresa</label>
-          <input id="lead-empresa" name="empresa" required maxLength={LIMITES.nome} autoComplete="organization" />
+          <label htmlFor="lead-empresa">
+            Empresa <span className="lp-obrigatorio">*</span>
+          </label>
+          <input id="lead-empresa" name="empresa" defaultValue={v.empresa} required maxLength={LIMITES.nome} autoComplete="organization" />
         </div>
         <div className="campo">
-          <label htmlFor="lead-utilizadores">Quantos utilizadores?</label>
-          <input id="lead-utilizadores" name="utilizadores" type="number" min={1} max={1000} defaultValue={1} required />
+          <label htmlFor="lead-utilizadores">
+            Quantos utilizadores? <span className="lp-obrigatorio">*</span>
+          </label>
+          <input id="lead-utilizadores" name="utilizadores" type="number" min={1} max={1000} defaultValue={v.utilizadores || 1} required />
         </div>
       </div>
 
       <div className="campo">
         <label htmlFor="lead-mensagem">Mensagem (opcional)</label>
-        <textarea id="lead-mensagem" name="mensagem" rows={3} maxLength={1000} />
+        <textarea id="lead-mensagem" name="mensagem" defaultValue={v.mensagem} rows={3} maxLength={1000} />
       </div>
 
       {/* Escondido de pessoas; só robôs o preenchem. */}
@@ -53,9 +66,19 @@ export default function FormLead() {
       </div>
 
       <label className="lp-consentimento">
-        <input type="checkbox" name="consentimento" value="sim" required />
-        <span>Aceito que a First Media use estes dados para me contactar sobre o First Media CRM.</span>
+        <input type="checkbox" name="consentimento" value="sim" defaultChecked={v.consentimento === "sim"} required />
+        <span>
+          Aceito que a First Media use estes dados para me contactar sobre o First Media CRM, como descrito na{" "}
+          <Link href="/privacidade" target="_blank" rel="noopener">
+            política de privacidade
+          </Link>
+          . <span className="lp-obrigatorio">*</span>
+        </span>
       </label>
+
+      <p className="lp-legenda">
+        <span className="lp-obrigatorio">*</span> Obrigatório
+      </p>
 
       {estado.erro && (
         <p className="erro" aria-live="polite">

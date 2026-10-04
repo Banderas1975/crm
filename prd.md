@@ -411,7 +411,7 @@ A página segue o funil de conversão, de cima para baixo:
 
 Cores e logótipo da First Media (ver `design.md`, "Landing page").
 
-**Formulário:** nome, email, telefone (opcional), empresa, número de utilizadores, mensagem (opcional) e a caixa obrigatória de consentimento (RGPD). Cada pedido fica guardado na tabela `leads` e sai um email de aviso de crm@firstmedia.pt para cada administrador (para o email de avisos, se tiver um). Contra abusos: um campo escondido que só robôs preenchem, e no máximo 3 pedidos por dia do mesmo email.
+**Formulário:** nome, email, telefone (obrigatório desde a v14.2), empresa, número de utilizadores, mensagem (opcional) e a caixa obrigatória de consentimento (RGPD). Cada pedido fica guardado na tabela `leads` e sai um email de aviso de crm@firstmedia.pt para cada administrador (para o email de avisos, se tiver um). Contra abusos: um campo escondido que só robôs preenchem, e no máximo 3 pedidos por dia do mesmo email.
 
 Mudanças de banco em `sql/leads.sql`.
 
@@ -421,6 +421,20 @@ Mudanças de banco em `sql/leads.sql`.
 - [ ] "Entrar" leva ao login; com sessão, o endereço abre o Dashboard
 - [ ] Preencho o formulário e vejo "Pedido recebido. Obrigado!"
 - [ ] Recebo o email "Lead novo" e o pedido aparece na tabela `leads` do Supabase
+
+### 2. IVA, política de privacidade e campos obrigatórios — CONCLUÍDO
+
+- O preço diz **"IVA incluído"** (no topo, no cartão do preço e nas perguntas).
+- Página **Política de privacidade** em `/privacidade`, com o aspeto da landing page: quem trata os dados, que dados, para quê, quanto tempo (24 meses depois do último contacto), com quem se partilham, cookies (só os essenciais), direitos e queixa à CNPD. Ligada na caixa do consentimento (abre noutro separador, para não perder o que já se escreveu) e no rodapé.
+- No formulário, os campos obrigatórios têm asterisco: **Nome, Email, Telefone**, Empresa, número de utilizadores e a caixa do consentimento. O telefone passou a ser obrigatório.
+
+Sem mudanças de banco.
+
+**PRONTO QUANDO**
+
+- [ ] O preço mostra "IVA incluído"
+- [ ] O link "política de privacidade" no formulário abre a página noutro separador
+- [ ] Sem telefone, o formulário não é enviado
 
 ### O que fica para depois
 

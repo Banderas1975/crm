@@ -5,7 +5,7 @@ import { NOME_COOKIE, sessaoValida } from "./lib/sessao";
 // "/" sem sessão vê-a no mesmo endereço). /emails/enviar é o cron da VPS:
 // não tem sessão, mas exige o segredo CRON_SEGREDO (verificado lá dentro).
 // /recuperar/<código> é o link do email de recuperação de senha.
-const PUBLICAS = new Set(["/inicio", "/logo-first-media.png", "/login", "/registo", "/recuperar", "/emails/enviar"]);
+const PUBLICAS = new Set(["/inicio", "/privacidade", "/logo-first-media.png", "/login", "/registo", "/recuperar", "/emails/enviar"]);
 const PUBLICAS_PREFIXO = ["/recuperar/"];
 
 // Regras de conteúdo (CSP): o navegador só corre scripts do próprio CRM que

@@ -57,7 +57,7 @@ const PERGUNTAS = [
   },
   {
     p: "Como é calculado o preço?",
-    r: "29,99 € por mês por cada utilizador. Uma equipa de 3 pessoas paga 3 × 29,99 € por mês.",
+    r: "29,99 € por mês por cada utilizador, com IVA incluído. Uma equipa de 3 pessoas paga 3 × 29,99 € por mês.",
   },
   {
     p: "Os meus colegas veem os meus contactos?",
@@ -122,7 +122,7 @@ export default function Inicio() {
                 Ver preço
               </a>
             </div>
-            <p className="lp-nota">14 dias grátis · depois 29,99 € por utilizador/mês</p>
+            <p className="lp-nota">14 dias grátis · depois 29,99 € por utilizador/mês, IVA incluído</p>
           </div>
 
           <div className="lp-funil" aria-hidden="true">
@@ -196,6 +196,7 @@ export default function Inicio() {
             <p className="lp-preco-valor">
               29,99 €<span> / utilizador / mês</span>
             </p>
+            <p className="lp-preco-iva">IVA incluído</p>
             <ul>
               {INCLUIDO.map((i) => (
                 <li key={i}>{i}</li>
@@ -230,7 +231,10 @@ export default function Inicio() {
       <footer className="lp-rodape">
         <div className="lp-largura lp-rodape-linha">
           <span>© First Media</span>
-          <Link href="/login">Entrar no CRM</Link>
+          <span className="lp-rodape-links">
+            <Link href="/privacidade">Política de privacidade</Link>
+            <Link href="/login">Entrar no CRM</Link>
+          </span>
         </div>
       </footer>
     </div>

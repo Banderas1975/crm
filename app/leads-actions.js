@@ -17,6 +17,16 @@ export async function pedirExperiencia(estadoAnterior, dados) {
   // Campo escondido que só um robô preenche. Fingimos que correu bem.
   if ((dados.get("site") ?? "") !== "") return { erro: "", enviado: true };
 
+  // Se algo falhar, o formulário volta preenchido com o que a pessoa escreveu
+  // (o React limpa o formulário depois de cada envio).
+  const valores = Object.fromEntries(
+    ["nome", "email", "telefone", "empresa", "utilizadores", "mensagem", "consentimento"].map((c) => [
+      c,
+      String(dados.get(c) ?? "").slice(0, 1000),
+    ]),
+  );
+  const falha = (erro) => ({ erro, valores });
+
   const nome = texto(dados, "nome", LIMITES.nome);
   const email = texto(dados, "email", LIMITES.email)?.toLowerCase();
   const telefone = texto(dados, "telefone", 40);
@@ -24,18 +34,19 @@ export async function pedirExperiencia(estadoAnterior, dados) {
   const mensagem = texto(dados, "mensagem", 1000);
   const utilizadores = Number(dados.get("utilizadores"));
 
-  if (!nome) return { erro: "Escreva o seu nome." };
-  if (!email || !emailValido(email)) return { erro: "Esse email não parece válido." };
-  if (telefone === null || (telefone && !/^[+\d][\d\s()-]{5,39}$/.test(telefone))) {
-    return { erro: "Esse telefone não parece válido." };
+  if (!nome) return falha("Escreva o seu nome.");
+  if (!email || !emailValido(email)) return falha("Esse email não parece válido.");
+  if (!telefone) return falha("Escreva o seu telefone.");
+  if (!/^[+\d][\d\s()-]{5,39}$/.test(telefone)) {
+    return falha("Esse telefone não parece válido.");
   }
-  if (!empresa) return { erro: "Escreva o nome da empresa." };
+  if (!empresa) return falha("Escreva o nome da empresa.");
   if (!Number.isInteger(utilizadores) || utilizadores < 1 || utilizadores > 1000) {
-    return { erro: "Indique quantos utilizadores (de 1 a 1000)." };
+    return falha("Indique quantos utilizadores (de 1 a 1000).");
   }
-  if (mensagem === null) return { erro: "A mensagem é muito comprida (máximo 1000 caracteres)." };
+  if (mensagem === null) return falha("A mensagem é muito comprida (máximo 1000 caracteres).");
   if (dados.get("consentimento") !== "sim") {
-    return { erro: "Para o podermos contactar, marque a caixa do consentimento." };
+    return falha("Para o podermos contactar, marque a caixa do consentimento.");
   }
 
   const enviado = { erro: "", enviado: true };
@@ -48,7 +59,7 @@ export async function pedirExperiencia(estadoAnterior, dados) {
     .gte("criado_em", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
   if (count >= MAX_POR_DIA) return enviado;
 
-  const lead = { nome, email, telefone: telefone || null, empresa, utilizadores, mensagem: mensagem || null };
+  const lead = { nome, email, telefone, empresa, utilizadores, mensagem: mensagem || null };
   const { data: novo, error } = await supabase
     .from("leads")
     .insert({ ...lead, consentimento_em: new Date().toISOString() })
@@ -56,7 +67,7 @@ export async function pedirExperiencia(estadoAnterior, dados) {
     .single();
   if (error) {
     console.error("Falha a gravar lead:", error.message);
-    return { erro: "Não foi possível enviar o pedido. Tente de novo daqui a pouco." };
+    return falha("Não foi possível enviar o pedido. Tente de novo daqui a pouco.");
   }
 
   // O aviso sai em segundo plano: quem preenche não fica à espera do email.
