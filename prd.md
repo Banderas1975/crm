@@ -393,6 +393,8 @@ As páginas de dentro mantêm o seu próprio título ("Funil — First Media CRM
 
 O título e a descrição também vão nas etiquetas de partilha (Open Graph e Twitter: o que o Facebook, o LinkedIn e o WhatsApp mostram quando se partilha o link), com o logótipo como imagem. O endereço oficial (`canonical`) é `https://firstmediacrm.online` e a página diz ao Google que pode ser indexada. A língua do site está marcada como português de Portugal (`pt-PT`).
 
+**Schema markup** (JSON-LD, os dados estruturados que o Google lê): a landing page descreve a First Media (organização), o site, o **First Media CRM como software** (categoria CRM, funciona no browser, funcionalidades e preço de 29,99 € por utilizador por mês, IVA incluído, com 14 dias grátis) e as **perguntas frequentes**. Só leva o que a página já mostra: sem avaliações nem números inventados.
+
 **PRONTO QUANDO**
 
 - [ ] O separador do browser na página pública mostra "Software CRM em Português | First Media CRM"
