@@ -2,7 +2,7 @@ import Link from "next/link";
 import { registar } from "../sessao-actions";
 import { LIMITES } from "../../lib/validacao";
 
-export const metadata = { title: "Criar conta — Meu CRM" };
+export const metadata = { title: "Criar conta — First Media CRM" };
 
 const ERROS = {
   email: "Escreva um email válido.",

@@ -4,7 +4,7 @@ import { supabase } from "../../../lib/supabase";
 import FormNovaSenha from "../../form-nova-senha";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Password nova — Meu CRM" };
+export const metadata = { title: "Password nova — First Media CRM" };
 
 // Só mostra o formulário se o link ainda servir. A verificação que conta é
 // repetida na action, no momento de gravar.

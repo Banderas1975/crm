@@ -78,7 +78,7 @@ O CRM não é uma página comprida. É um **sistema com áreas**, dentro de um s
 
 ```
 ┌──────────────┬──────────────────────────────────────────┐
-│              │  Meu CRM        email@pessoa.com   Sair  │  ← cabeçalho
+│              │  First Media CRM  email@pessoa.com  Sair │  ← cabeçalho
 │  Dashboard   ├──────────────────────────────────────────┤
 │  Funil       │                                          │
 │  Contatos    │           área de conteúdo               │

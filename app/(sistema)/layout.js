@@ -26,7 +26,7 @@ export default async function Sistema({ children }) {
 
       <div className="area">
         <header className="cabecalho-app">
-          <p className="marca">Meu CRM</p>
+          <p className="marca">First Media CRM</p>
           <div className="conta">
             <span className="apoio mono">{utilizador.email}</span>
             <form action={sair}>

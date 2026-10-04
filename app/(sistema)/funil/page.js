@@ -5,7 +5,7 @@ import { exigirSessao } from "../../acesso";
 import { haQuantoTempo } from "../../tempo";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Funil — Meu CRM" };
+export const metadata = { title: "Funil — First Media CRM" };
 
 export default async function Funil() {
   const eu = await exigirSessao();

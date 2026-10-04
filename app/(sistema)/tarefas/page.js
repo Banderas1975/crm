@@ -4,7 +4,7 @@ import { exigirSessao } from "../../acesso";
 import { hojeEmLisboa, fimDaSemana, somarDias, formatarDia } from "../../tempo";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Tarefas — Meu CRM" };
+export const metadata = { title: "Tarefas — First Media CRM" };
 
 export default async function Tarefas() {
   const eu = await exigirSessao();

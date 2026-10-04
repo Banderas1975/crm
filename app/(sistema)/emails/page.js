@@ -5,7 +5,7 @@ import PreferenciasEmail from "../../preferencias-email";
 
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Emails — Meu CRM" };
+export const metadata = { title: "Emails — First Media CRM" };
 
 const TIPOS = {
   tarefas: "Resumo de tarefas",
