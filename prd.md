@@ -328,6 +328,20 @@ Mudanças de banco em `sql/tarefas-hora.sql`: `tarefas.vence_hora`, `usuarios.av
 - [ ] Concluo uma tarefa que se repete e a seguinte fica à mesma hora
 - [ ] Uma hora antes de uma tarefa recebo um email, uma vez só
 
+## Versão 11
+
+### 1. Segurança: RLS em todas as tabelas e Next.js atualizado — CONCLUÍDO
+
+- **RLS em todas as tabelas.** As tabelas criadas no início (`usuarios`, `contatos`, `anotacoes`, `follow_ups`, `tarefas`) podiam estar sem proteção de linhas: quem tivesse a chave pública do Supabase (a "anon", que não é secreta por natureza) lia e escrevia nelas pela API — incluindo os hashes das senhas. `sql/seguranca.sql` liga o RLS em todas as tabelas, sem políticas: a chave pública deixa de ver ou mexer em qualquer coisa. O CRM não é afetado, porque usa a chave secreta, só no servidor. O SQL pode ser corrido mais de uma vez e termina a listar as tabelas ainda sem RLS (tem de vir vazio).
+- **Next.js 16.3.8.** A versão anterior (16.3.4) tinha uma falha crítica conhecida (execução remota de código em `next/og`, que o CRM não usa). Depois da atualização, `npm audit` não encontra vulnerabilidades.
+
+**Encontrado na revisão e deixado para depois, por decisão:** "Sair" não invalida uma sessão copiada (vale até 12 horas); o registo diz se um email já tem conta e não limita contas à espera; "Gerar follow-up" não tem limite diário; Dashboard e Funil só contam os primeiros 1000 contatos (limite do Supabase por pedido).
+
+**PRONTO QUANDO**
+
+- [ ] O `sql/seguranca.sql` termina sem tabelas listadas
+- [ ] Depois de atualizar a VPS, `npm ls next` mostra 16.3.8 e o CRM funciona como antes
+
 ### O que fica para depois
 
 - Permissões avançadas: partilhar contatos entre utilizadores; relatórios da equipa por responsável
