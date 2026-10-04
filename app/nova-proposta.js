@@ -4,8 +4,22 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import { anexarProposta } from "./actions";
 import { TAMANHO_MAX_PROPOSTA } from "../lib/validacao";
 
+// Se o envio nem chegar ao CRM (o servidor web à frente recusa-o, a rede cai),
+// a action falha sem resposta. Sem isto, a página inteira ia para o ecrã de
+// erro; assim fica onde está, com uma mensagem por baixo do formulário.
+async function enviar(estadoAnterior, dados) {
+  try {
+    return await anexarProposta(estadoAnterior, dados);
+  } catch {
+    return {
+      ...estadoAnterior,
+      erro: "O servidor recusou o ficheiro. Pode ser grande demais para o servidor web, ou a ligação falhou. Tente de novo ou use um ficheiro mais pequeno.",
+    };
+  }
+}
+
 export default function NovaProposta({ contatoId }) {
-  const [estado, acao, enviando] = useActionState(anexarProposta, { erro: "" });
+  const [estado, acao, enviando] = useActionState(enviar, { erro: "" });
   const [erroLocal, setErroLocal] = useState("");
   const formulario = useRef(null);
 
