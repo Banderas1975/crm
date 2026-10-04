@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import FormLead from "../form-lead";
 import "./landing.css";
 
@@ -98,9 +99,81 @@ const EXEMPLO = [
   { etapa: "Cliente", cor: "#5FD39B", cartoes: ["Café Central"] },
 ];
 
-export default function Inicio() {
+// Schema markup (JSON-LD): diz ao Google, em linguagem de máquina, o que é esta
+// página — um software, o preço, quem o faz e as perguntas frequentes. Só leva
+// o que a página já mostra: nada de avaliações ou números inventados.
+const ESQUEMA = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE}/#organizacao`,
+      name: "First Media",
+      url: SITE,
+      logo: `${SITE}/logo-first-media.png`,
+      email: "crm@firstmedia.pt",
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE}/#site`,
+      url: SITE,
+      name: "First Media CRM",
+      inLanguage: "pt-PT",
+      publisher: { "@id": `${SITE}/#organizacao` },
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": `${SITE}/#software`,
+      name: "First Media CRM",
+      description: DESCRICAO,
+      url: SITE,
+      image: `${SITE}/logo-first-media.png`,
+      applicationCategory: "BusinessApplication",
+      applicationSubCategory: "CRM",
+      operatingSystem: "Web, Windows, macOS, Android, iOS",
+      inLanguage: "pt-PT",
+      featureList: FUNCIONALIDADES.map((f) => f.titulo),
+      publisher: { "@id": `${SITE}/#organizacao` },
+      offers: {
+        "@type": "Offer",
+        url: `${SITE}/#preco`,
+        price: "29.99",
+        priceCurrency: "EUR",
+        availability: "https://schema.org/InStock",
+        description: "14 dias grátis. Depois, 29,99 € por utilizador por mês, IVA incluído.",
+        priceSpecification: {
+          "@type": "UnitPriceSpecification",
+          price: "29.99",
+          priceCurrency: "EUR",
+          valueAddedTaxIncluded: true,
+          unitText: "utilizador por mês",
+          billingDuration: "P1M",
+        },
+      },
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${SITE}/#perguntas`,
+      inLanguage: "pt-PT",
+      mainEntity: PERGUNTAS.map((q) => ({
+        "@type": "Question",
+        name: q.p,
+        acceptedAnswer: { "@type": "Answer", text: q.r },
+      })),
+    },
+  ],
+};
+
+// "<" escapado: nenhum texto consegue fechar a etiqueta <script> antes do tempo.
+const ESQUEMA_JSON = JSON.stringify(ESQUEMA).replace(/</g, "\\u003c");
+
+export default async function Inicio() {
+  // O nonce da CSP (ver proxy.js), para o browser aceitar esta etiqueta <script>.
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
+
   return (
     <div className="lp">
+      <script type="application/ld+json" nonce={nonce} dangerouslySetInnerHTML={{ __html: ESQUEMA_JSON }} />
       <header className="lp-topo">
         <div className="lp-largura lp-topo-linha">
           <a href="#inicio" className="lp-logo">
