@@ -40,7 +40,7 @@ export async function pedirExperiencia(estadoAnterior, dados) {
   if (!/^[+\d][\d\s()-]{5,39}$/.test(telefone)) {
     return falha("Esse telefone não parece válido.");
   }
-  if (!empresa) return falha("Escreva o nome da empresa.");
+  if (empresa === null) return falha("O nome da empresa é muito comprido.");
   if (!Number.isInteger(utilizadores) || utilizadores < 1 || utilizadores > 1000) {
     return falha("Indique quantos utilizadores (de 1 a 1000).");
   }
@@ -59,7 +59,7 @@ export async function pedirExperiencia(estadoAnterior, dados) {
     .gte("criado_em", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
   if (count >= MAX_POR_DIA) return enviado;
 
-  const lead = { nome, email, telefone, empresa, utilizadores, mensagem: mensagem || null };
+  const lead = { nome, email, telefone, empresa: empresa || null, utilizadores, mensagem: mensagem || null };
   const { data: novo, error } = await supabase
     .from("leads")
     .insert({ ...lead, consentimento_em: new Date().toISOString() })
@@ -91,7 +91,7 @@ async function avisarAdministradores(id, lead) {
       chave: `lead:${id}:${admin.id}`,
       tipo: "lead",
       para: admin.email_avisos || admin.email,
-      assunto: `Lead novo: ${lead.empresa}`,
+      assunto: `Lead novo: ${lead.empresa || lead.nome}`,
       texto: corpo,
       html,
     });

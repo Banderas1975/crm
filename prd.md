@@ -411,7 +411,7 @@ A página segue o funil de conversão, de cima para baixo:
 
 Cores e logótipo da First Media (ver `design.md`, "Landing page").
 
-**Formulário:** nome, email, telefone (obrigatório desde a v14.2), empresa, número de utilizadores, mensagem (opcional) e a caixa obrigatória de consentimento (RGPD). Cada pedido fica guardado na tabela `leads` e sai um email de aviso de crm@firstmedia.pt para cada administrador (para o email de avisos, se tiver um). Contra abusos: um campo escondido que só robôs preenchem, e no máximo 3 pedidos por dia do mesmo email.
+**Formulário:** nome, email, telefone (obrigatório desde a v14.2), empresa (opcional desde a v14.2), número de utilizadores, mensagem (opcional) e a caixa obrigatória de consentimento (RGPD). Cada pedido fica guardado na tabela `leads` e sai um email de aviso de crm@firstmedia.pt para cada administrador (para o email de avisos, se tiver um). Contra abusos: um campo escondido que só robôs preenchem, e no máximo 3 pedidos por dia do mesmo email.
 
 Mudanças de banco em `sql/leads.sql`.
 
@@ -426,15 +426,16 @@ Mudanças de banco em `sql/leads.sql`.
 
 - O preço diz **"IVA incluído"** (no topo, no cartão do preço e nas perguntas).
 - Página **Política de privacidade** em `/privacidade`, com o aspeto da landing page: quem trata os dados, que dados, para quê, quanto tempo (24 meses depois do último contacto), com quem se partilham, cookies (só os essenciais), direitos e queixa à CNPD. Ligada na caixa do consentimento (abre noutro separador, para não perder o que já se escreveu) e no rodapé.
-- No formulário, os campos obrigatórios têm asterisco: **Nome, Email, Telefone**, Empresa, número de utilizadores e a caixa do consentimento. O telefone passou a ser obrigatório.
+- No formulário, os campos obrigatórios têm asterisco: **Nome, Email, Telefone**, número de utilizadores e a caixa do consentimento. O telefone passou a ser obrigatório. A **Empresa é opcional** (`sql/leads-empresa-opcional.sql`).
 
-Sem mudanças de banco.
+Mudança de banco: `sql/leads-empresa-opcional.sql`.
 
 **PRONTO QUANDO**
 
 - [ ] O preço mostra "IVA incluído"
 - [ ] O link "política de privacidade" no formulário abre a página noutro separador
 - [ ] Sem telefone, o formulário não é enviado
+- [ ] Sem empresa, o formulário é enviado
 
 ### O que fica para depois
 
