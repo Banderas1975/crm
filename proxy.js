@@ -5,8 +5,9 @@ import { NOME_COOKIE, sessaoValida } from "./lib/sessao";
 // "/" sem sessão vê-a no mesmo endereço). /emails/enviar é o cron da VPS:
 // não tem sessão, mas exige o segredo CRON_SEGREDO (verificado lá dentro).
 // /recuperar/<código> é o link do email de recuperação de senha. Os ícones
-// (favicon) também têm de se ver sem sessão, no separador do browser.
-const PUBLICAS = new Set(["/inicio", "/privacidade", "/logo-first-media.png", "/icon.png", "/apple-icon.png", "/login", "/registo", "/recuperar", "/emails/enviar"]);
+// (favicon) também têm de se ver sem sessão, no separador do browser, e o
+// robots.txt, o sitemap.xml e o llms.txt são para os bots do Google e das IAs.
+const PUBLICAS = new Set(["/inicio", "/privacidade", "/logo-first-media.png", "/icon.png", "/apple-icon.png", "/robots.txt", "/sitemap.xml", "/llms.txt", "/login", "/registo", "/recuperar", "/emails/enviar"]);
 const PUBLICAS_PREFIXO = ["/recuperar/"];
 
 // Regras de conteúdo (CSP): o navegador só corre scripts do próprio CRM que
