@@ -322,7 +322,7 @@ export function emailLead(lead) {
     `Nome: ${lead.nome}`,
     `Email: ${lead.email}`,
     `Telefone: ${lead.telefone || "—"}`,
-    `Empresa: ${lead.empresa}`,
+    `Empresa: ${lead.empresa || "—"}`,
     `Utilizadores: ${lead.utilizadores}`,
     ...(lead.mensagem ? ["", `Mensagem: ${lead.mensagem}`] : []),
   ];
