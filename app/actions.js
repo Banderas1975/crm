@@ -7,7 +7,7 @@ import { exigirSessao } from "./acesso";
 import { escreverFollowUp } from "../lib/ia";
 import { ETAPAS, ORIGENS, MOTIVOS_PERDA } from "./etapas";
 import { REPETICOES, proximaData } from "./tarefas";
-import { hojeEmLisboa, deLisboa } from "./tempo";
+import { hojeEmLisboa, deLisboa, formatarHora } from "./tempo";
 import {
   LIMITES,
   emailValido,
@@ -175,14 +175,25 @@ export async function criarTarefa(estadoAnterior, dados) {
   const venceEm = dados.get("vence_em") || null;
   if (venceEm && !dataValida(venceEm)) return { erro: "Essa data não existe." };
 
+  // Com data, a hora é obrigatória ("14:30", em Lisboa). Sem data, não há hora.
+  const hora = dados.get("vence_hora") || "";
+  const minutos = lerHora(hora);
+  if (venceEm && minutos === null) return { erro: "Escolha a hora da tarefa." };
+  if (!venceEm && hora) return { erro: "Para pôr hora, escolha primeiro o dia." };
+
   const repete = dados.get("repete") || null;
   if (repete && !(repete in REPETICOES)) return { erro: "Repetição inválida." };
   // Sem data não há de onde contar a seguinte: a repetição ficaria parada.
   if (repete && !venceEm) return { erro: "Uma tarefa que se repete precisa de data." };
 
-  const { error } = await supabase
-    .from("tarefas")
-    .insert({ contato_id: contatoId, titulo, vence_em: venceEm, repete, dono_id: eu.id });
+  const { error } = await supabase.from("tarefas").insert({
+    contato_id: contatoId,
+    titulo,
+    vence_em: venceEm,
+    vence_hora: venceEm ? formatarHora(minutos) : null,
+    repete,
+    dono_id: eu.id,
+  });
 
   if (error) return { erro: "Não foi possível guardar a tarefa. Tente de novo." };
 
@@ -206,7 +217,7 @@ export async function concluirTarefa(idCru) {
     .eq("id", id)
     .eq("dono_id", eu.id)
     .is("concluida_em", null)
-    .select("contato_id, titulo, vence_em, repete");
+    .select("contato_id, titulo, vence_em, vence_hora, repete");
 
   if (error) return { ok: false };
 
@@ -221,6 +232,8 @@ export async function concluirTarefa(idCru) {
       contato_id: tarefa.contato_id,
       titulo: tarefa.titulo,
       vence_em: proximaData(tarefa.vence_em, tarefa.repete, hojeEmLisboa()),
+      // A seguinte é à mesma hora.
+      vence_hora: tarefa.vence_hora,
       repete: tarefa.repete,
       dono_id: eu.id,
     });
@@ -442,16 +455,21 @@ export async function criarReuniao(estadoAnterior, dados) {
 // Chamadas pelo calendário ao arrastar (ou pelas setas do teclado).
 // Devolvem { ok } para o cartão saber se ficou mesmo guardado.
 
-export async function moverTarefa(idCru, dia) {
+// minutos: a hora nova, em minutos depois da meia-noite em Lisboa; null deixa a
+// hora como está (arrastar no mês, ou na linha "tarefas", muda só o dia).
+export async function moverTarefa(idCru, dia, minutos = null) {
   const eu = await exigirSessao();
 
   const id = Number(idCru);
   if (!idValido(id) || !dataValida(dia || "")) return { ok: false };
+  if (minutos !== null && (!Number.isInteger(minutos) || minutos < 0 || minutos > 1439)) return { ok: false };
+
+  const mudanca = minutos === null ? { vence_em: dia } : { vence_em: dia, vence_hora: formatarHora(minutos) };
 
   // Só tarefas por fazer: as concluídas já não estão no calendário.
   const { data, error } = await supabase
     .from("tarefas")
-    .update({ vence_em: dia })
+    .update(mudanca)
     .eq("id", id)
     .eq("dono_id", eu.id)
     .is("concluida_em", null)

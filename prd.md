@@ -305,6 +305,29 @@ Mudanças de banco em `sql/emails.sql`: preferências em `usuarios`, `reunioes.a
 - [ ] Desligo um aviso na área Emails e esse aviso deixa de chegar
 - [ ] O histórico mostra cada email, e nenhum aparece em duplicado
 
+## Versão 10
+
+### 1. Hora nas tarefas — CONCLUÍDO
+
+As tarefas passam a ter **hora e minutos**. Uma tarefa com dia **tem de ter hora**; sem dia, não tem hora. As tarefas criadas antes da v10 ficam sem hora até serem mudadas.
+
+A hora é guardada como se lê num relógio de Lisboa ("14:30"), tal como o dia já era desde a v3: não há fuso para converter, e o que se escreve é o que se vê, esteja o computador onde estiver. O banco recusa hora sem dia.
+
+- **Onde aparece:** na página do contato e na área Tarefas ("04/10, 14:30"), ordenadas por dia e hora; no resumo diário por email.
+- **Calendário:** na semana e no dia, as tarefas com hora ficam na grelha das horas (meia hora cada), ao lado das reuniões. Arrastar na grelha muda o dia e a hora; arrastar no mês muda só o dia. Com o teclado, ↑ ↓ mudam a hora em passos de meia hora. As tarefas antigas, sem hora, continuam na linha "tarefas" do dia.
+- **Repetir:** a tarefa seguinte nasce à mesma hora.
+- **Aviso por email 1 hora antes** de cada tarefa com hora, só para o dono. Liga-se e desliga-se na área Emails ("Tarefa daqui a uma hora"), e, como os outros avisos, sai uma única vez.
+
+Mudanças de banco em `sql/tarefas-hora.sql`: `tarefas.vence_hora`, `usuarios.aviso_tarefa_antes` e o tipo novo no registo de emails.
+
+**PRONTO QUANDO**
+
+- [ ] Crio uma tarefa com dia e o CRM obriga a escolher a hora
+- [ ] A tarefa aparece com "dia, hora" na página do contato e na área Tarefas, pela ordem certa
+- [ ] No Calendário (semana) a tarefa está na hora certa; arrasto-a para outra hora, recarrego, e continua lá
+- [ ] Concluo uma tarefa que se repete e a seguinte fica à mesma hora
+- [ ] Uma hora antes de uma tarefa recebo um email, uma vez só
+
 ### O que fica para depois
 
 - Permissões avançadas: partilhar contatos entre utilizadores; relatórios da equipa por responsável

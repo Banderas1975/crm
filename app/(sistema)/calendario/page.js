@@ -3,7 +3,7 @@ import { supabase } from "../../../lib/supabase";
 import Calendario from "../../calendario";
 import { exigirSessao } from "../../acesso";
 import { hojeEmLisboa, somarDias, inicioDaSemana, emLisboa, deLisboa } from "../../tempo";
-import { dataValida } from "../../../lib/validacao";
+import { dataValida, lerHora } from "../../../lib/validacao";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Calendário — Meu CRM" };
@@ -71,7 +71,7 @@ export default async function PaginaCalendario({ searchParams }) {
         .from("tarefas")
         // Com o nome da ligação: desde a v6 há duas entre tarefas e contatos
         // (a simples e a de dono), e sem ele o banco não sabe qual usar.
-        .select("id, titulo, vence_em, contato_id, contatos!tarefas_contato_dono(nome)")
+        .select("id, titulo, vence_em, vence_hora, contato_id, contatos!tarefas_contato_dono(nome)")
         .eq("dono_id", eu.id)
         .is("concluida_em", null)
         .gte("vence_em", primeiro)
@@ -91,6 +91,8 @@ export default async function PaginaCalendario({ searchParams }) {
     id: t.id,
     titulo: t.titulo,
     dia: t.vence_em,
+    // "14:30:00" → 870 minutos; as tarefas antigas não têm hora.
+    minutos: t.vence_hora ? lerHora(t.vence_hora.slice(0, 5)) : null,
     contatoId: t.contato_id,
     nome: t.contatos?.nome ?? "",
   }));

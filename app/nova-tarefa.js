@@ -7,15 +7,18 @@ import { LIMITES } from "../lib/validacao";
 
 export default function NovaTarefa({ contatoId }) {
   const [estado, acao, salvando] = useActionState(criarTarefa, { erro: "" });
-  // Repetir sem data não vale: o servidor recusa, e aqui o campo nem abre.
-  const [temData, setTemData] = useState(false);
+  // O dia é acompanhado pelo React (campo controlado). Sem isto, depois de o
+  // formulário se limpar, escolher outra vez o mesmo dia não contava como
+  // mudança e a hora ficava desativada. Sem dia, hora e repetição nem abrem.
+  const [dia, setDia] = useState("");
+  const temData = Boolean(dia);
 
   // A action devolve um contador que sobe a cada tarefa guardada.
   const ultimo = useRef(0);
   useEffect(() => {
     if (estado.salvo && estado.salvo !== ultimo.current) {
       ultimo.current = estado.salvo;
-      setTemData(false);
+      setDia("");
     }
   }, [estado.salvo]);
 
@@ -43,8 +46,15 @@ export default function NovaTarefa({ contatoId }) {
             id="vence_em"
             name="vence_em"
             type="date"
-            onChange={(e) => setTemData(Boolean(e.target.value))}
+            value={dia}
+            onChange={(e) => setDia(e.target.value)}
           />
+        </div>
+
+        {/* Com dia, a hora é obrigatória; sem dia, nem aparece ativa. */}
+        <div className="campo">
+          <label htmlFor="vence_hora">Hora (Lisboa)</label>
+          <input id="vence_hora" name="vence_hora" type="time" step={300} required={temData} disabled={!temData} />
         </div>
 
         <div className="campo">
@@ -60,7 +70,7 @@ export default function NovaTarefa({ contatoId }) {
         </div>
       </div>
 
-      {!temData && <p className="ajuda">Para repetir, marque primeiro uma data.</p>}
+      {!temData && <p className="ajuda">Para pôr hora ou repetir, marque primeiro uma data.</p>}
 
       {estado.erro && (
         <p className="erro" aria-live="polite">

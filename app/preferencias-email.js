@@ -32,6 +32,10 @@ export default function PreferenciasEmail({ conta }) {
             Resumo das tarefas atrasadas e de hoje, todos os dias às 8h
           </label>
           <label>
+            <input type="checkbox" name="aviso_tarefa_antes" defaultChecked={conta.aviso_tarefa_antes} />
+            Tarefa daqui a uma hora
+          </label>
+          <label>
             <input type="checkbox" name="aviso_reuniao_antes" defaultChecked={conta.aviso_reuniao_antes} />
             Reunião daqui a uma hora
           </label>

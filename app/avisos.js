@@ -3,7 +3,8 @@
 // botão "Enviar email de teste" da área Emails.
 import { supabase } from "../lib/supabase";
 import { enviarEmail } from "../lib/email";
-import { hojeEmLisboa, emLisboa, formatarHora, formatarDia } from "./tempo";
+import { hojeEmLisboa, emLisboa, formatarHora, formatarDia, somarDias, deLisboa } from "./tempo";
+import { lerHora } from "../lib/validacao";
 
 const MAX_TENTATIVAS = 3;
 // Um envio "a enviar" há mais do que isto ficou preso (o servidor reiniciou a meio).
@@ -87,7 +88,7 @@ export async function enviarUmaVez({ usuarioId, chave, tipo, para, assunto, text
 async function utilizadores() {
   const { data, error } = await supabase
     .from("usuarios")
-    .select("id, email, email_avisos, aviso_tarefas, aviso_reuniao_antes, aviso_reuniao_alterada")
+    .select("id, email, email_avisos, aviso_tarefas, aviso_tarefa_antes, aviso_reuniao_antes, aviso_reuniao_alterada")
     .eq("estado", "aprovado");
   if (error) throw new Error(error.message);
   return new Map(data.map((u) => [u.id, u]));
@@ -108,17 +109,19 @@ async function resumoTarefas(contas, contagem) {
 
     const { data: tarefas } = await supabase
       .from("tarefas")
-      .select("titulo, vence_em, contatos!tarefas_contato_dono(nome)")
+      .select("titulo, vence_em, vence_hora, contatos!tarefas_contato_dono(nome)")
       .eq("dono_id", u.id)
       .is("concluida_em", null)
       .not("vence_em", "is", null)
       .lte("vence_em", hoje)
-      .order("vence_em");
+      .order("vence_em")
+      .order("vence_hora", { nullsFirst: false });
     if (!tarefas?.length) continue;
 
     const atrasadas = tarefas.filter((t) => t.vence_em < hoje);
     const deHoje = tarefas.filter((t) => t.vence_em === hoje);
-    const linha = (t) => `• ${t.titulo} — ${t.contatos?.nome ?? ""}${t.vence_em < hoje ? ` (desde ${formatarDia(t.vence_em)})` : ""}`;
+    const linha = (t) =>
+      `• ${t.vence_hora ? `${t.vence_hora.slice(0, 5)} ` : ""}${t.titulo} — ${t.contatos?.nome ?? ""}${t.vence_em < hoje ? ` (desde ${formatarDia(t.vence_em)})` : ""}`;
 
     const { texto, html } = montar({
       titulo: `Tarefas para hoje: ${deHoje.length}${atrasadas.length ? ` · atrasadas: ${atrasadas.length}` : ""}`,
@@ -135,6 +138,45 @@ async function resumoTarefas(contas, contagem) {
       tipo: "tarefas",
       para: destino(u),
       assunto: `Tarefas de ${formatarDia(hoje)}: ${deHoje.length} hoje${atrasadas.length ? `, ${atrasadas.length} atrasadas` : ""}`,
+      texto,
+      html,
+    })] += 1;
+  }
+}
+
+// 2a. Uma hora antes de cada tarefa com hora: só para o dono, que é quem a faz.
+// A hora está guardada como se lê em Lisboa; aqui passa a instante para comparar.
+async function tarefasEmBreve(contas, contagem) {
+  const agora = Date.now();
+  const hoje = hojeEmLisboa();
+  const { data: tarefas, error } = await supabase
+    .from("tarefas")
+    .select("id, titulo, vence_em, vence_hora, dono_id, contatos!tarefas_contato_dono(nome)")
+    .is("concluida_em", null)
+    .not("vence_hora", "is", null)
+    .in("vence_em", [hoje, somarDias(hoje, 1)]);
+  if (error) throw new Error(error.message);
+
+  for (const t of tarefas) {
+    const hora = t.vence_hora.slice(0, 5);
+    const quando = Date.parse(deLisboa(t.vence_em, lerHora(hora)));
+    if (quando <= agora || quando > agora + HORA_MS) continue;
+
+    const u = contas.get(t.dono_id);
+    if (!u?.aviso_tarefa_antes) continue;
+
+    const minutosAte = Math.max(1, Math.round((quando - agora) / 60000));
+    const { texto, html } = montar({
+      titulo: `Daqui a ${minutosAte} min: ${t.titulo}`,
+      linhas: [`Quando: ${formatarDia(t.vence_em)}, ${hora} (Lisboa)`, `Contato: ${t.contatos?.nome ?? ""}`],
+      caminho: "/tarefas",
+    });
+    contagem[await enviarUmaVez({
+      usuarioId: u.id,
+      chave: `tarefa_antes:${t.id}:${t.vence_em}T${hora}:${u.id}`,
+      tipo: "tarefa_antes",
+      para: destino(u),
+      assunto: `Tarefa daqui a ${minutosAte} min: ${t.titulo}`,
       texto,
       html,
     })] += 1;
@@ -246,6 +288,7 @@ export async function enviarAvisos() {
   const contas = await utilizadores();
   const contagem = { enviado: 0, falhou: 0, ja: 0 };
   await resumoTarefas(contas, contagem);
+  await tarefasEmBreve(contas, contagem);
   await reunioesEmBreve(contas, contagem);
   await reunioesAlteradas(contas, contagem);
   return contagem;

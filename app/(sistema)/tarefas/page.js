@@ -16,14 +16,16 @@ export default async function Tarefas() {
 
   const { data: tarefas, error } = await supabase
     .from("tarefas")
-    .select("id, titulo, vence_em, repete, contato_id, contatos!tarefas_contato_dono(nome)")
+    .select("id, titulo, vence_em, vence_hora, repete, contato_id, contatos!tarefas_contato_dono(nome)")
     .eq("dono_id", eu.id)
     .is("concluida_em", null)
-    .order("vence_em", { ascending: true });
+    .order("vence_em", { ascending: true })
+    .order("vence_hora", { ascending: true, nullsFirst: false });
 
   const lista = (tarefas ?? []).map((tarefa) => ({
     ...tarefa,
     dia: tarefa.vence_em ? formatarDia(tarefa.vence_em) : null,
+    hora: tarefa.vence_hora?.slice(0, 5) ?? null,
   }));
 
   // As datas são texto AAAA-MM-DD, por isso comparam-se como texto e não há

@@ -9,6 +9,7 @@ export const metadata = { title: "Emails — Meu CRM" };
 
 const TIPOS = {
   tarefas: "Resumo de tarefas",
+  tarefa_antes: "Tarefa em breve",
   reuniao_antes: "Reunião em breve",
   reuniao_alterada: "Reunião marcada/mudada",
   teste: "Teste",
@@ -30,7 +31,7 @@ export default async function Emails() {
 
   const { data: conta } = await supabase
     .from("usuarios")
-    .select("email, email_avisos, aviso_tarefas, aviso_reuniao_antes, aviso_reuniao_alterada")
+    .select("email, email_avisos, aviso_tarefas, aviso_tarefa_antes, aviso_reuniao_antes, aviso_reuniao_alterada")
     .eq("id", eu.id)
     .single();
 

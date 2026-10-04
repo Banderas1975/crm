@@ -29,7 +29,7 @@ export default function TarefaItem({ tarefa, mostrarContato = false }) {
       <Link href={`/contatos/${tarefa.contato_id}`}>{tarefa.contatos.nome}</Link>
     );
   }
-  if (tarefa.dia) detalhes.push(tarefa.dia);
+  if (tarefa.dia) detalhes.push(tarefa.hora ? `${tarefa.dia}, ${tarefa.hora}` : tarefa.dia);
   if (tarefa.repete) detalhes.push("repete");
 
   return (
