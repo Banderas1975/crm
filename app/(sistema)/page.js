@@ -3,11 +3,22 @@ import { supabase } from "../../lib/supabase";
 import { exigirSessao } from "../acesso";
 import { ETAPAS, CORES_ETAPA } from "../etapas";
 import { haQuantoTempo } from "../tempo";
+import RelatoriosPainel from "../relatorios-painel";
+import { lerFiltros, carregarDados, calcular } from "../relatorios";
 
 export const dynamic = "force-dynamic";
 
-export default async function Dashboard() {
+export default async function Dashboard({ searchParams }) {
   const eu = await exigirSessao();
+  const filtros = lerFiltros(await searchParams);
+
+  // Os relatórios fazem as contas com todos os dados de quem pede.
+  let relatorios = null;
+  try {
+    relatorios = calcular(await carregarDados(eu.id), filtros);
+  } catch (erro) {
+    console.error("Falha nos relatórios:", erro.message);
+  }
 
   // Uma busca só serve os três blocos: os números, o gráfico e os recentes.
   const { data: contatos, error } = await supabase
@@ -115,6 +126,12 @@ export default async function Dashboard() {
           </ul>
         )}
       </section>
+
+      {relatorios ? (
+        <RelatoriosPainel r={relatorios} filtros={filtros} />
+      ) : (
+        <p className="erro">Não foi possível carregar os relatórios.</p>
+      )}
     </>
   );
 }

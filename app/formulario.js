@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { salvarContato } from "./actions";
 import { INDICATIVOS } from "./indicativos";
 import { LIMITES } from "../lib/validacao";
+import { ORIGENS } from "./etapas";
 
 // País pré-selecionado no seletor de indicativo.
 const PADRAO = "+351";
@@ -73,6 +74,18 @@ export default function Formulario({ aoSalvar }) {
             }
           />
         </div>
+      </div>
+
+      <div className="campo">
+        <label htmlFor="origem-novo">Origem</label>
+        <select id="origem-novo" name="origem" defaultValue="">
+          <option value="">Sem origem</option>
+          {ORIGENS.map((o) => (
+            <option key={o} value={o}>
+              {o}
+            </option>
+          ))}
+        </select>
       </div>
 
       {estado.erro && (

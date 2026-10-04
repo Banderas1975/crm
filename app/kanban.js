@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useOptimistic, useState, useTransition } from "react";
 import { mudarEtapa } from "./actions";
 import { ETAPAS, CORES_ETAPA } from "./etapas";
+import { usarMotivoPerda } from "./motivo-perda";
 
 export default function Kanban({ contatos }) {
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function Kanban({ contatos }) {
   // Coluna por cima da qual o cartão está a passar, só para dar retorno visual.
   const [alvo, setAlvo] = useState(null);
   const [, comecar] = useTransition();
+  const [pedirMotivo, janelaMotivo] = usarMotivoPerda();
 
   // O cartão muda de coluna já, sem esperar o servidor. Se a gravação falhar,
   // o React devolve a lista ao que o servidor diz — o cartão volta sozinho.
@@ -19,14 +21,18 @@ export default function Kanban({ contatos }) {
     atual.map((contato) => (contato.id === id ? { ...contato, etapa } : contato))
   );
 
-  function mover(id, etapa) {
+  async function mover(id, etapa) {
     const contato = lista.find((c) => c.id === id);
     if (!contato || contato.etapa === etapa) return;
+
+    // Perder pede sempre o motivo. Cancelar deixa o cartão onde estava.
+    const motivo = etapa === "perdido" ? await pedirMotivo(contato.nome) : null;
+    if (etapa === "perdido" && !motivo) return;
 
     setErro("");
     comecar(async () => {
       aplicarJa({ id, etapa });
-      const { ok } = await mudarEtapa(id, etapa);
+      const { ok } = await mudarEtapa(id, etapa, motivo);
       if (!ok) setErro("Não foi possível mudar a etapa. O cartão voltou para onde estava.");
     });
   }
@@ -44,6 +50,8 @@ export default function Kanban({ contatos }) {
           {erro}
         </p>
       )}
+
+      {janelaMotivo}
 
       <div className="kanban">
         {ETAPAS.map((etapa) => (

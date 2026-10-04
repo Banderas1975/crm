@@ -8,7 +8,7 @@ Um CRM simples para organizar contatos e oportunidades de negócio em um só lug
 
 - [x] Cadastro e listagem de contatos
 - [x] Telefone com indicativo de país — seletor com todos os países, número guardado no formato internacional (`+351 912345678`); Portugal exige exatamente 9 dígitos, os outros países aceitam de 4 a 15 no total
-- [x] Funil com etapas: novo, em contato, proposta, cliente
+- [x] Funil com etapas: novo, em contato, proposta, cliente (e "perdido", desde a v8)
 - [x] Anotações por contato
 - [x] Login de administrador
 - [x] Follow-up gerado por IA
@@ -235,9 +235,45 @@ Na área Contatos, no cartão "Todos os contatos", escolhe-se o lote e carrega-s
 - [ ] Com mais de 500 contatos, o Lote 2 traz os seguintes, sem repetir nenhum
 - [ ] Com outra conta, a exportação só traz os contatos dessa conta
 
+## Versão 8
+
+### 1. Relatórios no Dashboard — CONCLUÍDO
+
+Cinco relatórios fixos, por baixo do painel do Dashboard, com **dois filtros comuns**: **período** (de/até, por omissão do início do ano até hoje) e **origem**. Cada relatório tem **Exportar .xlsx**, com os mesmos filtros, valores como números (para somar no Excel) e uma folha final com os filtros usados.
+
+O filtro **responsável** não existe: desde a v6 cada utilizador só vê o que é seu, admin incluído, e por isso só haveria uma opção. Foi decidido manter essa privacidade.
+
+1. **Funil de conversão** — dos contatos que entraram no período: quantos chegaram a cada etapa (estar numa etapa mais à frente conta como ter passado pelas anteriores), o valor, a taxa de passagem à etapa seguinte e o tempo médio em cada etapa (só estadias já terminadas).
+2. **Receita vs meta** — por mês: receita dos negócios ganhos, meta, % atingido. No mês corrente: ritmo (€/dia), projeção para o fim do mês e quanto falta por dia. Por cliente: cada negócio ganho, com data, origem e valor. As metas escrevem-se ali mesmo, uma por mês (gravar o mesmo mês substitui).
+3. **Pipeline aberto** — fotografia de agora: negócios em novo, em contato e proposta, por etapa, com valor e valor ponderado pela probabilidade (novo 10%, em contato 25%, proposta 50%), e a lista por data de fecho prevista (as que já passaram ficam assinaladas). Não usa o período — os fechos previstos são no futuro.
+4. **Motivos de perda** — negócios perdidos no período, por motivo, com parte e valor perdido.
+5. **Origem → receita** — por canal: leads que entraram no período, quantos já são clientes, conversão, negócios ganhos, receita e ticket médio.
+
+**Valor de um negócio:** o da proposta com que foi ganho; se ainda não foi ganho, o da proposta mais recente; sem proposta, zero.
+
+**O que mudou nos dados** (`sql/relatorios.sql`, a correr depois do `donos.sql`):
+
+- **Etapa "perdido"**, a 5.ª do funil, com o vermelho que já existia no design. Marcar como perdido — no Funil ou na página do contato — abre uma janela que **obriga a escolher o motivo** de uma **lista fechada**: Preço, Escolheu concorrente, Sem orçamento, Sem resposta, Adiado, Não era o perfil, Outro. O banco recusa perdido sem motivo e motivos fora da lista. Texto livre daria "preço", "Preco" e "caro demais" como três motivos diferentes, e nada somava.
+- **Origem** do contato, também de lista fechada: Site, Indicação, LinkedIn, Redes sociais, Evento, Prospeção ativa, Outro. Escolhe-se ao criar o contato e muda-se na ficha. Os contatos antigos ficam "Sem origem".
+- **Fecho previsto** do negócio, na ficha do contato.
+- **Histórico de etapas**, **data de ganho** e **data de perda** gravados pelo próprio banco (trigger) a cada mudança de etapa, venha ela de onde vier. O histórico começa na v8: o tempo que os contatos antigos já estavam na etapa atual não ficou registado, e os clientes ganhos antes da v8 não têm data de ganho (o relatório diz quantos são).
+- **Metas** mensais, por utilizador.
+
+O Funil passou a ter cinco colunas, mais estreitas, para caberem num ecrã normal sem rolar.
+
+**PRONTO QUANDO**
+
+- [ ] No Dashboard vejo os cinco relatórios por baixo do painel, com os filtros de período e origem por cima
+- [ ] Mudo o período ou a origem, carrego em Aplicar, e os cinco relatórios mudam juntos
+- [ ] Arrasto um contato para "perdido" no Funil e tenho de escolher o motivo; se cancelar, ele fica onde estava
+- [ ] Gravo uma meta para este mês e o relatório de receita mostra a meta, o % atingido, o ritmo e a projeção
+- [ ] Ponho origem e fecho previsto num contato e ele aparece no pipeline e no relatório de origem
+- [ ] Exporto cada relatório e o Excel abre o ficheiro com os mesmos números do ecrã
+- [ ] Com outra conta, os relatórios mostram só os números dessa conta
+
 ### O que fica para depois
 
-- Permissões avançadas: partilhar contatos entre utilizadores, metas por usuário
+- Permissões avançadas: partilhar contatos entre utilizadores; relatórios da equipa por responsável
 - Automações e lembretes agendados (email, WhatsApp)
 - Integrações com outros sistemas
 - Aplicativo de celular
@@ -248,10 +284,10 @@ Na área Contatos, no cartão "Todos os contatos", escolhe-se o lote e carrega-s
 - Importação de contatos (CSV, planilha, contatos do celular). A exportação para .xlsx entrou na v7.
 - Envio de e-mail ou WhatsApp pelo sistema
 - Integrações com outras ferramentas
-- Campos personalizados e etapas de funil configuráveis
-- Histórico de alterações e auditoria
+- Campos personalizados e etapas de funil configuráveis (a v8 acrescentou campos e a etapa "perdido", fixos)
+- Histórico de alterações e auditoria (só as mudanças de etapa ficam registadas, desde a v8)
 - Aplicativo para celular (a web responsiva resolve)
-- Relatórios avançados, metas e comissões
+- Comissões e relatórios configuráveis (os cinco relatórios fixos e as metas mensais entraram na v8)
 - Cobrança, planos e assinaturas
 - Lembretes automáticos (as tarefas entraram na v3 e o calendário com reuniões na v5; lembretes continuam fora — o CRM não envia convites nem avisos de reunião)
 - Anexos e arquivos por contato, além das propostas (que entraram na v4)

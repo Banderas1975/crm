@@ -42,6 +42,7 @@ de etapa, em nenhum outro lugar:
 | em contato | `#F5A524` |
 | proposta | `#A78BFA` |
 | cliente | `#34D399` |
+| perdido | `#F87171` (o mesmo vermelho de erro: não é uma cor nova) |
 
 ### Erro
 
@@ -113,7 +114,7 @@ com a mesma identidade (mesmas cores, mesmas formas, mesma tipografia).
 
 | Área | Caminho | O que mostra |
 | --- | --- | --- |
-| Dashboard | `/` | O painel com os números do funil |
+| Dashboard | `/` | O painel com os números do funil e, por baixo, os cinco relatórios |
 | Funil | `/funil` | A lista de contatos: etapa, anotações e follow-up |
 | Calendário | `/calendario` | Tarefas e reuniões por mês, semana ou dia, arrastáveis |
 | Contatos | `/contatos` | O cadastro de um contato novo |
@@ -126,6 +127,16 @@ com a mesma identidade (mesmas cores, mesmas formas, mesma tipografia).
 - Horas e números de dia em JetBrains Mono.
 - O dia de hoje com o número na cor de destaque.
 - Em telas estreitas o calendário rola para o lado **por dentro da sua caixa**; a página não.
+
+### Relatórios
+
+- Filtros numa linha, por cima dos relatórios; cada relatório num cartão, com o
+  botão **Exportar .xlsx** no canto.
+- Gráficos de barras finas, em HTML e CSS, sem biblioteca. Etapas na cor da etapa;
+  tudo o resto no azul de destaque. A meta é um traço fino sobre a barra da receita.
+- O número vai sempre em texto ao lado da barra, em JetBrains Mono: a cor nunca é
+  a única forma de ler um valor.
+- Tabelas rolam para o lado por dentro do cartão; a página não.
 
 ## Proibido
 

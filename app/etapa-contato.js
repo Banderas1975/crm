@@ -3,26 +3,33 @@
 import { useOptimistic, useState, useTransition } from "react";
 import { mudarEtapa } from "./actions";
 import { ETAPAS, CORES_ETAPA } from "./etapas";
+import { usarMotivoPerda } from "./motivo-perda";
 
 // Trocar a etapa aqui grava já e, pelo revalidate da action,
 // o Kanban e o Dashboard passam a mostrar a etapa nova.
-export default function EtapaContato({ contatoId, etapa }) {
+export default function EtapaContato({ contatoId, nome, etapa }) {
   const [erro, setErro] = useState("");
   const [, comecar] = useTransition();
   const [atual, aplicarJa] = useOptimistic(etapa);
+  const [pedirMotivo, janelaMotivo] = usarMotivoPerda();
 
-  function mudar(nova) {
+  async function mudar(nova) {
     if (nova === atual) return;
+    // Perder pede sempre o motivo. Cancelar deixa a etapa como estava.
+    const motivo = nova === "perdido" ? await pedirMotivo(nome) : null;
+    if (nova === "perdido" && !motivo) return;
+
     setErro("");
     comecar(async () => {
       aplicarJa(nova);
-      const { ok } = await mudarEtapa(contatoId, nova);
+      const { ok } = await mudarEtapa(contatoId, nova, motivo);
       if (!ok) setErro("Não foi possível mudar a etapa.");
     });
   }
 
   return (
     <>
+      {janelaMotivo}
       <select
         className="seletor-etapa"
         aria-label="Etapa do funil"
