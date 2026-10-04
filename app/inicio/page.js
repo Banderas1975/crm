@@ -198,8 +198,8 @@ export default function Inicio() {
               <span>Preencha o formulário no fim desta página.</span>
             </li>
             <li>
-              <strong>Adicione os seus contactos</strong>
-              <span>E arraste cada um pelas etapas do funil.</span>
+              <strong>Preencha o formulário abaixo</strong>
+              <span>Rapidamente lhe damos acesso ao software</span>
             </li>
             <li>
               <strong>Feche mais negócios</strong>
