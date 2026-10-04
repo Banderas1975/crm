@@ -58,7 +58,7 @@
 .lp-nav a { color: var(--texto-apoio); text-decoration: none; font-weight: 600; font-size: 15px; }
 .lp-nav a:hover { color: var(--texto); }
 
-.lp-topo-acoes { display: flex; align-items: center; gap: 16px; }
+.lp-topo-acoes { display: flex; align-items: center; gap: 16px; margin-left: auto; }
 .lp-entrar { font-weight: 700; text-decoration: none; }
 .lp-entrar:hover { text-decoration: underline; }
 .lp-botao-topo { padding: 9px 16px; font-size: 15px; }
@@ -219,8 +219,10 @@
   border-radius: 6px;
 }
 
-.lp-preco-valor { margin: 0 0 24px; font-size: 48px; font-weight: 800; letter-spacing: -0.02em; }
+.lp-preco-valor { margin: 0 0 4px; font-size: 48px; font-weight: 800; letter-spacing: -0.02em; }
 .lp-preco-valor span { font-size: 16px; font-weight: 600; color: var(--texto-apoio); letter-spacing: 0; }
+
+.lp-preco-iva { margin: 0 0 24px; font-size: 14px; color: var(--texto-apoio); }
 
 .lp-preco ul { margin: 0 0 28px; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
 .lp-preco li { padding-left: 28px; position: relative; }
@@ -282,7 +284,20 @@
 /* ---- rodapé ---- */
 
 .lp-rodape { border-top: 1px solid var(--borda); }
-.lp-rodape-linha { display: flex; justify-content: space-between; padding-top: 28px; padding-bottom: 28px; font-size: 14px; color: var(--texto-apoio); }
+.lp-rodape-links { display: flex; gap: 20px; flex-wrap: wrap; }
+
+.lp-obrigatorio { color: var(--destaque); }
+.lp-legenda { margin: 0 0 20px; font-size: 13px; color: var(--texto-apoio); }
+
+/* página da política de privacidade */
+.lp-texto { padding-top: 56px; padding-bottom: 72px; }
+.lp-texto h1 { font-size: clamp(32px, 4vw, 44px); }
+.lp-texto h2 { margin: 40px 0 12px; font-size: 22px; }
+.lp-texto p, .lp-texto li { color: var(--texto-apoio); }
+.lp-texto ul { padding-left: 20px; }
+.lp-texto strong { color: var(--texto); }
+
+.lp-rodape-linha { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 28px; padding-bottom: 28px; font-size: 14px; color: var(--texto-apoio); }
 
 /* ---- telas estreitas ---- */
 
@@ -290,7 +305,6 @@
   .lp-heroi { grid-template-columns: 1fr; padding-top: 56px; padding-bottom: 56px; gap: 40px; }
   .lp-grelha-3, .lp-passos { grid-template-columns: 1fr; }
   .lp-nav { display: none; }
-  .lp-topo-acoes { margin-left: auto; }
 }
 
 @media (max-width: 560px) {
