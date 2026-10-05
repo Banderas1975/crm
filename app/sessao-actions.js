@@ -10,6 +10,7 @@ import { exigirAdmin } from "./acesso";
 import { envioConfigurado } from "../lib/email";
 import { enviarUmaVez, emailRegisto, emailAprovado } from "./avisos";
 import { LIMITES, emailValido, idValido, montarTelefone } from "../lib/validacao";
+import { ipDoPedido, bloqueado, contar, limpar } from "../lib/limites";
 
 const SENHA_MINIMA = 8;
 
@@ -17,10 +18,16 @@ const SENHA_MINIMA = 8;
 // trava um robô a criar centenas de contas (e a mandar centenas de avisos).
 const MAX_REGISTOS_HORA = 10;
 
-// Travão contra quem tenta adivinhar senhas: 5 falhas seguidas bloqueiam
-// esse email durante 15 minutos. Conta-se por email, exista a conta ou não,
-// para o bloqueio não revelar que emails têm conta.
+// Travão contra quem tenta adivinhar senhas, em duas partes:
+// - 5 falhas com o mesmo email, a partir da mesma ligação (IP), bloqueiam esse
+//   par durante 15 minutos. Quem erra de propósito a senha do administrador só
+//   se bloqueia a si próprio: o administrador, noutra ligação, continua a entrar.
+// - 20 falhas a partir da mesma ligação, em quaisquer emails, bloqueiam essa
+//   ligação durante 15 minutos: trava quem experimenta muitos emails.
+// Sem IP conhecido (nginx sem X-Real-IP), conta-se só por email, como antes.
+// Conta-se exista a conta ou não, para o bloqueio não revelar que emails têm conta.
 const MAX_FALHAS = 5;
+const MAX_FALHAS_IP = 20;
 const BLOQUEIO_MS = 15 * 60 * 1000;
 
 // Um hash que não abre conta nenhuma. Conferir a senha contra ele quando o
@@ -38,14 +45,12 @@ export async function entrar(dados) {
     redirect("/login?erro=invalido");
   }
 
-  const { data: tentativa } = await supabase
-    .from("tentativas_login")
-    .select("falhas, bloqueado_ate")
-    .eq("email", email)
-    .maybeSingle();
+  const ip = await ipDoPedido();
+  const chaveEmail = ip ? `login:${email}|${ip}` : `login:${email}`;
+  const chaveIp = ip && `login-ip:${ip}`;
 
   // Bloqueado: nem se confere a senha, mesmo que agora viesse certa.
-  if (tentativa?.bloqueado_ate && new Date(tentativa.bloqueado_ate) > new Date()) {
+  if ((await bloqueado(chaveEmail)) || (chaveIp && (await bloqueado(chaveIp)))) {
     redirect("/login?erro=bloqueado");
   }
 
@@ -59,18 +64,13 @@ export async function entrar(dados) {
 
   // Uma mensagem só: não dizemos se falhou o email ou a senha.
   if (!utilizador || !certa) {
-    const falhas = (tentativa?.falhas ?? 0) + 1;
-    const bloqueia = falhas >= MAX_FALHAS;
-    await supabase.from("tentativas_login").upsert({
-      email,
-      falhas: bloqueia ? 0 : falhas,
-      bloqueado_ate: bloqueia ? new Date(Date.now() + BLOQUEIO_MS).toISOString() : null,
-    });
-    redirect(bloqueia ? "/login?erro=bloqueado" : "/login?erro=invalido");
+    const porEmail = await contar(chaveEmail, MAX_FALHAS, BLOQUEIO_MS, BLOQUEIO_MS);
+    const porIp = chaveIp ? await contar(chaveIp, MAX_FALHAS_IP, BLOQUEIO_MS, BLOQUEIO_MS) : false;
+    redirect(porEmail || porIp ? "/login?erro=bloqueado" : "/login?erro=invalido");
   }
 
-  // Senha certa: a contagem recomeça do zero.
-  if (tentativa) await supabase.from("tentativas_login").delete().eq("email", email);
+  // Senha certa: a contagem deste email recomeça do zero.
+  await limpar(chaveEmail);
 
   if (utilizador.estado !== "aprovado") redirect("/login?erro=pendente");
 

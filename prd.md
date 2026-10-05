@@ -158,7 +158,7 @@ As mudanças de banco estão em `sql/reunioes.sql`: tabelas `reunioes`, `reuniao
 ### 2. Segurança — CONCLUÍDO
 
 - **Cabeçalhos de segurança em todas as páginas.** A CSP (Content Security Policy) só deixa correr os scripts do próprio CRM que tragam o código (nonce) daquele pedido: um script escondido num nome de contato ou numa anotação não corre. Há também anti-moldura (`X-Frame-Options: DENY` e `frame-ancestors 'none'`), HSTS (só HTTPS), `nosniff`, `Referrer-Policy`, e câmara, microfone e localização desligados. O Next deixa de anunciar que é Next (`X-Powered-By`).
-- **Travão no login.** 5 senhas erradas seguidas para o mesmo email bloqueiam esse email durante 15 minutos. Enquanto está bloqueado, nem a senha certa entra. Conta por email, exista a conta ou não, para o bloqueio não revelar que emails estão registados. A senha certa recomeça a contagem.
+- **Travão no login.** 5 senhas erradas seguidas para o mesmo email bloqueiam esse email durante 15 minutos. Enquanto está bloqueado, nem a senha certa entra. Conta por email, exista a conta ou não, para o bloqueio não revelar que emails estão registados. A senha certa recomeça a contagem. (Desde a v16 conta por email **e ligação**, mais um limite por ligação: ver a v16.)
 
 **PRONTO QUANDO**
 
@@ -421,7 +421,7 @@ A página segue o funil de conversão, de cima para baixo:
 
 Cores e logótipo da First Media (ver `design.md`, "Landing page").
 
-**Formulário:** nome, email, telefone (obrigatório desde a v14.2), empresa (opcional desde a v14.2), número de utilizadores, mensagem (opcional) e a caixa obrigatória de consentimento (RGPD). Cada pedido fica guardado na tabela `leads` e sai um email de aviso de crm@firstmedia.pt para cada administrador (para o email de avisos, se tiver um). Contra abusos: um campo escondido que só robôs preenchem, e no máximo 10 pedidos por dia do mesmo email (eram 3 até à v16). Passado o limite, o formulário diz que já recebemos vários pedidos com aquele email hoje, em vez de fingir que enviou.
+**Formulário:** nome, email, telefone (obrigatório desde a v14.2), empresa (opcional desde a v14.2), número de utilizadores, mensagem (opcional) e a caixa obrigatória de consentimento (RGPD). Cada pedido fica guardado na tabela `leads` e sai um email de aviso de crm@firstmedia.pt para cada administrador (para o email de avisos, se tiver um). Contra abusos: um campo escondido que só robôs preenchem, e no máximo 10 pedidos por dia do mesmo email (eram 3 até à v16). Desde a v16, também no máximo 20 pedidos por dia a partir da mesma ligação (IP), com quaisquer emails. Passado o limite, o formulário diz que já recebemos vários pedidos com aquele email hoje, em vez de fingir que enviou.
 
 Mudanças de banco em `sql/leads.sql`.
 
@@ -485,6 +485,8 @@ Quando o registo fica concluído (conta criada), a página de registo mostra o p
 O campo da senha do registo tem o botão "Mostrar"/"Ocultar", igual ao do login, para ver o que se escreveu.
 
 Contra abusos no registo: um campo escondido que só robôs preenchem (o robô vê o pop-up de sucesso, mas nada é gravado) e no máximo 10 contas novas por hora, de toda a gente junta; passado o limite, o formulário pede para tentar daqui a uma hora e não sai aviso ao administrador. A política de privacidade passou a dizer que da conta se guardam também o nome e o telefone.
+
+**Limites por ligação (IP).** O travão do login deixou de deixar que qualquer pessoa bloqueie o administrador: 5 senhas erradas bloqueiam durante 15 minutos só aquele email **naquela ligação**, e o administrador, noutra ligação, continua a entrar. Além disso, 20 senhas erradas a partir da mesma ligação, em quaisquer emails, bloqueiam essa ligação durante 15 minutos. No formulário da landing page, a mesma ligação envia no máximo 20 pedidos por dia, com quaisquer emails. O IP nunca fica guardado: só um hash dele, na tabela `limites` (`sql/limites.sql`). O IP vem do cabeçalho `X-Real-IP` que o nginx da VPS põe (`proxy_set_header X-Real-IP $remote_addr;`); sem ele, os limites por ligação ficam desligados e o login volta a contar só por email.
 
 No canto superior esquerdo do login e do registo há um "← Voltar": no login leva à página inicial, no registo leva ao login.
 

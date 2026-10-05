@@ -10,7 +10,7 @@ export const metadata = { title: "Entrar — First Media CRM" };
 const ERROS = {
   invalido: "Usuário ou senha inválidos.",
   pendente: "A sua conta ainda está por aprovar pelo administrador.",
-  bloqueado: "Demasiadas tentativas erradas. Por segurança, este email fica bloqueado durante 15 minutos.",
+  bloqueado: "Demasiadas tentativas erradas. Por segurança, o acesso fica bloqueado durante 15 minutos.",
 };
 
 export default async function Login({ searchParams }) {
