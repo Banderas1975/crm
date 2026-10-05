@@ -3,6 +3,7 @@ import { registar } from "../sessao-actions";
 import { LIMITES } from "../../lib/validacao";
 import { INDICATIVOS } from "../indicativos";
 import PopupRegisto from "../popup-registo";
+import CampoSenha from "../campo-senha";
 
 export const metadata = { title: "Criar conta — First Media CRM" };
 
@@ -64,15 +65,7 @@ export default async function Registo({ searchParams }) {
 
           <div className="campo">
             <label htmlFor="senha">Senha</label>
-            <input
-              id="senha"
-              name="senha"
-              type="password"
-              required
-              minLength={8}
-              maxLength={LIMITES.senha}
-              autoComplete="new-password"
-            />
+            <CampoSenha id="senha" name="senha" minLength={8} maxLength={LIMITES.senha} autoComplete="new-password" />
             <p className="ajuda">Pelo menos 8 caracteres.</p>
           </div>
 
