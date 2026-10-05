@@ -79,7 +79,7 @@ const PERGUNTAS = [
   },
   {
     p: "Como é calculado o preço?",
-    r: "29,99 € por mês por cada utilizador, com IVA incluído. Uma equipa de 3 pessoas paga 3 × 29,99 € por mês.",
+    r: "29,99 € por mês por cada utilizador, com IVA incluído. Uma equipa de 3 pessoas paga 3 × 29,99 € por mês. Também pode pagar por ano: 287 € por utilizador, com IVA incluído e 20% de desconto face ao mensal.",
   },
   {
     p: "Os meus colegas veem os meus contactos?",
