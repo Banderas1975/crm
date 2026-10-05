@@ -16,6 +16,7 @@ const TIPOS = {
   recuperar: "Recuperar password",
   lead: "Lead novo",
   registo: "Conta nova",
+  aprovado: "Conta ativada",
 };
 
 // Curto, para a tabela caber: "04/10, 05:30".

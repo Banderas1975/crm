@@ -343,6 +343,15 @@ export function emailRegisto(conta) {
   });
 }
 
+// Para quem acabou de ser aprovado pelo administrador.
+export function emailAprovado() {
+  return montar({
+    titulo: "Conta ativada",
+    linhas: ["Obrigado, a sua conta do First Media CRM foi ativada, desfrute!"],
+    caminho: "/login",
+  });
+}
+
 export function emailDeTeste() {
   return montar({
     titulo: "Email de teste do CRM",
