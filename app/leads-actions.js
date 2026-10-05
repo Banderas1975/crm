@@ -5,7 +5,7 @@ import { envioConfigurado } from "../lib/email";
 import { enviarUmaVez, emailLead } from "./avisos";
 import { LIMITES, emailValido } from "../lib/validacao";
 
-const MAX_POR_DIA = 3; // pedidos do mesmo email em 24 horas
+const MAX_POR_DIA = 10; // pedidos do mesmo email em 24 horas
 
 const texto = (dados, campo, max) => {
   const valor = (dados.get(campo) ?? "").toString().trim();
@@ -51,7 +51,7 @@ export async function pedirExperiencia(estadoAnterior, dados) {
 
   const enviado = { erro: "", enviado: true };
 
-  // O mesmo email no máximo 3 vezes por dia: chega para enganos, trava abusos.
+  // O mesmo email no máximo 10 vezes por dia: chega para enganos e testes, trava abusos.
   const { count } = await supabase
     .from("leads")
     .select("id", { count: "exact", head: true })
