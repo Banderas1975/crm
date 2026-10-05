@@ -482,7 +482,9 @@ Cada conta nova envia um email de aviso de crm@firstmedia.pt a cada administrado
 
 Quando o registo fica concluído (conta criada), a página de registo mostra o pop-up "Entraremos em contacto muito brevemente", nas cores da landing page (exceção registada no `design.md`). Só aparece depois de a conta ficar gravada: com um erro no formulário, não aparece. Ao fechar ("Fechar", X ou Esc), segue para o login.
 
-Mudanças de banco: `sql/usuarios-nome-telefone.sql` (colunas `usuarios.nome` e `usuarios.telefone`) e `sql/aviso-registo.sql` (o tipo novo no registo de emails).
+Quando o administrador aprova uma conta, sai um email de crm@firstmedia.pt para essa pessoa: "Obrigado, a sua conta do First Media CRM foi ativada, desfrute!", com o link para entrar. Sai uma vez por aprovação; uma conta a quem se tirou o acesso e que volta a ser aprovada recebe-o de novo.
+
+Mudanças de banco: `sql/usuarios-nome-telefone.sql` (colunas `usuarios.nome` e `usuarios.telefone`), `sql/aviso-registo.sql` e `sql/aviso-aprovado.sql` (os tipos novos no registo de emails).
 
 **PRONTO QUANDO**
 
@@ -493,6 +495,7 @@ Mudanças de banco: `sql/usuarios-nome-telefone.sql` (colunas `usuarios.nome` e 
 - [ ] Na área Usuários vejo o nome e o telefone da conta nova por baixo do email
 - [ ] Quando alguém cria conta, recebo no email de administrador o aviso "Conta nova" com o nome, o email e o telefone
 - [ ] Só depois de criar a conta aparece o pop-up "Entraremos em contacto muito brevemente"; ao abrir o registo ou com um erro no formulário, não aparece; ao fechá-lo, vou para o login
+- [ ] Aprovo uma conta e a pessoa recebe o email "Obrigado, a sua conta do First Media CRM foi ativada, desfrute!"
 
 ### O que fica para depois
 

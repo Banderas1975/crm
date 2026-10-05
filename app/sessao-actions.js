@@ -8,7 +8,7 @@ import { criarHash, senhaConfere } from "../lib/senha";
 import { criarSessao, NOME_COOKIE, DURACAO_SEGUNDOS } from "../lib/sessao";
 import { exigirAdmin } from "./acesso";
 import { envioConfigurado } from "../lib/email";
-import { enviarUmaVez, emailRegisto } from "./avisos";
+import { enviarUmaVez, emailRegisto, emailAprovado } from "./avisos";
 import { LIMITES, emailValido, idValido, montarTelefone } from "../lib/validacao";
 
 const SENHA_MINIMA = 8;
@@ -148,7 +148,30 @@ export async function aprovarUtilizador(dados) {
   const id = Number(dados.get("id"));
   if (!idValido(id)) return;
 
-  await supabase.from("usuarios").update({ estado: "aprovado" }).eq("id", id);
+  // Só muda quem estava à espera: dois cliques seguidos não enviam dois emails.
+  const { data: aprovada } = await supabase
+    .from("usuarios")
+    .update({ estado: "aprovado" })
+    .eq("id", id)
+    .eq("estado", "pendente")
+    .select("id, email")
+    .maybeSingle();
+
+  // O email sai em segundo plano: o administrador não fica à espera dele.
+  // A chave leva a hora, para uma conta reaprovada (depois de "Remover acesso") ser avisada outra vez.
+  if (aprovada && envioConfigurado()) {
+    const { texto, html } = emailAprovado();
+    enviarUmaVez({
+      usuarioId: aprovada.id,
+      chave: `aprovado:${aprovada.id}:${Date.now()}`,
+      tipo: "aprovado",
+      para: aprovada.email,
+      assunto: "A sua conta do First Media CRM foi ativada",
+      texto,
+      html,
+    }).catch((e) => console.error("Falha no email de conta ativada:", e.message));
+  }
+
   revalidatePath("/usuarios");
 }
 
