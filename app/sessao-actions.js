@@ -7,7 +7,7 @@ import { supabase } from "../lib/supabase";
 import { criarHash, senhaConfere } from "../lib/senha";
 import { criarSessao, NOME_COOKIE, DURACAO_SEGUNDOS } from "../lib/sessao";
 import { exigirAdmin } from "./acesso";
-import { LIMITES, emailValido, idValido } from "../lib/validacao";
+import { LIMITES, emailValido, idValido, montarTelefone } from "../lib/validacao";
 
 const SENHA_MINIMA = 8;
 
@@ -80,15 +80,22 @@ export async function entrar(dados) {
 }
 
 export async function registar(dados) {
+  const nome = (dados.get("nome") ?? "").trim();
   const email = (dados.get("email") ?? "").trim().toLowerCase();
   const senha = dados.get("senha") ?? "";
 
+  if (!nome || nome.length > LIMITES.nome) redirect("/registo?erro=nome");
+  // Obrigatório: um número vazio também conta como erro.
+  const { telefone } = montarTelefone(dados.get("indicativo"), dados.get("telefone"));
+  if (!telefone) redirect("/registo?erro=telefone");
   if (!emailValido(email) || email.length > LIMITES.email) redirect("/registo?erro=email");
   // O limite máximo também protege o servidor: cifrar uma senha gigante custa tempo de CPU.
   if (senha.length < SENHA_MINIMA || senha.length > LIMITES.senha) redirect("/registo?erro=senha");
 
   const { error } = await supabase.from("usuarios").insert({
+    nome,
     email,
+    telefone,
     senha_hash: await criarHash(senha),
   });
 

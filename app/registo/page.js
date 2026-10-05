@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { registar } from "../sessao-actions";
 import { LIMITES } from "../../lib/validacao";
+import { INDICATIVOS } from "../indicativos";
 
 export const metadata = { title: "Criar conta — First Media CRM" };
 
 const ERROS = {
+  nome: "Escreva o seu nome.",
+  telefone: "Escreva um telefone válido, sem o indicativo. Os portugueses têm 9 dígitos.",
   email: "Escreva um email válido.",
   senha: "A senha tem de ter pelo menos 8 caracteres.",
   repetido: "Já existe uma conta com esse email.",
@@ -24,8 +27,37 @@ export default async function Registo({ searchParams }) {
       <section className="cartao">
         <form action={registar}>
           <div className="campo">
+            <label htmlFor="nome">Nome</label>
+            <input id="nome" name="nome" type="text" required maxLength={LIMITES.nome} autoComplete="name" autoFocus />
+          </div>
+
+          <div className="campo">
             <label htmlFor="email">Email</label>
-            <input id="email" name="email" type="email" required maxLength={LIMITES.email} autoComplete="email" autoFocus />
+            <input id="email" name="email" type="email" required maxLength={LIMITES.email} autoComplete="email" />
+          </div>
+
+          <div className="campo">
+            <label htmlFor="telefone">Telefone</label>
+            <div className="campo-duplo">
+              <select name="indicativo" defaultValue="+351" aria-label="Indicativo do país">
+                {INDICATIVOS.map(({ pais, codigo }) => (
+                  <option key={pais} value={codigo}>
+                    {pais} ({codigo})
+                  </option>
+                ))}
+              </select>
+              <input
+                id="telefone"
+                name="telefone"
+                type="tel"
+                inputMode="tel"
+                required
+                autoComplete="tel-national"
+                placeholder="912345678"
+                pattern="[ ]*([0-9][ ]*){4,15}"
+                title="Escreva só os dígitos do número, sem o indicativo do país."
+              />
+            </div>
           </div>
 
           <div className="campo">
