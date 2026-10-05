@@ -190,6 +190,7 @@ por dentro não muda.
   chega ao contraste mínimo.
 - Mesmas fontes, mesmas formas, mesmo "proibido" de baixo (sem gradientes, sem emojis).
 - Logótipo em `public/logo-first-media.png`, no topo à esquerda.
+- **Pop-up do fim do registo** (aparece no login logo depois de criar conta): também usa estas cores — círculo com o visto em laranja, "muito brevemente" em lilás, botão "Fechar" laranja. É a única peça do CRM, fora da landing page, com as cores do logótipo.
 - **Favicon** (o ícone do separador do browser, em todas as páginas): só o símbolo do logótipo, sem o texto, que a 16 píxeis não se lia. Ficheiros `app/favicon.ico`, `app/icon.png` e `app/apple-icon.png` (ecrã inicial do iPhone).
 
 ## Proibido
@@ -199,6 +200,6 @@ por dentro não muda.
 - Emojis na interface
 - Sombras exageradas
 - Animações chamativas
-- Qualquer cor de marca além do azul elétrico (exceto na landing page, ver acima)
+- Qualquer cor de marca além do azul elétrico (exceto na landing page e no pop-up do fim do registo, ver acima)
 
 Se parecer template de IA, está errado.

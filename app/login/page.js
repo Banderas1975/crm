@@ -2,6 +2,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import BotaoTema from "../botao-tema";
 import CampoSenha from "../campo-senha";
+import PopupRegisto from "../popup-registo";
 import { entrar } from "../sessao-actions";
 import { LIMITES } from "../../lib/validacao";
 
@@ -20,6 +21,7 @@ export default async function Login({ searchParams }) {
 
   return (
     <main className="pagina pagina-login">
+      {registado && <PopupRegisto />}
       <div className="tema-entrada">
         <BotaoTema inicial={tema} />
       </div>
