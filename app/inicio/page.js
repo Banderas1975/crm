@@ -134,22 +134,43 @@ const ESQUEMA = {
       inLanguage: "pt-PT",
       featureList: FUNCIONALIDADES.map((f) => f.titulo),
       publisher: { "@id": `${SITE}/#organizacao` },
-      offers: {
-        "@type": "Offer",
-        url: `${SITE}/#preco`,
-        price: "29.99",
-        priceCurrency: "EUR",
-        availability: "https://schema.org/InStock",
-        description: "14 dias grátis. Depois, 29,99 € por utilizador por mês, IVA incluído.",
-        priceSpecification: {
-          "@type": "UnitPriceSpecification",
+      // Os dois cartões da secção "Preço": mensal e anual.
+      offers: [
+        {
+          "@type": "Offer",
+          name: "Mensal",
+          url: `${SITE}/#preco`,
           price: "29.99",
           priceCurrency: "EUR",
-          valueAddedTaxIncluded: true,
-          unitText: "utilizador por mês",
-          billingDuration: "P1M",
+          availability: "https://schema.org/InStock",
+          description: "14 dias grátis. Depois, 29,99 € por utilizador por mês, IVA incluído.",
+          priceSpecification: {
+            "@type": "UnitPriceSpecification",
+            price: "29.99",
+            priceCurrency: "EUR",
+            valueAddedTaxIncluded: true,
+            unitText: "utilizador por mês",
+            billingDuration: "P1M",
+          },
         },
-      },
+        {
+          "@type": "Offer",
+          name: "Anual",
+          url: `${SITE}/#preco`,
+          price: "287",
+          priceCurrency: "EUR",
+          availability: "https://schema.org/InStock",
+          description: "14 dias grátis. Depois, 287 € por utilizador por ano, IVA incluído: 20% de desconto face ao mensal.",
+          priceSpecification: {
+            "@type": "UnitPriceSpecification",
+            price: "287",
+            priceCurrency: "EUR",
+            valueAddedTaxIncluded: true,
+            unitText: "utilizador por ano",
+            billingDuration: "P1Y",
+          },
+        },
+      ],
     },
     {
       "@type": "FAQPage",
@@ -285,20 +306,37 @@ export default async function Inicio() {
         <section id="preco" className="lp-seccao lp-largura">
           <p className="lp-sobretitulo">Preço</p>
           <h2>Um preço simples, sem surpresas.</h2>
-          <div className="lp-preco">
-            <p className="lp-preco-etiqueta">14 dias grátis</p>
-            <p className="lp-preco-valor">
-              29,99 €<span> / utilizador / mês</span>
-            </p>
-            <p className="lp-preco-iva">IVA incluído</p>
-            <ul>
-              {INCLUIDO.map((i) => (
-                <li key={i}>{i}</li>
-              ))}
-            </ul>
-            <a href="#experimentar" className="botao lp-botao-grande">
-              Experimentar 14 dias grátis
-            </a>
+          <div className="lp-precos">
+            <div className="lp-preco">
+              <p className="lp-preco-etiqueta">14 dias grátis</p>
+              <p className="lp-preco-valor">
+                29,99 €<span> / utilizador / mês</span>
+              </p>
+              <p className="lp-preco-iva">IVA incluído</p>
+              <ul>
+                {INCLUIDO.map((i) => (
+                  <li key={i}>{i}</li>
+                ))}
+              </ul>
+              <a href="#experimentar" className="botao lp-botao-grande">
+                Experimentar 14 dias grátis
+              </a>
+            </div>
+            <div className="lp-preco">
+              <p className="lp-preco-etiqueta">Anual · poupe 20%</p>
+              <p className="lp-preco-valor">
+                287 €<span> / utilizador / ano</span>
+              </p>
+              <p className="lp-preco-iva">IVA incluído · 20% de desconto face ao mensal</p>
+              <ul>
+                {INCLUIDO.map((i) => (
+                  <li key={i}>{i}</li>
+                ))}
+              </ul>
+              <a href="#experimentar" className="botao lp-botao-grande">
+                Experimentar 14 dias grátis
+              </a>
+            </div>
           </div>
         </section>
 

@@ -200,7 +200,11 @@
 
 /* ---- preço ---- */
 
+/* Mensal à esquerda, anual à direita; em ecrãs estreitos ficam um por baixo do outro. */
+.lp-precos { display: flex; flex-wrap: wrap; gap: 24px; }
+
 .lp-preco {
+  flex: 1 1 320px;
   max-width: 440px;
   padding: 36px;
   background: var(--superficie);
