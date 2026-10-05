@@ -1,6 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { enviarAvisos } from "../../avisos";
 import { envioConfigurado } from "../../../lib/email";
+import { limparAntigos } from "../../../lib/limites";
 
 // Chamado pelo cron da VPS a cada 5 minutos. Não há sessão aqui: quem chama
 // prova-se com o segredo CRON_SEGREDO do .env.local, no cabeçalho Authorization.
@@ -15,6 +16,10 @@ function autorizado(pedido) {
 
 export async function POST(pedido) {
   if (!autorizado(pedido)) return new Response("Não autorizado.", { status: 401 });
+
+  // Aproveita a passagem do cron para apagar os contadores antigos contra abusos.
+  // Uma falha aqui não impede os avisos.
+  await limparAntigos().catch((erro) => console.error("Falha a limpar limites:", erro.message));
   if (!envioConfigurado()) return Response.json({ erro: "SMTP por configurar no .env.local" }, { status: 503 });
 
   try {

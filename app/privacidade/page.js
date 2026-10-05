@@ -43,6 +43,10 @@ export default function Privacidade() {
             <strong>Se usar o CRM:</strong> o nome, o telefone e o email da conta, a password (guardada apenas em forma cifrada, que nem nós
             conseguimos ler) e os dados que introduz no CRM, como contactos, tarefas e reuniões.
           </li>
+          <li>
+            <strong>Para proteger o site contra abusos:</strong> nas tentativas de entrar no CRM e nos pedidos do
+            formulário, um código derivado do endereço IP (não o próprio IP), que não permite saber qual era o IP.
+          </li>
         </ul>
 
         <h2>Para que usamos os dados</h2>
@@ -56,7 +60,8 @@ export default function Privacidade() {
         <h2>Durante quanto tempo os guardamos</h2>
         <p>
           Os dados do formulário são guardados até 24 meses depois do último contacto, ou até retirar o seu
-          consentimento, se for antes. Os dados da conta são guardados enquanto a conta estiver ativa.
+          consentimento, se for antes. Os dados da conta são guardados enquanto a conta estiver ativa. O código derivado
+          do endereço IP é apagado automaticamente ao fim de 2 dias, no máximo.
         </p>
 
         <h2>Com quem partilhamos</h2>
