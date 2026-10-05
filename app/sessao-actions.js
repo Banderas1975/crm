@@ -7,6 +7,8 @@ import { supabase } from "../lib/supabase";
 import { criarHash, senhaConfere } from "../lib/senha";
 import { criarSessao, NOME_COOKIE, DURACAO_SEGUNDOS } from "../lib/sessao";
 import { exigirAdmin } from "./acesso";
+import { envioConfigurado } from "../lib/email";
+import { enviarUmaVez, emailRegisto } from "./avisos";
 import { LIMITES, emailValido, idValido, montarTelefone } from "../lib/validacao";
 
 const SENHA_MINIMA = 8;
@@ -92,18 +94,47 @@ export async function registar(dados) {
   // O limite máximo também protege o servidor: cifrar uma senha gigante custa tempo de CPU.
   if (senha.length < SENHA_MINIMA || senha.length > LIMITES.senha) redirect("/registo?erro=senha");
 
-  const { error } = await supabase.from("usuarios").insert({
-    nome,
-    email,
-    telefone,
-    senha_hash: await criarHash(senha),
-  });
+  const { data: nova, error } = await supabase
+    .from("usuarios")
+    .insert({ nome, email, telefone, senha_hash: await criarHash(senha) })
+    .select("id")
+    .single();
 
   // 23505 = email repetido (a coluna é unique).
   if (error?.code === "23505") redirect("/registo?erro=repetido");
   if (error) redirect("/registo?erro=geral");
 
+  // O aviso sai em segundo plano: quem se regista não fica à espera do email.
+  if (envioConfigurado()) {
+    avisarAdministradores(nova.id, { nome, email, telefone }).catch((e) =>
+      console.error("Falha no aviso de conta nova:", e.message),
+    );
+  }
+
   redirect("/login?registado=1");
+}
+
+// Um email para cada administrador (para o email de avisos, se tiver um).
+async function avisarAdministradores(id, conta) {
+  const { data: admins, error } = await supabase
+    .from("usuarios")
+    .select("id, email, email_avisos")
+    .eq("papel", "admin")
+    .eq("estado", "aprovado");
+  if (error) throw new Error(error.message);
+
+  const { texto, html } = emailRegisto(conta);
+  for (const admin of admins) {
+    await enviarUmaVez({
+      usuarioId: admin.id,
+      chave: `registo:${id}:${admin.id}`,
+      tipo: "registo",
+      para: admin.email_avisos || admin.email,
+      assunto: `Conta nova: ${conta.nome}`,
+      texto,
+      html,
+    });
+  }
 }
 
 export async function sair() {

@@ -334,6 +334,15 @@ ${linhas.map((l) => `<p style="margin:0 0 6px">${escapar(l)}</p>`).join("\n")}
   return { texto, html };
 }
 
+// Aviso ao administrador: alguém criou conta e está à espera de aprovação.
+export function emailRegisto(conta) {
+  return montar({
+    titulo: "Conta nova à espera de aprovação",
+    linhas: [`Nome: ${conta.nome}`, `Email: ${conta.email}`, `Telefone: ${conta.telefone}`],
+    caminho: "/usuarios",
+  });
+}
+
 export function emailDeTeste() {
   return montar({
     titulo: "Email de teste do CRM",
