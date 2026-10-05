@@ -417,7 +417,7 @@ A página segue o funil de conversão, de cima para baixo:
 1. **Atenção:** "Nunca mais perca um follow-up", com um funil de exemplo e o botão "Experimentar 14 dias grátis".
 2. **Interesse:** as três dores (contactos espalhados, follow-ups esquecidos, vendas às escuras).
 3. **Desejo:** as funcionalidades que o CRM já tem e os 3 passos para começar.
-4. **Ação:** preço — **29,99 € por utilizador por mês, com 14 dias grátis** —, perguntas frequentes e o formulário.
+4. **Ação:** preço — **29,99 € por utilizador por mês, com 14 dias grátis**, e ao lado, à direita, o cartão anual: **287 € por utilizador por ano**, 20% de desconto face ao mensal —, perguntas frequentes e o formulário.
 
 Cores e logótipo da First Media (ver `design.md`, "Landing page").
 
