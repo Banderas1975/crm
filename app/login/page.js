@@ -20,6 +20,9 @@ export default async function Login({ searchParams }) {
 
   return (
     <main className="pagina pagina-login">
+      <Link href="/" className="voltar-entrada">
+        ← Voltar
+      </Link>
       <div className="tema-entrada">
         <BotaoTema inicial={tema} />
       </div>

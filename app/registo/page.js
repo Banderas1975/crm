@@ -22,6 +22,9 @@ export default async function Registo({ searchParams }) {
   return (
     <main className="pagina pagina-login">
       {concluido && <PopupRegisto />}
+      <Link href="/login" className="voltar-entrada">
+        ← Voltar
+      </Link>
       <header className="cabecalho">
         <h1>Criar conta</h1>
         <p className="apoio">A conta fica à espera de aprovação do administrador.</p>
