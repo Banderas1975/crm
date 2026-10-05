@@ -2,6 +2,7 @@ import Link from "next/link";
 import { registar } from "../sessao-actions";
 import { LIMITES } from "../../lib/validacao";
 import { INDICATIVOS } from "../indicativos";
+import PopupRegisto from "../popup-registo";
 
 export const metadata = { title: "Criar conta — First Media CRM" };
 
@@ -15,10 +16,11 @@ const ERROS = {
 };
 
 export default async function Registo({ searchParams }) {
-  const { erro } = await searchParams;
+  const { erro, concluido } = await searchParams;
 
   return (
     <main className="pagina pagina-login">
+      {concluido && <PopupRegisto />}
       <header className="cabecalho">
         <h1>Criar conta</h1>
         <p className="apoio">A conta fica à espera de aprovação do administrador.</p>

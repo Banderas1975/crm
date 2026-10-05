@@ -480,6 +480,8 @@ Quem cria conta escreve agora **Nome, Email e Telefone**, os três obrigatórios
 
 Cada conta nova envia um email de aviso de crm@firstmedia.pt a cada administrador (para o email de avisos, se tiver um), com o nome, o email e o telefone de quem se registou e o link para a área Usuários. Sai uma vez só por conta, e fica na lista de emails enviados da área Emails como "Conta nova".
 
+Quando o registo fica concluído (conta criada), a página de registo mostra o pop-up "Entraremos em contacto muito brevemente", nas cores da landing page (exceção registada no `design.md`). Só aparece depois de a conta ficar gravada: com um erro no formulário, não aparece. Ao fechar ("Fechar", X ou Esc), segue para o login.
+
 Mudanças de banco: `sql/usuarios-nome-telefone.sql` (colunas `usuarios.nome` e `usuarios.telefone`) e `sql/aviso-registo.sql` (o tipo novo no registo de emails).
 
 **PRONTO QUANDO**
@@ -490,6 +492,7 @@ Mudanças de banco: `sql/usuarios-nome-telefone.sql` (colunas `usuarios.nome` e 
 - [ ] Com tudo certo, a conta fica à espera de aprovação e, no Supabase, a linha em `usuarios` tem o nome e o telefone
 - [ ] Na área Usuários vejo o nome e o telefone da conta nova por baixo do email
 - [ ] Quando alguém cria conta, recebo no email de administrador o aviso "Conta nova" com o nome, o email e o telefone
+- [ ] Só depois de criar a conta aparece o pop-up "Entraremos em contacto muito brevemente"; ao abrir o registo ou com um erro no formulário, não aparece; ao fechá-lo, vou para o login
 
 ### O que fica para depois
 

@@ -111,7 +111,7 @@ export async function registar(dados) {
     );
   }
 
-  redirect("/login?registado=1");
+  redirect("/registo?concluido=1");
 }
 
 // Um email para cada administrador (para o email de avisos, se tiver um).

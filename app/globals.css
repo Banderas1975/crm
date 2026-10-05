@@ -905,6 +905,79 @@ button.tarefa-marca:disabled { cursor: default; }
 
 .janela-topo .titulo-secao { margin: 0; }
 
+/* ---- pop-up do fim do registo ----
+   Cores da landing page, não do tema: é a exceção registada no design.md. */
+
+.popup-registo {
+  position: relative;
+  width: min(560px, calc(100vw - 32px));
+  padding: 56px 32px 40px;
+  text-align: center;
+  color: #EEF0FA;
+  background: #161A30;
+  border: 1px solid #2A3052;
+  border-radius: var(--raio);
+}
+
+.popup-registo::backdrop { background: rgb(0 0 0 / 0.6); }
+
+.popup-registo h2 {
+  margin: 24px auto 32px;
+  max-width: 400px;
+  font-size: clamp(28px, 6vw, 40px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.popup-registo h2 em { font-style: normal; color: #A4ACE9; }
+
+.popup-registo-icone { display: block; margin: 0 auto; }
+
+.popup-registo-icone circle,
+.popup-registo-icone path {
+  fill: none;
+  stroke: #F15A24;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.popup-registo-x {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  padding: 6px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.popup-registo-x path { stroke: #A4ACE9; stroke-width: 2; stroke-linecap: round; }
+.popup-registo-x:hover path { stroke: #EEF0FA; }
+
+.popup-registo-botao {
+  width: min(280px, 100%);
+  padding: 15px 28px;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0E1020;
+  background: #F15A24;
+  border: 0;
+  border-radius: var(--raio);
+  cursor: pointer;
+}
+
+.popup-registo-botao:hover { background: #FF7A4D; }
+
+.popup-registo-x:focus-visible,
+.popup-registo-botao:focus-visible {
+  outline: 2px solid #A4ACE9;
+  outline-offset: 2px;
+}
+
 /* ---- propostas do contato ---- */
 
 .proposta { align-items: center; justify-content: space-between; }
