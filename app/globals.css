@@ -307,6 +307,10 @@ a:hover { color: var(--destaque-hover); }
 .campo-duplo select { flex: 0 0 210px; min-width: 0; }
 .campo-duplo input { flex: 1 1 auto; }
 
+/* Indicativo em cima e número por baixo: no cartão estreito do registo,
+   lado a lado o número ficava cortado. */
+.campo-empilhado { display: grid; gap: 8px; }
+
 .campo input,
 .campo select {
   width: 100%;

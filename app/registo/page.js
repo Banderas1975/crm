@@ -38,7 +38,7 @@ export default async function Registo({ searchParams }) {
 
           <div className="campo">
             <label htmlFor="telefone">Telefone</label>
-            <div className="campo-duplo">
+            <div className="campo-empilhado">
               <select name="indicativo" defaultValue="+351" aria-label="Indicativo do país">
                 {INDICATIVOS.map(({ pais, codigo }) => (
                   <option key={pais} value={codigo}>
