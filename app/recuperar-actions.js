@@ -7,6 +7,7 @@ import { criarHash } from "../lib/senha";
 import { envioConfigurado } from "../lib/email";
 import { enviarUmaVez, emailRecuperacao } from "./avisos";
 import { LIMITES, emailValido } from "../lib/validacao";
+import { limpar, limparComecadas } from "../lib/limites";
 
 const SENHA_MINIMA = 8;
 const VALIDADE_MS = 60 * 60 * 1000; // 1 hora
@@ -113,7 +114,8 @@ export async function definirSenha(estadoAnterior, dados) {
     .update({ usado_em: agora })
     .eq("usuario_id", pedido.usuario_id)
     .is("usado_em", null);
-  await supabase.from("tentativas_login").delete().eq("email", conta.email);
+  await limpar(`login:${conta.email}`);
+  await limparComecadas(`login:${conta.email}|`);
 
   redirect("/login?senha=alterada");
 }

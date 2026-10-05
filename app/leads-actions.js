@@ -4,8 +4,11 @@ import { supabase } from "../lib/supabase";
 import { envioConfigurado } from "../lib/email";
 import { enviarUmaVez, emailLead } from "./avisos";
 import { LIMITES, emailValido } from "../lib/validacao";
+import { ipDoPedido, bloqueado, contar } from "../lib/limites";
 
 const MAX_POR_DIA = 10; // pedidos do mesmo email em 24 horas
+const MAX_POR_IP = 20; // pedidos da mesma ligação (IP) em 24 horas, com quaisquer emails
+const DIA_MS = 24 * 60 * 60 * 1000;
 
 const texto = (dados, campo, max) => {
   const valor = (dados.get(campo) ?? "").toString().trim();
@@ -61,6 +64,13 @@ export async function pedirExperiencia(estadoAnterior, dados) {
     return falha("Já recebemos vários pedidos com este email hoje. Vamos entrar em contacto consigo em breve; pode tentar de novo amanhã.");
   }
 
+  // A mesma ligação no máximo 20 vezes por dia: um robô que troque de email a
+  // cada envio também fica travado. Sem IP conhecido, fica só o limite por email.
+  const ip = await ipDoPedido();
+  if (ip && (await bloqueado(`lead-ip:${ip}`))) {
+    return falha("Recebemos demasiados pedidos a partir desta ligação hoje. Tente de novo amanhã.");
+  }
+
   const lead = { nome, email, telefone, empresa: empresa || null, utilizadores, mensagem: mensagem || null };
   const { data: novo, error } = await supabase
     .from("leads")
@@ -71,6 +81,8 @@ export async function pedirExperiencia(estadoAnterior, dados) {
     console.error("Falha a gravar lead:", error.message);
     return falha("Não foi possível enviar o pedido. Tente de novo daqui a pouco.");
   }
+
+  if (ip) await contar(`lead-ip:${ip}`, MAX_POR_IP, DIA_MS, DIA_MS);
 
   // O aviso sai em segundo plano: quem preenche não fica à espera do email.
   if (envioConfigurado()) avisarAdministradores(novo.id, lead).catch((e) => console.error("Falha no aviso de lead:", e.message));
