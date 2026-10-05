@@ -17,12 +17,24 @@ const FORMATO_DATA = new Intl.DateTimeFormat("pt-PT", {
   timeZone: "Europe/Lisbon",
 });
 
+// Nome e telefone, se existirem. As contas criadas antes da v16 não os têm.
+function Identificacao({ u }) {
+  if (!u.nome && !u.telefone) return null;
+  return (
+    <p className="apoio">
+      {u.nome}
+      {u.nome && u.telefone && " · "}
+      {u.telefone && <span className="mono">{u.telefone}</span>}
+    </p>
+  );
+}
+
 export default async function Usuarios() {
   const admin = await exigirAdmin();
 
   const { data: utilizadores } = await supabase
     .from("usuarios")
-    .select("id, email, papel, estado, criado_em")
+    .select("id, nome, telefone, email, papel, estado, criado_em")
     .order("criado_em", { ascending: false });
 
   const pendentes = utilizadores?.filter((u) => u.estado === "pendente") ?? [];
@@ -50,6 +62,7 @@ export default async function Usuarios() {
                 <div className="contato-topo">
                   <div>
                     <p className="nome mono">{u.email}</p>
+                    <Identificacao u={u} />
                     <p className="apoio">
                       Pediu acesso em{" "}
                       <span className="mono">{FORMATO_DATA.format(new Date(u.criado_em))}</span>
@@ -91,6 +104,7 @@ export default async function Usuarios() {
                     <p className="nome mono">
                       {u.email} {souEu && <span className="apoio">— você</span>}
                     </p>
+                    <Identificacao u={u} />
                     <p className="apoio">
                       Entrou em{" "}
                       <span className="mono">{FORMATO_DATA.format(new Date(u.criado_em))}</span>
