@@ -478,7 +478,9 @@ Mudanças de banco em `sql/smtp-utilizadores.sql`. Precisa de `SMTP_CHAVE` no `.
 
 Quem cria conta escreve agora **Nome, Email e Telefone**, os três obrigatórios, além da senha. O telefone usa o mesmo seletor de indicativo dos contatos e fica no formato internacional (`+351 912345678`); Portugal exige 9 dígitos. As contas que já existiam ficam sem nome e sem telefone. Na área **Usuários**, o administrador vê o nome e o telefone por baixo do email de cada conta, à espera ou com acesso.
 
-Mudança de banco: `sql/usuarios-nome-telefone.sql` (colunas `usuarios.nome` e `usuarios.telefone`).
+Cada conta nova envia um email de aviso de crm@firstmedia.pt a cada administrador (para o email de avisos, se tiver um), com o nome, o email e o telefone de quem se registou e o link para a área Usuários. Sai uma vez só por conta, e fica na lista de emails enviados da área Emails como "Conta nova".
+
+Mudanças de banco: `sql/usuarios-nome-telefone.sql` (colunas `usuarios.nome` e `usuarios.telefone`) e `sql/aviso-registo.sql` (o tipo novo no registo de emails).
 
 **PRONTO QUANDO**
 
@@ -487,6 +489,7 @@ Mudança de banco: `sql/usuarios-nome-telefone.sql` (colunas `usuarios.nome` e `
 - [ ] Com um telefone português de 8 dígitos, aparece o aviso e a conta não é criada
 - [ ] Com tudo certo, a conta fica à espera de aprovação e, no Supabase, a linha em `usuarios` tem o nome e o telefone
 - [ ] Na área Usuários vejo o nome e o telefone da conta nova por baixo do email
+- [ ] Quando alguém cria conta, recebo no email de administrador o aviso "Conta nova" com o nome, o email e o telefone
 
 ### O que fica para depois
 

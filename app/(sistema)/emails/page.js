@@ -15,6 +15,7 @@ const TIPOS = {
   teste: "Teste",
   recuperar: "Recuperar password",
   lead: "Lead novo",
+  registo: "Conta nova",
 };
 
 // Curto, para a tabela caber: "04/10, 05:30".
