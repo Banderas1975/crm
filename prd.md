@@ -488,6 +488,8 @@ Contra abusos no registo: um campo escondido que só robôs preenchem (o robô v
 
 **Limites por ligação (IP).** O travão do login deixou de deixar que qualquer pessoa bloqueie o administrador: 5 senhas erradas bloqueiam durante 15 minutos só aquele email **naquela ligação**, e o administrador, noutra ligação, continua a entrar. Além disso, 20 senhas erradas a partir da mesma ligação, em quaisquer emails, bloqueiam essa ligação durante 15 minutos. No formulário da landing page, a mesma ligação envia no máximo 20 pedidos por dia, com quaisquer emails. O IP nunca fica guardado: só um hash dele, na tabela `limites` (`sql/limites.sql`). O IP vem do cabeçalho `X-Real-IP` que o nginx da VPS põe (`proxy_set_header X-Real-IP $remote_addr;`); sem ele, os limites por ligação ficam desligados e o login volta a contar só por email.
 
+Os contadores da tabela `limites` com mais de 2 dias, e que não estejam bloqueados nesse momento, são apagados automaticamente pelo cron dos avisos (`/emails/enviar`, a cada 5 minutos). A política de privacidade diz que se guarda esse código derivado do IP, e que é apagado ao fim de 2 dias no máximo.
+
 No canto superior esquerdo do login e do registo há um "← Voltar": no login leva à página inicial, no registo leva ao login.
 
 Quando o administrador aprova uma conta, sai um email de crm@firstmedia.pt para essa pessoa: "Obrigado, a sua conta do First Media CRM foi ativada, desfrute!", com o link para entrar. Sai uma vez por aprovação; uma conta a quem se tirou o acesso e que volta a ser aprovada recebe-o de novo.
