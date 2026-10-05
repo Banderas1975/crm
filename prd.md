@@ -421,7 +421,7 @@ A página segue o funil de conversão, de cima para baixo:
 
 Cores e logótipo da First Media (ver `design.md`, "Landing page").
 
-**Formulário:** nome, email, telefone (obrigatório desde a v14.2), empresa (opcional desde a v14.2), número de utilizadores, mensagem (opcional) e a caixa obrigatória de consentimento (RGPD). Cada pedido fica guardado na tabela `leads` e sai um email de aviso de crm@firstmedia.pt para cada administrador (para o email de avisos, se tiver um). Contra abusos: um campo escondido que só robôs preenchem, e no máximo 10 pedidos por dia do mesmo email (eram 3 até à v16).
+**Formulário:** nome, email, telefone (obrigatório desde a v14.2), empresa (opcional desde a v14.2), número de utilizadores, mensagem (opcional) e a caixa obrigatória de consentimento (RGPD). Cada pedido fica guardado na tabela `leads` e sai um email de aviso de crm@firstmedia.pt para cada administrador (para o email de avisos, se tiver um). Contra abusos: um campo escondido que só robôs preenchem, e no máximo 10 pedidos por dia do mesmo email (eram 3 até à v16). Passado o limite, o formulário diz que já recebemos vários pedidos com aquele email hoje, em vez de fingir que enviou.
 
 Mudanças de banco em `sql/leads.sql`.
 

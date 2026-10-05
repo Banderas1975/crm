@@ -57,7 +57,9 @@ export async function pedirExperiencia(estadoAnterior, dados) {
     .select("id", { count: "exact", head: true })
     .eq("email", email)
     .gte("criado_em", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString());
-  if (count >= MAX_POR_DIA) return enviado;
+  if (count >= MAX_POR_DIA) {
+    return falha("Já recebemos vários pedidos com este email hoje. Vamos entrar em contacto consigo em breve; pode tentar de novo amanhã.");
+  }
 
   const lead = { nome, email, telefone, empresa: empresa || null, utilizadores, mensagem: mensagem || null };
   const { data: novo, error } = await supabase
