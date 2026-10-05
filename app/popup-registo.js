@@ -1,22 +1,28 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 
-// Aparece por cima do login logo a seguir ao registo. Usa as cores da landing
-// page (exceção registada no design.md). Janela nativa (<dialog>): fecha no Esc.
+// Aparece na página de registo só depois de a conta ficar criada. Usa as cores
+// da landing page (exceção registada no design.md). Janela nativa (<dialog>):
+// fecha no Esc. Ao fechar, de qualquer forma, segue para o login.
 export default function PopupRegisto() {
   const janela = useRef(null);
+  const router = useRouter();
 
   useEffect(() => {
     janela.current.showModal();
-    // Tira o "?registado=1" do endereço: recarregar a página não volta a abrir o pop-up.
-    window.history.replaceState(null, "", "/login");
   }, []);
 
   const fechar = () => janela.current.close();
 
   return (
-    <dialog className="popup-registo" ref={janela} aria-labelledby="popup-registo-titulo">
+    <dialog
+      className="popup-registo"
+      ref={janela}
+      aria-labelledby="popup-registo-titulo"
+      onClose={() => router.replace("/login?registado=1")}
+    >
       <button className="popup-registo-x" onClick={fechar} aria-label="Fechar">
         <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
           <path d="M5 5l14 14M19 5L5 19" />
