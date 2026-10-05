@@ -335,7 +335,7 @@ Mudanças de banco em `sql/tarefas-hora.sql`: `tarefas.vence_hora`, `usuarios.av
 - **RLS em todas as tabelas.** As tabelas criadas no início (`usuarios`, `contatos`, `anotacoes`, `follow_ups`, `tarefas`) podiam estar sem proteção de linhas: quem tivesse a chave pública do Supabase (a "anon", que não é secreta por natureza) lia e escrevia nelas pela API — incluindo os hashes das senhas. `sql/seguranca.sql` liga o RLS em todas as tabelas, sem políticas: a chave pública deixa de ver ou mexer em qualquer coisa. O CRM não é afetado, porque usa a chave secreta, só no servidor. O SQL pode ser corrido mais de uma vez e termina a listar as tabelas ainda sem RLS (tem de vir vazio).
 - **Next.js 16.3.8.** A versão anterior (16.3.4) tinha uma falha crítica conhecida (execução remota de código em `next/og`, que o CRM não usa). Depois da atualização, `npm audit` não encontra vulnerabilidades.
 
-**Encontrado na revisão e deixado para depois, por decisão:** "Sair" não invalida uma sessão copiada (vale até 12 horas); o registo diz se um email já tem conta e não limita contas à espera; "Gerar follow-up" não tem limite diário; Dashboard e Funil só contam os primeiros 1000 contatos (limite do Supabase por pedido).
+**Encontrado na revisão e deixado para depois, por decisão:** "Sair" não invalida uma sessão copiada (vale até 12 horas); o registo diz se um email já tem conta (o limite de contas à espera entrou na v16); "Gerar follow-up" não tem limite diário; Dashboard e Funil só contam os primeiros 1000 contatos (limite do Supabase por pedido).
 
 **PRONTO QUANDO**
 
@@ -483,6 +483,8 @@ Cada conta nova envia um email de aviso de crm@firstmedia.pt a cada administrado
 Quando o registo fica concluído (conta criada), a página de registo mostra o pop-up "Entraremos em contacto muito brevemente", nas cores da landing page (exceção registada no `design.md`). Só aparece depois de a conta ficar gravada: com um erro no formulário, não aparece. Ao fechar ("Fechar", X ou Esc), segue para o login.
 
 O campo da senha do registo tem o botão "Mostrar"/"Ocultar", igual ao do login, para ver o que se escreveu.
+
+Contra abusos no registo: um campo escondido que só robôs preenchem (o robô vê o pop-up de sucesso, mas nada é gravado) e no máximo 10 contas novas por hora, de toda a gente junta; passado o limite, o formulário pede para tentar daqui a uma hora e não sai aviso ao administrador. A política de privacidade passou a dizer que da conta se guardam também o nome e o telefone.
 
 No canto superior esquerdo do login e do registo há um "← Voltar": no login leva à página inicial, no registo leva ao login.
 
