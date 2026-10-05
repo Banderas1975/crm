@@ -19,29 +19,8 @@ import {
   lerValor,
   DURACOES,
   lerHora,
+  montarTelefone,
 } from "../lib/validacao";
-
-// Junta indicativo + número num telefone só. Devolve { telefone } ou { erro }.
-// Regra E.164: no máximo 15 dígitos somando indicativo e número.
-function montarTelefone(indicativo, numeroCru) {
-  const numero = (numeroCru || "").replace(/\D/g, "");
-  if (!numero) return { telefone: null };
-
-  const codigo = (indicativo || "").replace(/\D/g, "");
-  if (!codigo) return { erro: "Escolha o indicativo do país do telefone." };
-
-  // Portugal: sempre 9 dígitos, sem contar o indicativo.
-  if (codigo === "351" && numero.length !== 9) {
-    return {
-      erro: `Telefone português inválido: tem de ter exatamente 9 dígitos, sem o indicativo (escreveu ${numero.length}).`,
-    };
-  }
-
-  if (numero.length < 4 || codigo.length + numero.length > 15) {
-    return { erro: "Telefone inválido. Escreva só os dígitos do número, sem o indicativo." };
-  }
-  return { telefone: `+${codigo} ${numero}` };
-}
 
 export async function salvarContato(estadoAnterior, dados) {
   const eu = await exigirSessao();

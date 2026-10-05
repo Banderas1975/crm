@@ -472,6 +472,21 @@ Mudanças de banco em `sql/smtp-utilizadores.sql`. Precisa de `SMTP_CHAVE` no `.
 - [ ] Com a password errada, o teste diz "O servidor recusou o utilizador ou a password"
 - [ ] Outro utilizador não vê a minha configuração
 
+## Versão 16
+
+### 1. Nome e telefone no registo — CONCLUÍDO
+
+Quem cria conta escreve agora **Nome, Email e Telefone**, os três obrigatórios, além da senha. O telefone usa o mesmo seletor de indicativo dos contatos e fica no formato internacional (`+351 912345678`); Portugal exige 9 dígitos. As contas que já existiam ficam sem nome e sem telefone.
+
+Mudança de banco: `sql/usuarios-nome-telefone.sql` (colunas `usuarios.nome` e `usuarios.telefone`).
+
+**PRONTO QUANDO**
+
+- [ ] Em "Criar conta" vejo Nome, Email, Telefone (com indicativo) e Senha
+- [ ] Sem nome ou sem telefone, a conta não é criada
+- [ ] Com um telefone português de 8 dígitos, aparece o aviso e a conta não é criada
+- [ ] Com tudo certo, a conta fica à espera de aprovação e, no Supabase, a linha em `usuarios` tem o nome e o telefone
+
 ### O que fica para depois
 
 - Permissões avançadas: partilhar contatos entre utilizadores; relatórios da equipa por responsável
