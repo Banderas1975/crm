@@ -267,6 +267,20 @@ a:hover { color: var(--destaque-hover); }
 /* botão do tema no canto superior direito das telas de entrada */
 .tema-entrada { position: absolute; top: 16px; right: 16px; }
 
+/* "← Voltar" do login (para a página inicial) e do registo (para o login). */
+.voltar-entrada {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 8px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texto-apoio);
+  text-decoration: none;
+}
+
+.voltar-entrada:hover { color: var(--destaque); }
+
 /* ---- blocos ---- */
 
 .cabecalho { margin-bottom: 8px; }
