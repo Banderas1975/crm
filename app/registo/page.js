@@ -13,6 +13,7 @@ const ERROS = {
   email: "Escreva um email válido.",
   senha: "A senha tem de ter pelo menos 8 caracteres.",
   repetido: "Já existe uma conta com esse email.",
+  muitos: "Estamos a receber muitos registos neste momento. Tente de novo daqui a uma hora.",
   geral: "Não foi possível criar a conta. Tente de novo.",
 };
 
@@ -70,6 +71,12 @@ export default async function Registo({ searchParams }) {
             <label htmlFor="senha">Senha</label>
             <CampoSenha id="senha" name="senha" minLength={8} maxLength={LIMITES.senha} autoComplete="new-password" />
             <p className="ajuda">Pelo menos 8 caracteres.</p>
+          </div>
+
+          {/* Escondido de pessoas; só robôs o preenchem. */}
+          <div className="escondido" aria-hidden="true">
+            <label htmlFor="registo-site">Site</label>
+            <input id="registo-site" name="site" tabIndex={-1} autoComplete="off" />
           </div>
 
           {erro && (

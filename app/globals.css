@@ -267,6 +267,9 @@ a:hover { color: var(--destaque-hover); }
 /* botão do tema no canto superior direito das telas de entrada */
 .tema-entrada { position: absolute; top: 16px; right: 16px; }
 
+/* Campo-armadilha para robôs: fora do ecrã, nunca visto por pessoas. */
+.escondido { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
 /* "← Voltar" do login (para a página inicial) e do registo (para o login). */
 .voltar-entrada {
   position: absolute;

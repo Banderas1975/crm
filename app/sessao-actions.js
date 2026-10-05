@@ -13,6 +13,10 @@ import { LIMITES, emailValido, idValido, montarTelefone } from "../lib/validacao
 
 const SENHA_MINIMA = 8;
 
+// Contas novas por hora, de toda a gente junta. Chega para um dia normal e
+// trava um robô a criar centenas de contas (e a mandar centenas de avisos).
+const MAX_REGISTOS_HORA = 10;
+
 // Travão contra quem tenta adivinhar senhas: 5 falhas seguidas bloqueiam
 // esse email durante 15 minutos. Conta-se por email, exista a conta ou não,
 // para o bloqueio não revelar que emails têm conta.
@@ -82,6 +86,9 @@ export async function entrar(dados) {
 }
 
 export async function registar(dados) {
+  // Campo escondido que só um robô preenche. Finge que correu bem e não grava nada.
+  if ((dados.get("site") ?? "") !== "") redirect("/registo?concluido=1");
+
   const nome = (dados.get("nome") ?? "").trim();
   const email = (dados.get("email") ?? "").trim().toLowerCase();
   const senha = dados.get("senha") ?? "";
@@ -93,6 +100,12 @@ export async function registar(dados) {
   if (!emailValido(email) || email.length > LIMITES.email) redirect("/registo?erro=email");
   // O limite máximo também protege o servidor: cifrar uma senha gigante custa tempo de CPU.
   if (senha.length < SENHA_MINIMA || senha.length > LIMITES.senha) redirect("/registo?erro=senha");
+
+  const { count } = await supabase
+    .from("usuarios")
+    .select("id", { count: "exact", head: true })
+    .gte("criado_em", new Date(Date.now() - 60 * 60 * 1000).toISOString());
+  if (count >= MAX_REGISTOS_HORA) redirect("/registo?erro=muitos");
 
   const { data: nova, error } = await supabase
     .from("usuarios")

@@ -40,7 +40,7 @@ export default function Privacidade() {
             mensagem (se escrever alguma) e a data em que deu o consentimento.
           </li>
           <li>
-            <strong>Se usar o CRM:</strong> o email da conta, a password (guardada apenas em forma cifrada, que nem nós
+            <strong>Se usar o CRM:</strong> o nome, o telefone e o email da conta, a password (guardada apenas em forma cifrada, que nem nós
             conseguimos ler) e os dados que introduz no CRM, como contactos, tarefas e reuniões.
           </li>
         </ul>
