@@ -397,7 +397,7 @@ O título e a descrição também vão nas etiquetas de partilha (Open Graph e T
 
 **Para os bots do Google e das IAs:**
 
-- `/robots.txt` — podem ler a landing page e a política de privacidade; o CRM por dentro (login, funil, contactos, etc.) fica fora. Os bots das IAs (GPTBot, ClaudeBot, PerplexityBot, Google-Extended e outros) aparecem pelo nome, como bem-vindos na parte pública.
+- `/robots.txt` — ficheiro fixo em `public/robots.txt` (desde a v16, com o texto dado): todos os bots podem ler tudo (`Allow: /`), e os das IAs (GPTBot, OAI-SearchBot, ClaudeBot, Claude-SearchBot, PerplexityBot, Google-Extended) aparecem pelo nome. O CRM por dentro deixou de estar listado como fora, por decisão: continua protegido pelo login, os bots só veem o ecrã de entrada. O Sitemap aponta para `https://www.firstmediacrm.online/sitemap.xml`.
 - `/sitemap.xml` — a lista das páginas públicas.
 - `/llms.txt` — um resumo do First Media CRM em texto simples, para as IAs: o que é, funcionalidades, preço, perguntas frequentes e contacto. Quando se muda a landing page, convém mudar também este ficheiro (`public/llms.txt`).
 
