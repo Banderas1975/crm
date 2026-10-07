@@ -397,9 +397,9 @@ O título e a descrição também vão nas etiquetas de partilha (Open Graph e T
 
 **Para os bots do Google e das IAs:**
 
-- `/robots.txt` — ficheiro fixo em `public/robots.txt` (desde a v16, com o texto dado): todos os bots podem ler tudo (`Allow: /`), e os das IAs (GPTBot, OAI-SearchBot, ClaudeBot, Claude-SearchBot, PerplexityBot, Google-Extended) aparecem pelo nome. O CRM por dentro deixou de estar listado como fora, por decisão: continua protegido pelo login, os bots só veem o ecrã de entrada. O Sitemap aponta para `https://www.firstmediacrm.online/sitemap.xml`.
+- `/robots.txt` — ficheiro fixo em `public/robots.txt` (desde a v16, com o texto dado): todos os bots podem ler tudo (`Allow: /`), e os das IAs (GPTBot, OAI-SearchBot, ClaudeBot, Claude-SearchBot, PerplexityBot, Google-Extended) aparecem pelo nome. O CRM por dentro deixou de estar listado como fora, por decisão: continua protegido pelo login, os bots só veem o ecrã de entrada. O Sitemap aponta para `https://firstmediacrm.online/sitemap.xml`, o endereço oficial, sem www. Quem abre qualquer página por `www.firstmediacrm.online` é redirecionado (301) para a mesma página sem www (`proxy.js`).
 - `/sitemap.xml` — a lista das páginas públicas.
-- `/llms.txt` — um resumo do First Media CRM em texto simples, para as IAs: o que é, funcionalidades, preço, perguntas frequentes e contacto. Quando se muda a landing page, convém mudar também este ficheiro (`public/llms.txt`).
+- `/llms.txt` — um resumo do First Media CRM em texto simples, para as IAs: o que é, funcionalidades, preço, perguntas frequentes e contacto. Inclui os dois planos, mensal (29,99 €) e anual (287 €). Quando se muda a landing page, convém mudar também este ficheiro (`public/llms.txt`).
 
 **PRONTO QUANDO**
 
