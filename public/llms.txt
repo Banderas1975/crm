@@ -1,6 +1,6 @@
 # First Media CRM
 
-> Software CRM simples e em português (de Portugal), para empresas em Portugal que querem vender mais sem complicar. Junta o pipeline de vendas, os contactos e as tarefas num só lugar. Custa 29,99 € por utilizador por mês, IVA incluído, com 14 dias grátis. Funciona no browser, no computador e no telemóvel, sem instalar nada.
+> Software CRM simples e em português (de Portugal), para empresas em Portugal que querem vender mais sem complicar. Junta o pipeline de vendas, os contactos e as tarefas num só lugar. Custa 29,99 € por utilizador por mês, ou 287 € por utilizador por ano (20% de desconto), IVA incluído, com 14 dias grátis. Funciona no browser, no computador e no telemóvel, sem instalar nada.
 
 Feito pela First Media. Site: https://firstmediacrm.online
 
@@ -16,9 +16,10 @@ Feito pela First Media. Site: https://firstmediacrm.online
 
 ## Preço
 
-- 29,99 € por utilizador por mês, IVA incluído.
-- 14 dias grátis para experimentar.
-- Exemplo: uma equipa de 3 pessoas paga 3 × 29,99 € por mês.
+- Plano mensal: 29,99 € por utilizador por mês, IVA incluído.
+- Plano anual: 287 € por utilizador por ano, IVA incluído (20% de desconto face ao mensal).
+- 14 dias grátis para experimentar, em qualquer dos planos.
+- Exemplo: uma equipa de 3 pessoas paga 3 × 29,99 € por mês, ou 3 × 287 € por ano.
 
 ## Perguntas frequentes
 

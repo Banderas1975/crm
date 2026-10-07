@@ -36,8 +36,17 @@ function regras(nonce) {
 // Primeira barreira: sem sessão válida, tudo cai no login — menos "/", que
 // mostra a landing page.
 // A verificação séria é repetida na página e em cada ação que toca no banco.
+// O endereço oficial é sem www. Quem chega por www vai para lá, com o mesmo
+// caminho, num redirecionamento permanente (301): o Google e as IAs ficam
+// só com um endereço.
+const OFICIAL = "firstmediacrm.online";
+
 export async function proxy(request) {
-  const { pathname } = request.nextUrl;
+  const { pathname, search } = request.nextUrl;
+
+  if (request.headers.get("host") === `www.${OFICIAL}`) {
+    return NextResponse.redirect(`https://${OFICIAL}${pathname}${search}`, 301);
+  }
 
   const publica = PUBLICAS.has(pathname) || PUBLICAS_PREFIXO.some((p) => pathname.startsWith(p));
   const cookie = request.cookies.get(NOME_COOKIE)?.value;
