@@ -72,9 +72,12 @@ export default function Privacidade() {
 
         <h2>Cookies</h2>
         <p>
-          Usamos cookies essenciais: um para manter a sua sessão aberta no CRM e outro para lembrar se escolheu o tema
-          claro ou escuro. Usamos também o Google Analytics, que grava cookies de estatística para sabermos quantas
-          pessoas visitam o site e que páginas abrem. Não usamos cookies de publicidade.
+          Usamos cookies essenciais: um para manter a sua sessão aberta no CRM, outro para lembrar se escolheu o tema
+          claro ou escuro, e outro para guardar a sua escolha sobre cookies (durante 6 meses). Só com a sua autorização,
+          dada no aviso de cookies da página principal, usamos também o Google Analytics, que grava cookies de
+          estatística para sabermos quantas pessoas visitam o site e que páginas abrem. Pode aceitar, recusar ou mudar
+          de ideias a qualquer momento em &laquo;Gerir cookies&raquo;, no fim da página principal; se retirar a
+          autorização, apagamos os cookies do Google Analytics. Não usamos cookies de publicidade.
         </p>
 
         <h2>Os seus direitos</h2>
