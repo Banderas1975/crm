@@ -492,6 +492,8 @@ Contra abusos no registo: um campo escondido que só robôs preenchem (o robô v
 
 Os contadores da tabela `limites` com mais de 2 dias, e que não estejam bloqueados nesse momento, são apagados automaticamente pelo cron dos avisos (`/emails/enviar`, a cada 5 minutos). A política de privacidade diz que se guarda esse código derivado do IP, e que é apagado ao fim de 2 dias no máximo.
 
+**Google Analytics** (`G-XBHF60CQXZ`) em todas as páginas, incluindo o CRM por dentro, logo a abrir o `<head>` (`app/layout.js`). Os scripts levam o nonce da CSP, e a CSP (`proxy.js`) passou a deixar o navegador falar com o Google Analytics. Carrega sem pedir consentimento, por decisão: a política de privacidade passou a dizer que se usam cookies de estatística do Google Analytics.
+
 No canto superior esquerdo do login e do registo há um "← Voltar": no login leva à página inicial, no registo leva ao login.
 
 Quando o administrador aprova uma conta, sai um email de crm@firstmedia.pt para essa pessoa: "Obrigado, a sua conta do First Media CRM foi ativada, desfrute!", com o link para entrar. Sai uma vez por aprovação; uma conta a quem se tirou o acesso e que volta a ser aprovada recebe-o de novo.
