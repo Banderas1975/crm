@@ -419,7 +419,7 @@ A página segue o funil de conversão, de cima para baixo:
 3. **Desejo:** as funcionalidades que o CRM já tem e os 3 passos para começar.
 4. **Ação:** preço — **29,99 € por utilizador por mês, com 14 dias grátis**, e ao lado, à direita, o cartão anual: **287 € por utilizador por ano**, 20% de desconto face ao mensal —, perguntas frequentes e o formulário.
 
-   Logo abaixo do preço, a secção **"O que dizem os nossos clientes"**: um slideshow com 6 testemunhos reais, autorizados pelos próprios, com o nome de cada um (sem profissão nem empresa). Mostra um de cada vez, passa sozinho a cada 7 segundos e pára com o rato ou o teclado em cima, quando se navega à mão ou se o sistema pedir menos animação. Setas, pontos, teclas ← → e deslizar no telemóvel. Os 6 textos estão no HTML, para as IAs e o Google os lerem. Ficam fora dos dados estruturados: o Google não aceita avaliações publicadas pela própria empresa.
+   Logo abaixo do preço, a secção **"O que dizem os nossos clientes"**: um slideshow com 6 testemunhos reais, autorizados pelos próprios, com o nome de cada um (sem profissão nem empresa). Mostra um de cada vez, passa sozinho a cada 5 segundos e pára com o rato ou o teclado em cima, quando se navega à mão ou se o sistema pedir menos animação. Setas, pontos, teclas ← → e deslizar no telemóvel. Os 6 textos estão no HTML, para as IAs e o Google os lerem. Ficam fora dos dados estruturados: o Google não aceita avaliações publicadas pela própria empresa.
 
 Cores e logótipo da First Media (ver `design.md`, "Landing page").
 

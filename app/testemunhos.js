@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const INTERVALO_MS = 7000;
+const INTERVALO_MS = 5000;
 
 const iniciais = (nome) =>
   nome
@@ -14,7 +14,7 @@ const iniciais = (nome) =>
 
 // Slideshow dos testemunhos da landing page. Todos os testemunhos vão no HTML
 // (as IAs e quem não tem JavaScript leem-nos todos); só se vê um de cada vez.
-// Passa sozinho a cada 7 segundos, mas pára quando o rato ou o teclado estão
+// Passa sozinho a cada 5 segundos, mas pára quando o rato ou o teclado estão
 // lá, quando a pessoa navega à mão, ou se o sistema pede menos animação.
 export default function Testemunhos({ lista }) {
   const [atual, setAtual] = useState(0);
