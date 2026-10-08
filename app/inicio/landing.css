@@ -389,9 +389,156 @@
 
 .lp-rodape-linha { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 28px; padding-bottom: 28px; font-size: 14px; color: var(--texto-apoio); }
 
+/* ---- cookies ---- */
+
+/* "Gerir cookies" no rodapé: um botão com aspeto de ligação, como as vizinhas. */
+.lp-rodape-botao {
+  padding: 0;
+  font: inherit;
+  color: var(--lilas);
+  text-decoration: underline;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+/* Faixa da primeira visita, presa ao fundo do ecrã, sem tapar a página toda. */
+.lp-cookies {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  width: min(1072px, calc(100vw - 32px));
+  padding: 22px 26px;
+  background: var(--elevado);
+  border: 1px solid var(--borda);
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.35);
+  transform: translateX(-50%);
+}
+
+.lp-cookies-texto { flex: 1 1 auto; }
+.lp-cookies-texto p { margin: 0; font-size: 14px; color: var(--texto-apoio); }
+.lp-cookies .lp-cookies-titulo { margin-bottom: 4px; font-size: 16px; font-weight: 800; color: var(--texto); }
+
+.lp-cookies-acoes { display: flex; align-items: center; gap: 12px; flex: 0 0 auto; }
+
+/* Aceitar e Recusar com o mesmo tamanho e peso: a escolha tem de ser livre. */
+.lp-cookies-botao {
+  min-width: 128px;
+  padding: 11px 20px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0E1020;
+  background: var(--destaque);
+  border: 2px solid var(--destaque);
+  border-radius: 10px;
+  cursor: pointer;
+}
+.lp-cookies-botao:hover { background: var(--destaque-hover); border-color: var(--destaque-hover); }
+
+.lp-cookies-secundario { color: var(--texto); background: transparent; border-color: var(--lilas); }
+.lp-cookies-secundario:hover { color: #0E1020; background: var(--lilas); border-color: var(--lilas); }
+
+.lp-cookies-texto-botao {
+  padding: 8px 4px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--lilas);
+  text-decoration: underline;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+/* Painel de preferências (janela nativa: fecha no Esc e escurece o fundo). */
+.lp-cookies-painel {
+  width: min(560px, calc(100vw - 32px));
+  padding: 32px;
+  color: var(--texto);
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: 16px;
+}
+.lp-cookies-painel::backdrop { background: rgb(0 0 0 / 0.6); }
+
+.lp-cookies-painel-topo { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.lp-cookies-painel h2 { margin: 0; font-size: 22px; }
+.lp-cookies-painel-intro { margin: 8px 0 20px; font-size: 14px; color: var(--texto-apoio); }
+
+.lp-cookies-fechar { display: grid; padding: 6px; background: none; border: 0; cursor: pointer; }
+.lp-cookies-fechar path { stroke: var(--lilas); stroke-width: 2; stroke-linecap: round; }
+
+.lp-cookies-categoria {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 0;
+  border-top: 1px solid var(--borda);
+}
+.lp-cookies-categoria p { margin: 0; font-size: 14px; color: var(--texto-apoio); }
+.lp-cookies-categoria .lp-cookies-categoria-nome { margin-bottom: 4px; font-size: 16px; font-weight: 700; color: var(--texto); }
+
+.lp-cookies-painel-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 20px;
+  border-top: 1px solid var(--borda);
+}
+.lp-cookies-painel-acoes .lp-cookies-botao { flex: 1 1 140px; min-width: 0; }
+
+/* Interruptor ligado/desligado, feito com uma caixa de seleção por baixo. */
+.lp-interruptor { position: relative; flex: 0 0 auto; width: 46px; height: 26px; margin-top: 2px; }
+.lp-interruptor input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.lp-interruptor input:disabled { cursor: not-allowed; }
+.lp-interruptor span {
+  position: absolute;
+  inset: 0;
+  background: var(--borda);
+  border-radius: 999px;
+  pointer-events: none;
+  transition: background 0.2s ease;
+}
+.lp-interruptor span::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: var(--texto);
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+.lp-interruptor input:checked + span { background: var(--destaque); }
+.lp-interruptor input:checked + span::after { transform: translateX(20px); background: #0E1020; }
+.lp-interruptor input:disabled + span { opacity: 0.55; }
+.lp-interruptor input:focus-visible + span { outline: 2px solid var(--lilas); outline-offset: 3px; }
+
+.lp-rodape-botao:focus-visible,
+.lp-cookies-botao:focus-visible,
+.lp-cookies-texto-botao:focus-visible,
+.lp-cookies-fechar:focus-visible { outline: 2px solid var(--lilas); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-interruptor span, .lp-interruptor span::after { transition: none; }
+}
+
 /* ---- telas estreitas ---- */
 
 @media (max-width: 900px) {
+  .lp-cookies { flex-direction: column; align-items: stretch; gap: 16px; }
+  /* Recusar e Aceitar lado a lado, do mesmo tamanho; Personalizar por baixo. */
+  .lp-cookies-acoes { display: grid; grid-template-columns: 1fr 1fr; }
+  .lp-cookies-acoes .lp-cookies-botao { min-width: 0; }
+  .lp-cookies-texto-botao { grid-column: 1 / -1; order: 1; }
   .lp-heroi { grid-template-columns: 1fr; padding-top: 56px; padding-bottom: 56px; gap: 40px; }
   .lp-grelha-3, .lp-passos { grid-template-columns: 1fr; }
   .lp-nav { display: none; }

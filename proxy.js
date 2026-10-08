@@ -22,9 +22,10 @@ function regras(nonce) {
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev ? " 'unsafe-eval'" : ""}`,
     // As cores das etapas e as posições no calendário vêm em style="...".
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob:",
+    // O Google Analytics (app/layout.js) envia as visitas para estes endereços.
+    "img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com",
     "font-src 'self'",
-    "connect-src 'self'",
+    "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
