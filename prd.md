@@ -419,6 +419,8 @@ A página segue o funil de conversão, de cima para baixo:
 3. **Desejo:** as funcionalidades que o CRM já tem e os 3 passos para começar.
 4. **Ação:** preço — **29,99 € por utilizador por mês, com 14 dias grátis**, e ao lado, à direita, o cartão anual: **287 € por utilizador por ano**, 20% de desconto face ao mensal —, perguntas frequentes e o formulário.
 
+   Logo abaixo do preço, a secção **"O que dizem os nossos clientes"**: um slideshow com 6 testemunhos reais, autorizados pelos próprios, com o nome de cada um (sem profissão nem empresa). Mostra um de cada vez, passa sozinho a cada 7 segundos e pára com o rato ou o teclado em cima, quando se navega à mão ou se o sistema pedir menos animação. Setas, pontos, teclas ← → e deslizar no telemóvel. Os 6 textos estão no HTML, para as IAs e o Google os lerem. Ficam fora dos dados estruturados: o Google não aceita avaliações publicadas pela própria empresa.
+
 Cores e logótipo da First Media (ver `design.md`, "Landing page").
 
 **Formulário:** nome, email, telefone (obrigatório desde a v14.2), empresa (opcional desde a v14.2), número de utilizadores, mensagem (opcional) e a caixa obrigatória de consentimento (RGPD). Cada pedido fica guardado na tabela `leads` e sai um email de aviso de crm@firstmedia.pt para cada administrador (para o email de avisos, se tiver um). Contra abusos: um campo escondido que só robôs preenchem, e no máximo 10 pedidos por dia do mesmo email (eram 3 até à v16). Desde a v16, também no máximo 20 pedidos por dia a partir da mesma ligação (IP), com quaisquer emails. Passado o limite, o formulário diz que já recebemos vários pedidos com aquele email hoje, em vez de fingir que enviou.
