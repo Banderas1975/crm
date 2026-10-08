@@ -14,34 +14,49 @@ const iniciais = (nome) =>
 
 // Slideshow dos testemunhos da landing page. Todos os testemunhos vão no HTML
 // (as IAs e quem não tem JavaScript leem-nos todos); só se vê um de cada vez.
-// Passa sozinho a cada 5 segundos, mas pára quando o rato ou o teclado estão
-// lá, quando a pessoa navega à mão, ou se o sistema pede menos animação.
+// Passa sozinho a cada 5 segundos. Enquanto a pessoa mexe — rato em movimento
+// por cima, toque, teclas, cliques nas setas — fica parado; 5 segundos depois
+// de ela parar (ou logo que o rato saia), volta ao automático. Se o sistema
+// pede menos animação, nunca passa sozinho.
 export default function Testemunhos({ lista }) {
   const [atual, setAtual] = useState(0);
   const [pausado, setPausado] = useState(false);
-  const [parado, setParado] = useState(false); // a pessoa navegou: não volta a andar sozinho
+  const [semAnimacao, setSemAnimacao] = useState(false);
   const toque = useRef(null);
+  const espera = useRef(null);
   const total = lista.length;
 
-  const ir = (i) => setAtual((i + total) % total);
+  // A pessoa está a usar o slideshow: pára, e retoma quando ela parar de mexer.
+  const atividade = () => {
+    setPausado(true);
+    clearTimeout(espera.current);
+    espera.current = setTimeout(() => setPausado(false), INTERVALO_MS);
+  };
+  const retomar = () => {
+    clearTimeout(espera.current);
+    setPausado(false);
+  };
+
   const navegar = (i) => {
-    setParado(true);
-    ir(i);
+    atividade();
+    setAtual((i + total) % total);
   };
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) setParado(true);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) setSemAnimacao(true);
+    return () => clearTimeout(espera.current);
   }, []);
 
   useEffect(() => {
-    if (pausado || parado) return;
+    if (pausado || semAnimacao) return;
     const t = setTimeout(() => setAtual((a) => (a + 1) % total), INTERVALO_MS);
     return () => clearTimeout(t);
-  }, [atual, pausado, parado, total]);
+  }, [atual, pausado, semAnimacao, total]);
 
   const teclas = (e) => {
     if (e.key === "ArrowLeft") navegar(atual - 1);
-    if (e.key === "ArrowRight") navegar(atual + 1);
+    else if (e.key === "ArrowRight") navegar(atual + 1);
+    else atividade();
   };
 
   return (
@@ -50,12 +65,13 @@ export default function Testemunhos({ lista }) {
       role="region"
       aria-roledescription="carrossel"
       aria-label="Testemunhos de clientes"
-      onMouseEnter={() => setPausado(true)}
-      onMouseLeave={() => setPausado(false)}
-      onFocus={() => setPausado(true)}
-      onBlur={() => setPausado(false)}
+      onMouseMove={atividade}
+      onMouseLeave={retomar}
       onKeyDown={teclas}
-      onTouchStart={(e) => (toque.current = e.touches[0].clientX)}
+      onTouchStart={(e) => {
+        atividade();
+        toque.current = e.touches[0].clientX;
+      }}
       onTouchEnd={(e) => {
         const dx = e.changedTouches[0].clientX - (toque.current ?? 0);
         if (Math.abs(dx) > 40) navegar(dx < 0 ? atual + 1 : atual - 1);
