@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { headers } from "next/headers";
 import FormLead from "../form-lead";
+import Testemunhos from "../testemunhos";
 import "./landing.css";
 
 // Página pública: é o que vê quem abre o endereço do CRM sem sessão (o proxy
@@ -88,6 +89,29 @@ const PERGUNTAS = [
   {
     p: "Posso tirar os meus dados?",
     r: "Sim. Exporta os seus contactos para Excel a qualquer momento.",
+  },
+];
+
+// Testemunhos reais, autorizados pelos próprios. Só se corrigiu a ortografia.
+const TESTEMUNHOS = [
+  { nome: "Ana Margarida", texto: "CRM simples e em conta. Funcionalidades bem definidas e apresentação gráfica cuidada." },
+  {
+    nome: "Luís Apolónio",
+    texto: "A minha funcionalidade preferida são as tarefas, pois o CRM pode avisar com antecedência via email as mesmas.",
+  },
+  {
+    nome: "António Vasques",
+    texto: "O facto de também funcionar em mobile é uma grande vantagem, assim sendo contratei um CRM que também cabe no bolso!",
+  },
+  {
+    nome: "Carlos Casaca",
+    texto:
+      "Como as minhas reuniões são maioritariamente por videoconferência, a funcionalidade de aviso de reuniões por email é excelente.",
+  },
+  { nome: "Verónica Esteves", texto: "Fácil de utilizar, com um Kanban bem feito e com relatórios poderosos e exportáveis." },
+  {
+    nome: "Ricardo Barceló",
+    texto: "É uma vantagem termos no backend a possibilidade de configurarmos o email que quisermos. Estou satisfeito!",
   },
 ];
 
@@ -338,6 +362,12 @@ export default async function Inicio() {
               </a>
             </div>
           </div>
+        </section>
+
+        <section id="testemunhos" className="lp-seccao lp-largura">
+          <p className="lp-sobretitulo">Testemunhos</p>
+          <h2>O que dizem os nossos clientes</h2>
+          <Testemunhos lista={TESTEMUNHOS} />
         </section>
 
         <section id="perguntas" className="lp-seccao lp-largura lp-estreito">
