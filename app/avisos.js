@@ -323,7 +323,6 @@ export function emailLead(lead) {
     `Email: ${lead.email}`,
     `Telefone: ${lead.telefone || "—"}`,
     `Empresa: ${lead.empresa || "—"}`,
-    `Utilizadores: ${lead.utilizadores}`,
     ...(lead.mensagem ? ["", `Mensagem: ${lead.mensagem}`] : []),
   ];
   const texto = ["Lead novo: pedido de 14 dias grátis", "", ...linhas].join("\n");
