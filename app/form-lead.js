@@ -38,10 +38,8 @@ export default function FormLead() {
           <input id="lead-email" name="email" defaultValue={v.email} type="email" required maxLength={LIMITES.email} autoComplete="email" />
         </div>
         <div className="campo">
-          <label htmlFor="lead-telefone">
-            Telefone <span className="lp-obrigatorio">*</span>
-          </label>
-          <input id="lead-telefone" name="telefone" defaultValue={v.telefone} type="tel" required maxLength={40} autoComplete="tel" />
+          <label htmlFor="lead-telefone">Telefone (opcional)</label>
+          <input id="lead-telefone" name="telefone" defaultValue={v.telefone} type="tel" maxLength={40} autoComplete="tel" />
         </div>
         <div className="campo">
           <label htmlFor="lead-empresa">Empresa (opcional)</label>
