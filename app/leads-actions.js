@@ -88,7 +88,8 @@ export async function pedirExperiencia(estadoAnterior, dados) {
   // O aviso sai em segundo plano: quem preenche não fica à espera do email.
   if (envioConfigurado()) avisarAdministradores(novo.id, lead).catch((e) => console.error("Falha no aviso de lead:", e.message));
 
-  return enviado;
+  // Volta ao navegador para preencher logo o formulário de criar conta.
+  return { ...enviado, dados: { nome, email, telefone: telefone || "" } };
 }
 
 async function avisarAdministradores(id, lead) {
