@@ -23,7 +23,7 @@ export async function pedirExperiencia(estadoAnterior, dados) {
   // Se algo falhar, o formulário volta preenchido com o que a pessoa escreveu
   // (o React limpa o formulário depois de cada envio).
   const valores = Object.fromEntries(
-    ["nome", "email", "telefone", "empresa", "utilizadores", "mensagem", "consentimento"].map((c) => [
+    ["nome", "email", "telefone", "empresa", "mensagem", "consentimento"].map((c) => [
       c,
       String(dados.get(c) ?? "").slice(0, 1000),
     ]),
@@ -35,7 +35,6 @@ export async function pedirExperiencia(estadoAnterior, dados) {
   const telefone = texto(dados, "telefone", 40);
   const empresa = texto(dados, "empresa", LIMITES.nome);
   const mensagem = texto(dados, "mensagem", 1000);
-  const utilizadores = Number(dados.get("utilizadores"));
 
   if (!nome) return falha("Escreva o seu nome.");
   if (!email || !emailValido(email)) return falha("Esse email não parece válido.");
@@ -45,9 +44,6 @@ export async function pedirExperiencia(estadoAnterior, dados) {
     return falha("Esse telefone não parece válido.");
   }
   if (empresa === null) return falha("O nome da empresa é muito comprido.");
-  if (!Number.isInteger(utilizadores) || utilizadores < 1 || utilizadores > 1000) {
-    return falha("Indique quantos utilizadores (de 1 a 1000).");
-  }
   if (mensagem === null) return falha("A mensagem é muito comprida (máximo 1000 caracteres).");
   if (dados.get("consentimento") !== "sim") {
     return falha("Para o podermos contactar, marque a caixa do consentimento.");
@@ -72,7 +68,7 @@ export async function pedirExperiencia(estadoAnterior, dados) {
     return falha("Recebemos demasiados pedidos a partir desta ligação hoje. Tente de novo amanhã.");
   }
 
-  const lead = { nome, email, telefone: telefone || null, empresa: empresa || null, utilizadores, mensagem: mensagem || null };
+  const lead = { nome, email, telefone: telefone || null, empresa: empresa || null, mensagem: mensagem || null };
   const { data: novo, error } = await supabase
     .from("leads")
     .insert({ ...lead, consentimento_em: new Date().toISOString() })

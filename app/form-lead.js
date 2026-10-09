@@ -58,12 +58,6 @@ export default function FormLead() {
           <label htmlFor="lead-empresa">Empresa (opcional)</label>
           <input id="lead-empresa" name="empresa" defaultValue={v.empresa} maxLength={LIMITES.nome} autoComplete="organization" />
         </div>
-        <div className="campo">
-          <label htmlFor="lead-utilizadores">
-            Quantos utilizadores? <span className="lp-obrigatorio">*</span>
-          </label>
-          <input id="lead-utilizadores" name="utilizadores" type="number" min={1} max={1000} defaultValue={v.utilizadores || 1} required />
-        </div>
       </div>
 
       <div className="campo">

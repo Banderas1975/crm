@@ -36,7 +36,7 @@ export default function Privacidade() {
         <h2>Que dados recolhemos</h2>
         <ul>
           <li>
-            <strong>No formulário de 14 dias grátis:</strong> nome, email, telefone, empresa, número de utilizadores, a
+            <strong>No formulário de 14 dias grátis:</strong> nome, email, telefone, empresa, a
             mensagem (se escrever alguma) e a data em que deu o consentimento.
           </li>
           <li>
