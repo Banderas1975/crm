@@ -12,7 +12,7 @@ Feito pela First Media. Site: https://firstmediacrm.online
 - Propostas anexadas: o PDF, Word ou Excel da proposta guardado na ficha do contacto.
 - Relatórios: taxa de conversão, valor ganho, motivos de perda e mais, com filtros.
 - Exportação para Excel: contactos e relatórios.
-- Privacidade entre colegas: cada utilizador vê apenas os seus próprios contactos, tarefas e reuniões.
+- Contactos privados ou partilhados: cada utilizador pode ver apenas os seus próprios contactos, tarefas e reuniões, ou os contactos podem ser partilhados com toda a equipa.
 
 ## Preço
 
@@ -25,7 +25,7 @@ Feito pela First Media. Site: https://firstmediacrm.online
 
 - Como funcionam os 14 dias grátis? Preenche-se o formulário no site, a First Media ativa a conta e usa-se o CRM durante 14 dias sem pagar. No fim decide-se se continua.
 - Preciso de instalar alguma coisa? Não. Funciona no browser, no computador e no telemóvel.
-- Os meus colegas veem os meus contactos? Não. Cada utilizador vê apenas os seus.
+- Os meus colegas veem os meus contactos? Depende de como a equipa preferir trabalhar: cada utilizador pode ver apenas os seus contactos, tarefas e reuniões, ou os contactos podem ser partilhados com toda a equipa.
 - Posso tirar os meus dados? Sim. Os contactos exportam-se para Excel a qualquer momento.
 
 ## Páginas
