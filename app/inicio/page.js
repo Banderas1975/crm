@@ -86,7 +86,7 @@ const PERGUNTAS = [
   },
   {
     p: "Os meus colegas veem os meus contactos?",
-    r: "Não. Cada utilizador vê apenas os seus próprios contactos, tarefas e reuniões.",
+    r: "Depende de como a sua equipa preferir trabalhar. Cada utilizador pode ver apenas os seus próprios contactos, tarefas e reuniões, ou os contactos podem ser partilhados com toda a equipa.",
   },
   {
     p: "Posso tirar os meus dados?",
