@@ -343,6 +343,26 @@ export function emailRegisto(conta) {
   });
 }
 
+// Para quem acabou de criar conta: a mesma mensagem do pop-up do fim do registo.
+// Sem link para o CRM: até ser aprovada, a conta ainda não entra.
+export function emailRegistoRecebido(nome) {
+  const titulo = "Recebemos o seu registo";
+  const linhas = [
+    `Olá ${nome},`,
+    "Obrigado por criar conta no First Media CRM.",
+    "A sua conta está à espera de aprovação. Entraremos em contacto muito brevemente.",
+    "Quando for aprovada, recebe outro email e já pode entrar.",
+  ];
+  // Sem o rodapé dos avisos ("Pode escolher que avisos recebe…"): esta pessoa
+  // ainda não entra no CRM.
+  const texto = [titulo, "", ...linhas].join("\n");
+  const html = `<div style="font-family:Arial,sans-serif;font-size:15px;color:#151B24;line-height:1.5">
+<h2 style="font-size:18px;margin:0 0 12px">${titulo}</h2>
+${linhas.map((l) => `<p style="margin:0 0 6px">${escapar(l)}</p>`).join("\n")}
+</div>`;
+  return { texto, html };
+}
+
 // Para quem acabou de ser aprovado pelo administrador.
 export function emailAprovado() {
   return montar({

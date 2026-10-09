@@ -8,7 +8,7 @@ import { criarHash, senhaConfere } from "../lib/senha";
 import { criarSessao, NOME_COOKIE, DURACAO_SEGUNDOS } from "../lib/sessao";
 import { exigirAdmin } from "./acesso";
 import { envioConfigurado } from "../lib/email";
-import { enviarUmaVez, emailRegisto, emailAprovado } from "./avisos";
+import { enviarUmaVez, emailRegisto, emailAprovado, emailRegistoRecebido } from "./avisos";
 import { LIMITES, emailValido, idValido, montarTelefone } from "../lib/validacao";
 import { ipDoPedido, bloqueado, contar, limpar } from "../lib/limites";
 
@@ -122,6 +122,17 @@ export async function registar(dados) {
     avisarAdministradores(nova.id, { nome, email, telefone }).catch((e) =>
       console.error("Falha no aviso de conta nova:", e.message),
     );
+    // E à própria pessoa: recebemos o registo, a conta está à espera de aprovação.
+    const { texto, html } = emailRegistoRecebido(nome);
+    enviarUmaVez({
+      usuarioId: nova.id,
+      chave: `registo-recebido:${nova.id}`,
+      tipo: "registo_recebido",
+      para: email,
+      assunto: "Recebemos o seu registo no First Media CRM",
+      texto,
+      html,
+    }).catch((e) => console.error("Falha no email de registo recebido:", e.message));
   }
 
   redirect("/registo?concluido=1");
