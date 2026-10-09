@@ -39,8 +39,9 @@ export async function pedirExperiencia(estadoAnterior, dados) {
 
   if (!nome) return falha("Escreva o seu nome.");
   if (!email || !emailValido(email)) return falha("Esse email não parece válido.");
-  if (!telefone) return falha("Escreva o seu telefone.");
-  if (!/^[+\d][\d\s()-]{5,39}$/.test(telefone)) {
+  if (telefone === null) return falha("O telefone é muito comprido.");
+  // Opcional; se vier escrito, tem de parecer um telefone.
+  if (telefone && !/^[+\d][\d\s()-]{5,39}$/.test(telefone)) {
     return falha("Esse telefone não parece válido.");
   }
   if (empresa === null) return falha("O nome da empresa é muito comprido.");
@@ -71,7 +72,7 @@ export async function pedirExperiencia(estadoAnterior, dados) {
     return falha("Recebemos demasiados pedidos a partir desta ligação hoje. Tente de novo amanhã.");
   }
 
-  const lead = { nome, email, telefone, empresa: empresa || null, utilizadores, mensagem: mensagem || null };
+  const lead = { nome, email, telefone: telefone || null, empresa: empresa || null, utilizadores, mensagem: mensagem || null };
   const { data: novo, error } = await supabase
     .from("leads")
     .insert({ ...lead, consentimento_em: new Date().toISOString() })
@@ -87,7 +88,8 @@ export async function pedirExperiencia(estadoAnterior, dados) {
   // O aviso sai em segundo plano: quem preenche não fica à espera do email.
   if (envioConfigurado()) avisarAdministradores(novo.id, lead).catch((e) => console.error("Falha no aviso de lead:", e.message));
 
-  return enviado;
+  // Volta ao navegador para preencher logo o formulário de criar conta.
+  return { ...enviado, dados: { nome, email, telefone: telefone || "" } };
 }
 
 async function avisarAdministradores(id, lead) {

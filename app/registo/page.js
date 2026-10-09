@@ -4,6 +4,7 @@ import { LIMITES } from "../../lib/validacao";
 import { INDICATIVOS } from "../indicativos";
 import PopupRegisto from "../popup-registo";
 import CampoSenha from "../campo-senha";
+import PreencherRegisto from "../preencher-registo";
 
 export const metadata = { title: "Criar conta — First Media CRM" };
 
@@ -23,6 +24,7 @@ export default async function Registo({ searchParams }) {
   return (
     <main className="pagina pagina-login">
       {concluido && <PopupRegisto />}
+      <PreencherRegisto />
       <Link href="/login" className="voltar-entrada">
         ← Voltar
       </Link>

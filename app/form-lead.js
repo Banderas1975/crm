@@ -1,21 +1,34 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { pedirExperiencia } from "./leads-actions";
 import { LIMITES } from "../lib/validacao";
 
+// A mesma chave é lida em app/preencher-registo.js.
+const DADOS_REGISTO = "dados-registo";
+
 export default function FormLead() {
   const [estado, acao, aEnviar] = useActionState(pedirExperiencia, { erro: "" });
+  const router = useRouter();
+
+  // Pedido enviado: segue logo para criar conta, com nome, email e telefone já
+  // escritos. Os dados passam pela memória do separador (sessionStorage), não
+  // pelo endereço: assim não ficam no histórico nem nas estatísticas de visitas.
+  useEffect(() => {
+    if (!estado.enviado) return;
+    try {
+      if (estado.dados) sessionStorage.setItem(DADOS_REGISTO, JSON.stringify(estado.dados));
+    } catch {}
+    router.push("/registo");
+  }, [estado, router]);
 
   if (estado.enviado) {
     return (
       <div className="lp-obrigado" aria-live="polite">
         <h3>Pedido recebido. Obrigado!</h3>
-        <p>Vamos entrar em contacto consigo em breve para ativar os seus 14 dias grátis.</p>
-        <p className="lp-obrigado-passo">
-          No canto superior direito clique em entrar e registe-se. Libertaremos posteriormente a sua conta
-        </p>
+        <p>A abrir a página para criar a sua conta…</p>
       </div>
     );
   }
@@ -38,10 +51,8 @@ export default function FormLead() {
           <input id="lead-email" name="email" defaultValue={v.email} type="email" required maxLength={LIMITES.email} autoComplete="email" />
         </div>
         <div className="campo">
-          <label htmlFor="lead-telefone">
-            Telefone <span className="lp-obrigatorio">*</span>
-          </label>
-          <input id="lead-telefone" name="telefone" defaultValue={v.telefone} type="tel" required maxLength={40} autoComplete="tel" />
+          <label htmlFor="lead-telefone">Telefone (opcional)</label>
+          <input id="lead-telefone" name="telefone" defaultValue={v.telefone} type="tel" maxLength={40} autoComplete="tel" />
         </div>
         <div className="campo">
           <label htmlFor="lead-empresa">Empresa (opcional)</label>
@@ -88,7 +99,7 @@ export default function FormLead() {
       )}
 
       <button className="botao lp-botao-grande" disabled={aEnviar}>
-        {aEnviar ? "A enviar..." : "Quero os 14 dias grátis"}
+        {aEnviar ? "A enviar..." : "Quero os 14 dias grátis já"}
       </button>
     </form>
   );
