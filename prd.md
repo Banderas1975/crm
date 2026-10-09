@@ -498,9 +498,11 @@ Os contadores da tabela `limites` com mais de 2 dias, e que não estejam bloquea
 
 No canto superior esquerdo do login e do registo há um "← Voltar": no login leva à página inicial, no registo leva ao login.
 
+Quem cria conta recebe logo um email "Recebemos o seu registo no First Media CRM": obrigado, a conta está à espera de aprovação, "Entraremos em contacto muito brevemente" (a frase do pop-up), e que recebe outro email quando for aprovada. Sai uma vez por conta (`sql/aviso-registo-recebido.sql`).
+
 Quando o administrador aprova uma conta, sai um email de crm@firstmedia.pt para essa pessoa: "Obrigado, a sua conta do First Media CRM foi ativada, desfrute!", com o link para entrar. Sai uma vez por aprovação; uma conta a quem se tirou o acesso e que volta a ser aprovada recebe-o de novo.
 
-Mudanças de banco: `sql/usuarios-nome-telefone.sql` (colunas `usuarios.nome` e `usuarios.telefone`), `sql/aviso-registo.sql` e `sql/aviso-aprovado.sql` (os tipos novos no registo de emails).
+Mudanças de banco: `sql/usuarios-nome-telefone.sql` (colunas `usuarios.nome` e `usuarios.telefone`), `sql/aviso-registo.sql`, `sql/aviso-aprovado.sql` e `sql/aviso-registo-recebido.sql` (os tipos novos no registo de emails).
 
 **PRONTO QUANDO**
 

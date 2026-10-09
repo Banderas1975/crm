@@ -17,6 +17,7 @@ const TIPOS = {
   lead: "Lead novo",
   registo: "Conta nova",
   aprovado: "Conta ativada",
+  registo_recebido: "Registo recebido",
 };
 
 // Curto, para a tabela caber: "04/10, 05:30".
