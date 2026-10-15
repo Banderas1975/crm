@@ -1,7 +1,7 @@
 import { cookies, headers } from "next/headers";
 import { Manrope, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { COOKIE_CONSENTIMENTO, lerConsentimento, etiquetas } from "../lib/consentimento";
+import { COOKIE_CONSENTIMENTO, CONVERSAO_SNIPPET, lerConsentimento, etiquetas } from "../lib/consentimento";
 
 const manrope = Manrope({ subsets: ["latin"], variable: "--fonte" });
 // Só nos números, contadores e etiquetas técnicas — ver design.md.
@@ -39,6 +39,10 @@ export default async function Layout({ children }) {
             <script async src={`https://www.googletagmanager.com/gtag/js?id=${ids[0]}`} nonce={nonce} />
             <script nonce={nonce} dangerouslySetInnerHTML={{ __html: inicioGtag(ids) }} />
           </>
+        )}
+        {consentimento?.publicidade && (
+          // Event snippet for CRM 2 conversion page
+          <script nonce={nonce} dangerouslySetInnerHTML={{ __html: CONVERSAO_SNIPPET }} />
         )}
       </head>
       <body>{children}</body>
