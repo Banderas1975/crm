@@ -15,6 +15,11 @@ const PUBLICAS_PREFIXO = ["/recuperar/"];
 // tragam o código (nonce) deste pedido. Um script injetado — num nome de
 // contato, numa anotação — não tem o código e não corre. O Next põe o nonce
 // sozinho nos scripts dele, porque o lê do cabeçalho do pedido.
+const GOOGLE = [
+  "https://*.google-analytics.com", "https://*.analytics.google.com", "https://*.googletagmanager.com",
+  "https://*.g.doubleclick.net", "https://*.google.com", "https://*.google.pt", "https://www.googleadservices.com",
+].join(" ");
+
 function regras(nonce) {
   const dev = process.env.NODE_ENV === "development";
   return [
@@ -22,10 +27,12 @@ function regras(nonce) {
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev ? " 'unsafe-eval'" : ""}`,
     // As cores das etapas e as posições no calendário vêm em style="...".
     "style-src 'self' 'unsafe-inline'",
-    // O Google Analytics (app/layout.js) envia as visitas para estes endereços.
-    "img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com",
+    // O Google Analytics e o Google Ads (app/layout.js) falam com estes endereços
+    // — a lista que a Google indica para a etiqueta gtag.js, com o google.pt.
+    `img-src 'self' data: blob: ${GOOGLE}`,
     "font-src 'self'",
-    "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
+    `connect-src 'self' ${GOOGLE} https://pagead2.googlesyndication.com`,
+    "frame-src https://td.doubleclick.net https://www.googletagmanager.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
