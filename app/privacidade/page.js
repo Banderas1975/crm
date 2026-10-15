@@ -67,17 +67,19 @@ export default function Privacidade() {
         <h2>Com quem partilhamos</h2>
         <p>
           Apenas com os fornecedores que tornam o serviço possível: o alojamento do servidor, a base de dados, o envio
-          de emails e as estatísticas de visitas (Google Analytics, da Google). Estes fornecedores só tratam os dados por nossa conta e segundo as nossas instruções.
+          de emails as estatísticas de visitas (Google Analytics) e a publicidade (Google Ads), ambos da Google. Estes fornecedores só tratam os dados por nossa conta e segundo as nossas instruções.
         </p>
 
         <h2>Cookies</h2>
         <p>
           Usamos cookies essenciais: um para manter a sua sessão aberta no CRM, outro para lembrar se escolheu o tema
           claro ou escuro, e outro para guardar a sua escolha sobre cookies (durante 6 meses). Só com a sua autorização,
-          dada no aviso de cookies da página principal, usamos também o Google Analytics, que grava cookies de
-          estatística para sabermos quantas pessoas visitam o site e que páginas abrem. Pode aceitar, recusar ou mudar
-          de ideias a qualquer momento em &laquo;Gerir cookies&raquo;, no fim da página principal; se retirar a
-          autorização, apagamos os cookies do Google Analytics. Não usamos cookies de publicidade.
+          dada no aviso de cookies da página principal e separada para cada finalidade, usamos também cookies de
+          estatística do Google Analytics, para sabermos quantas pessoas visitam o site e que páginas abrem, e cookies
+          de publicidade do Google Ads, para medirmos se os nossos anúncios trazem visitas e pedidos e para os
+          mostrarmos a quem já visitou o site. Pode aceitar, recusar ou mudar de ideias a qualquer momento em
+          &laquo;Gerir cookies&raquo;, no fim da página principal; se retirar uma autorização, apagamos os cookies
+          correspondentes neste site.
         </p>
 
         <h2>Os seus direitos</h2>

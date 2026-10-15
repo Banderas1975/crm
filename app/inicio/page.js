@@ -3,7 +3,7 @@ import { cookies, headers } from "next/headers";
 import FormLead from "../form-lead";
 import Testemunhos from "../testemunhos";
 import AvisoCookies, { GerirCookies } from "../aviso-cookies";
-import { COOKIE_CONSENTIMENTO } from "../../lib/consentimento";
+import { COOKIE_CONSENTIMENTO, lerConsentimento } from "../../lib/consentimento";
 import "./landing.css";
 
 // Página pública: é o que vê quem abre o endereço do CRM sem sessão (o proxy
@@ -217,8 +217,7 @@ const ESQUEMA_JSON = JSON.stringify(ESQUEMA).replace(/</g, "\\u003c");
 export default async function Inicio() {
   // O nonce da CSP (ver proxy.js), para o browser aceitar esta etiqueta <script>.
   const nonce = (await headers()).get("x-nonce") ?? undefined;
-  const consentimento = (await cookies()).get(COOKIE_CONSENTIMENTO)?.value;
-  const escolha = ["estatisticas", "essenciais"].includes(consentimento) ? consentimento : null;
+  const escolha = lerConsentimento((await cookies()).get(COOKIE_CONSENTIMENTO)?.value);
 
   return (
     <div className="lp">
