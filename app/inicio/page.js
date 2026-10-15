@@ -232,6 +232,7 @@ export default async function Inicio() {
           <nav className="lp-nav" aria-label="Secções">
             <a href="#funcionalidades">Funcionalidades</a>
             <a href="#preco">Preço</a>
+            <a href="#testemunhos">Testemunhos</a>
             <a href="#perguntas">Perguntas</a>
           </nav>
           <div className="lp-topo-acoes">
