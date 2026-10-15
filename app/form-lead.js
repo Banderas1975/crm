@@ -21,6 +21,9 @@ export default function FormLead() {
     try {
       if (estado.dados) sessionStorage.setItem(DADOS_REGISTO, JSON.stringify(estado.dados));
     } catch {}
+    // Conversão do Google Ads: só existe para quem aceitou os cookies de
+    // publicidade, e só conta pedidos gravados (estado.dados; um robô não os tem).
+    if (estado.dados && typeof window.gtag_report_conversion === "function") window.gtag_report_conversion();
     router.push("/registo");
   }, [estado, router]);
 

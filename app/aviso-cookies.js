@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { COOKIE_CONSENTIMENTO, VALIDADE_CONSENTIMENTO, escreverConsentimento, etiquetas } from "../lib/consentimento";
+import {
+  COOKIE_CONSENTIMENTO,
+  VALIDADE_CONSENTIMENTO,
+  CONVERSAO_ENVIO,
+  escreverConsentimento,
+  etiquetas,
+} from "../lib/consentimento";
 
 // Aviso de cookies da landing page: uma faixa em baixo na primeira visita, e um
 // painel de preferências que se reabre em "Gerir cookies", no rodapé. "Aceitar"
@@ -39,6 +45,20 @@ function carregarGoogle(ids) {
     s.src = `https://www.googletagmanager.com/gtag/js?id=${ids[0]}`;
     document.head.appendChild(s);
   }
+}
+
+// Aceitou a publicidade agora: a mesma função de conversão que o <head> traz
+// (lib/consentimento.js), para o pedido feito nesta visita também contar.
+function prepararConversao() {
+  window.gtag_report_conversion = function gtag_report_conversion(url) {
+    window.gtag("event", "conversion", {
+      send_to: CONVERSAO_ENVIO,
+      event_callback: () => {
+        if (typeof url !== "undefined") window.location = url;
+      },
+    });
+    return false;
+  };
 }
 
 // Retirou uma autorização: apaga os cookies da Google neste site — _ga… do
@@ -80,6 +100,7 @@ export default function AvisoCookies({ escolha: inicial }) {
       return;
     }
     carregarGoogle(etiquetas({ estatisticas: nova.estatisticas && !antes.estatisticas, publicidade: nova.publicidade && !antes.publicidade }));
+    if (nova.publicidade && !antes.publicidade) prepararConversao();
     setEscolha(nova);
   };
 
