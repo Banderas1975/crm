@@ -3,6 +3,7 @@ import { cookies, headers } from "next/headers";
 import FormLead from "../form-lead";
 import Testemunhos from "../testemunhos";
 import AvisoCookies, { GerirCookies } from "../aviso-cookies";
+import OffConversion from "../offconversion";
 import { COOKIE_CONSENTIMENTO, lerConsentimento } from "../../lib/consentimento";
 import "./landing.css";
 
@@ -406,6 +407,7 @@ export default async function Inicio() {
       </footer>
 
       <AvisoCookies escolha={escolha} />
+      <OffConversion />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import "../inicio/landing.css";
+import OffConversion from "../offconversion";
 
 // Pública, com o aspeto da landing page (é para lá que aponta o link do formulário).
 export const dynamic = "force-dynamic";
@@ -9,6 +10,7 @@ export const metadata = { title: "Política de privacidade — First Media CRM" 
 export default function Privacidade() {
   return (
     <div className="lp">
+      <OffConversion />
       <header className="lp-topo">
         <div className="lp-largura lp-topo-linha">
           <Link href="/" className="lp-logo">
@@ -67,7 +69,7 @@ export default function Privacidade() {
         <h2>Com quem partilhamos</h2>
         <p>
           Apenas com os fornecedores que tornam o serviço possível: o alojamento do servidor, a base de dados, o envio
-          de emails as estatísticas de visitas (Google Analytics) e a publicidade (Google Ads), ambos da Google. Estes fornecedores só tratam os dados por nossa conta e segundo as nossas instruções.
+          de emails as estatísticas de visitas (Google Analytics) e a publicidade (Google Ads), ambos da Google, e a medição de conversões e dos formulários do site (OffConversion). Estes fornecedores só tratam os dados por nossa conta e segundo as nossas instruções.
         </p>
 
         <h2>Cookies</h2>
