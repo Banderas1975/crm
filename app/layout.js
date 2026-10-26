@@ -44,16 +44,6 @@ export default async function Layout({ children }) {
           // Event snippet for CRM 2 conversion page
           <script nonce={nonce} dangerouslySetInnerHTML={{ __html: CONVERSAO_SNIPPET }} />
         )}
-        {/* OffConversion: em todas as páginas e para todas as visitas, por decisão
-            (sem depender do aviso de cookies). Lê os formulários (data-forms). */}
-        <script
-          async
-          src="https://api.offconversion.com/v1/p"
-          data-id="pk_live_kg-HC7HywyHjCxa6NKWbKxdwuP__QS-Q"
-          data-consent-mode="auto"
-          data-forms="true"
-          nonce={nonce}
-        />
       </head>
       <body>{children}</body>
     </html>

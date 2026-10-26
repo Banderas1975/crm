@@ -1,5 +1,6 @@
 import Link from "next/link";
 import "../inicio/landing.css";
+import OffConversion from "../offconversion";
 
 // Pública, com o aspeto da landing page (é para lá que aponta o link do formulário).
 export const dynamic = "force-dynamic";
@@ -9,6 +10,7 @@ export const metadata = { title: "Política de privacidade — First Media CRM" 
 export default function Privacidade() {
   return (
     <div className="lp">
+      <OffConversion />
       <header className="lp-topo">
         <div className="lp-largura lp-topo-linha">
           <Link href="/" className="lp-logo">

@@ -6,6 +6,7 @@ import {
   COOKIE_CONSENTIMENTO,
   VALIDADE_CONSENTIMENTO,
   CONVERSAO_ENVIO,
+  OFFCONVERSION,
   escreverConsentimento,
   etiquetas,
 } from "../lib/consentimento";
@@ -61,6 +62,19 @@ function prepararConversao() {
   };
 }
 
+// Aceitou a publicidade agora: o OffConversion também começa já. Este aviso só
+// existe na landing page, uma das páginas públicas onde o OffConversion entra.
+function carregarOffConversion() {
+  if (document.querySelector(`script[src="${OFFCONVERSION.src}"]`)) return;
+  const s = document.createElement("script");
+  s.async = true;
+  s.src = OFFCONVERSION.src;
+  s.dataset.id = OFFCONVERSION.id;
+  s.dataset.consentMode = "auto";
+  s.dataset.forms = "true";
+  document.head.appendChild(s);
+}
+
 // Retirou uma autorização: apaga os cookies da Google neste site — _ga… do
 // Google Analytics e _gcl… do Google Ads —, com e sem www.
 function apagarCookiesGoogle() {
@@ -100,7 +114,10 @@ export default function AvisoCookies({ escolha: inicial }) {
       return;
     }
     carregarGoogle(etiquetas({ estatisticas: nova.estatisticas && !antes.estatisticas, publicidade: nova.publicidade && !antes.publicidade }));
-    if (nova.publicidade && !antes.publicidade) prepararConversao();
+    if (nova.publicidade && !antes.publicidade) {
+      prepararConversao();
+      carregarOffConversion();
+    }
     setEscolha(nova);
   };
 
