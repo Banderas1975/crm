@@ -500,6 +500,8 @@ Os contadores da tabela `limites` com mais de 2 dias, e que não estejam bloquea
 
 **Conversão do Google Ads** ("CRM 2", `AW-17954366291/5xHUCIiHrp4dENPGp_FC`): conta um pedido dos 14 dias grátis enviado com sucesso. O código dado pelo Google Ads (`gtag_report_conversion`) vai no `<head>`, logo a seguir à etiqueta Google, só para quem aceitou a Publicidade; é da mesma conta da etiqueta, `AW-17954366291` (a conta `AW-17945715732`, dada antes, não conta e saiu). O formulário chama a função quando o pedido fica gravado, antes de seguir para Criar conta. Pedidos travados (robôs, limites, erros) não contam.
 
+**OffConversion** (`pk_live_kg-HC7HywyHjCxa6NKWbKxdwuP__QS-Q`), desde a v16: script no `<head>` de todas as páginas, incluindo o login e o CRM por dentro, e para todas as visitas, **sem depender do aviso de cookies — por decisão, depois de avisado**. Tem `data-forms="true"` (lê os formulários) e `data-consent-mode="auto"`. A CSP deixa o navegador falar com `*.offconversion.com`. Riscos aceites: os formulários do CRM (login, Backend, contactos) podem ser lidos por um fornecedor externo, e o script carrega sem consentimento. A política de privacidade nomeia o OffConversion como fornecedor.
+
 No canto superior esquerdo do login e do registo há um "← Voltar": no login leva à página inicial, no registo leva ao login.
 
 Quem cria conta recebe logo um email "Recebemos o seu registo no First Media CRM": obrigado, a conta está à espera de aprovação, "Entraremos em contacto muito brevemente" (a frase do pop-up), e que recebe outro email quando for aprovada. Sai uma vez por conta (`sql/aviso-registo-recebido.sql`).

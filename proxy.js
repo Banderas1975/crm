@@ -29,9 +29,10 @@ function regras(nonce) {
     "style-src 'self' 'unsafe-inline'",
     // O Google Analytics e o Google Ads (app/layout.js) falam com estes endereços
     // — a lista que a Google indica para a etiqueta gtag.js, com o google.pt.
-    `img-src 'self' data: blob: ${GOOGLE}`,
+    // O OffConversion (app/layout.js) envia para os endereços *.offconversion.com.
+    `img-src 'self' data: blob: ${GOOGLE} https://*.offconversion.com`,
     "font-src 'self'",
-    `connect-src 'self' ${GOOGLE} https://pagead2.googlesyndication.com`,
+    `connect-src 'self' ${GOOGLE} https://pagead2.googlesyndication.com https://*.offconversion.com`,
     "frame-src https://td.doubleclick.net https://www.googletagmanager.com",
     "object-src 'none'",
     "base-uri 'self'",
