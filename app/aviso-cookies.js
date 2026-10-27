@@ -5,17 +5,17 @@ import { useEffect, useRef, useState } from "react";
 import {
   COOKIE_CONSENTIMENTO,
   VALIDADE_CONSENTIMENTO,
-  CONVERSAO_ENVIO,
   OFFCONVERSION,
   escreverConsentimento,
-  etiquetas,
+  estadoGoogle,
 } from "../lib/consentimento";
 
 // Aviso de cookies da landing page: uma faixa em baixo na primeira visita, e um
 // painel de preferências que se reabre em "Gerir cookies", no rodapé. "Aceitar"
 // e "Recusar" têm o mesmo peso, como pede a CNPD. Duas categorias opcionais:
-// Estatísticas (Google Analytics) e Publicidade (Google Ads). Sem escolha, nada
-// da Google carrega (app/layout.js lê o mesmo cookie no servidor).
+// Estatísticas (Google Analytics) e Publicidade (Google Ads). A etiqueta Google
+// carrega sempre com tudo negado (Consent Mode v2, app/layout.js); a escolha
+// daqui passa à Google com gtag('consent', 'update').
 
 const ABRIR = "abrir-preferencias-cookies";
 
@@ -25,41 +25,6 @@ const NADA = { estatisticas: false, publicidade: false };
 function gravar(escolha) {
   const seguro = location.protocol === "https:" ? "; secure" : "";
   document.cookie = `${COOKIE_CONSENTIMENTO}=${escreverConsentimento(escolha)}; path=/; max-age=${VALIDADE_CONSENTIMENTO}; samesite=lax${seguro}`;
-}
-
-// Aceitou agora: as etiquetas novas começam já, sem recarregar a página.
-// O script criado aqui é aceite pela CSP porque vem de um script com nonce.
-function carregarGoogle(ids) {
-  if (!ids.length) return;
-  const jaCarregado = Boolean(window.gtag);
-  window.dataLayer = window.dataLayer || [];
-  window.gtag =
-    window.gtag ||
-    function gtag() {
-      window.dataLayer.push(arguments);
-    };
-  if (!jaCarregado) window.gtag("js", new Date());
-  for (const id of ids) window.gtag("config", id);
-  if (!jaCarregado) {
-    const s = document.createElement("script");
-    s.async = true;
-    s.src = `https://www.googletagmanager.com/gtag/js?id=${ids[0]}`;
-    document.head.appendChild(s);
-  }
-}
-
-// Aceitou a publicidade agora: a mesma função de conversão que o <head> traz
-// (lib/consentimento.js), para o pedido feito nesta visita também contar.
-function prepararConversao() {
-  window.gtag_report_conversion = function gtag_report_conversion(url) {
-    window.gtag("event", "conversion", {
-      send_to: CONVERSAO_ENVIO,
-      event_callback: () => {
-        if (typeof url !== "undefined") window.location = url;
-      },
-    });
-    return false;
-  };
 }
 
 // Aceitou a publicidade agora: o OffConversion também começa já. Este aviso só
@@ -108,16 +73,15 @@ export default function AvisoCookies({ escolha: inicial }) {
     painel.current?.close();
     const antes = escolha ?? NADA;
     if ((antes.estatisticas && !nova.estatisticas) || (antes.publicidade && !nova.publicidade)) {
-      // Uma etiqueta já está a correr nesta página: só recarregando pára.
+      // Retirou uma autorização: a Google deixa de guardar, os cookies dela saem,
+      // e a página recarrega para o OffConversion (se estava a correr) parar.
+      window.gtag?.("consent", "update", estadoGoogle(nova));
       apagarCookiesGoogle();
       location.reload();
       return;
     }
-    carregarGoogle(etiquetas({ estatisticas: nova.estatisticas && !antes.estatisticas, publicidade: nova.publicidade && !antes.publicidade }));
-    if (nova.publicidade && !antes.publicidade) {
-      prepararConversao();
-      carregarOffConversion();
-    }
+    window.gtag?.("consent", "update", estadoGoogle(nova));
+    if (nova.publicidade && !antes.publicidade) carregarOffConversion();
     setEscolha(nova);
   };
 

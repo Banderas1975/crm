@@ -21,9 +21,13 @@ export default function FormLead() {
     try {
       if (estado.dados) sessionStorage.setItem(DADOS_REGISTO, JSON.stringify(estado.dados));
     } catch {}
-    // Conversão do Google Ads: só existe para quem aceitou os cookies de
-    // publicidade, e só conta pedidos gravados (estado.dados; um robô não os tem).
-    if (estado.dados && typeof window.gtag_report_conversion === "function") window.gtag_report_conversion();
+    // Conversão do Google Ads, só para pedidos gravados (estado.dados; um robô
+    // não os tem). Leva o email para as conversões otimizadas: a Google recebe-o
+    // cifrado (hash) e só o usa se a pessoa aceitou a publicidade (ad_user_data).
+    if (estado.dados && typeof window.gtag_report_conversion === "function") {
+      window.gtag("set", "user_data", { email: estado.dados.email });
+      window.gtag_report_conversion();
+    }
     router.push("/registo");
   }, [estado, router]);
 
