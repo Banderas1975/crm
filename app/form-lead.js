@@ -2,40 +2,35 @@
 
 import Link from "next/link";
 import { useActionState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { pedirExperiencia } from "./leads-actions";
 import { LIMITES } from "../lib/validacao";
-
-// A mesma chave é lida em app/preencher-registo.js.
-const DADOS_REGISTO = "dados-registo";
+import CampoSenha from "./campo-senha";
 
 export default function FormLead() {
   const [estado, acao, aEnviar] = useActionState(pedirExperiencia, { erro: "" });
-  const router = useRouter();
 
-  // Pedido enviado: segue logo para criar conta, com nome, email e telefone já
-  // escritos. Os dados passam pela memória do separador (sessionStorage), não
-  // pelo endereço: assim não ficam no histórico nem nas estatísticas de visitas.
+  // Conta criada e sessão aberta: entra logo no CRM. Antes, a conversão do
+  // Google Ads, só para contas criadas (estado.dados; um robô não os tem), com
+  // o email para as conversões otimizadas: a Google recebe-o cifrado (hash) e
+  // só o usa se a pessoa aceitou a publicidade (ad_user_data). A página muda
+  // quando a Google confirma o envio, ou ao fim de 1,5 segundos no máximo.
   useEffect(() => {
     if (!estado.enviado) return;
-    try {
-      if (estado.dados) sessionStorage.setItem(DADOS_REGISTO, JSON.stringify(estado.dados));
-    } catch {}
-    // Conversão do Google Ads, só para pedidos gravados (estado.dados; um robô
-    // não os tem). Leva o email para as conversões otimizadas: a Google recebe-o
-    // cifrado (hash) e só o usa se a pessoa aceitou a publicidade (ad_user_data).
+    const entrar = () => window.location.assign("/");
     if (estado.dados && typeof window.gtag_report_conversion === "function") {
       window.gtag("set", "user_data", { email: estado.dados.email });
-      window.gtag_report_conversion();
+      window.gtag_report_conversion("/");
+      const t = setTimeout(entrar, 1500);
+      return () => clearTimeout(t);
     }
-    router.push("/registo");
-  }, [estado, router]);
+    entrar();
+  }, [estado]);
 
   if (estado.enviado) {
     return (
       <div className="lp-obrigado" aria-live="polite">
-        <h3>Pedido recebido. Obrigado!</h3>
-        <p>A abrir a página para criar a sua conta…</p>
+        <h3>Conta criada. Bem-vindo!</h3>
+        <p>Os seus 14 dias grátis começaram. A abrir o CRM…</p>
       </div>
     );
   }
@@ -65,6 +60,14 @@ export default function FormLead() {
           <label htmlFor="lead-empresa">Empresa (opcional)</label>
           <input id="lead-empresa" name="empresa" defaultValue={v.empresa} maxLength={LIMITES.nome} autoComplete="organization" />
         </div>
+      </div>
+
+      <div className="campo">
+        <label htmlFor="lead-senha">
+          Senha para entrar no CRM <span className="lp-obrigatorio">*</span>
+        </label>
+        <CampoSenha id="lead-senha" name="senha" minLength={8} maxLength={LIMITES.senha} autoComplete="new-password" />
+        <p className="ajuda">Pelo menos 8 caracteres.</p>
       </div>
 
       <div className="campo">

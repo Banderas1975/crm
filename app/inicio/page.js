@@ -75,7 +75,7 @@ const INCLUIDO = [
 const PERGUNTAS = [
   {
     p: "Como funcionam os 14 dias grátis?",
-    r: "Preenche o formulário, nós ativamos a sua conta e usa o CRM durante 14 dias sem pagar. No fim decide se continua.",
+    r: "Preenche o formulário, a sua conta fica logo ativa e entra no CRM. Usa-o durante 14 dias sem pagar e, no fim, decide se continua.",
   },
   {
     p: "Preciso de instalar alguma coisa?",
@@ -388,7 +388,7 @@ export default async function Inicio() {
         <section id="experimentar" className="lp-seccao lp-largura lp-estreito">
           <p className="lp-sobretitulo">14 dias grátis</p>
           <h2>Experimente o First Media CRM</h2>
-          <p className="lp-lead">Deixe os seus dados e ativamos a sua conta de experiência.</p>
+          <p className="lp-lead">Crie a sua conta e entre já no CRM. Os 14 dias grátis começam agora.</p>
           <div className="lp-caixa-form">
             <FormLead />
           </div>

@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { supabase } from "../lib/supabase";
 import { lerSessao, sessaoCriadaEm, NOME_COOKIE } from "../lib/sessao";
+import { podeEntrar, experienciaTerminou } from "./contas";
 
 // Devolve o utilizador da sessão, ou manda para o login.
 // Chamada no topo de tudo o que lê ou escreve dados.
@@ -15,19 +16,20 @@ export async function exigirSessao() {
 
   const { data: utilizador } = await supabase
     .from("usuarios")
-    .select("id, email, papel, estado, senha_alterada_em")
+    .select("id, email, papel, estado, senha_alterada_em, experiencia_ate")
     .eq("id", id)
     .single();
 
-  // Conta apagada ou desaprovada entretanto: a sessão deixa de valer.
-  if (!utilizador || utilizador.estado !== "aprovado") redirect("/login");
+  // Conta apagada, desaprovada ou com os 14 dias de experiência acabados: a
+  // sessão deixa de valer.
+  if (!podeEntrar(utilizador)) redirect(experienciaTerminou(utilizador) ? "/login?erro=experiencia" : "/login");
 
   // A senha mudou depois de esta sessão começar: quem a tinha aberta fica de fora.
   if (utilizador.senha_alterada_em && Date.parse(utilizador.senha_alterada_em) > sessaoCriadaEm(cookie)) {
     redirect("/login");
   }
 
-  const { senha_alterada_em, ...resto } = utilizador;
+  const { senha_alterada_em, experiencia_ate, ...resto } = utilizador;
   return resto;
 }
 

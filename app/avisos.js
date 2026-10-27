@@ -89,7 +89,8 @@ async function utilizadores() {
   const { data, error } = await supabase
     .from("usuarios")
     .select("id, email, email_avisos, aviso_tarefas, aviso_tarefa_antes, aviso_reuniao_antes, aviso_reuniao_alterada")
-    .eq("estado", "aprovado");
+    // Também quem está nos 14 dias de experiência.
+    .or(`estado.eq.aprovado,experiencia_ate.gt.${new Date().toISOString()}`);
   if (error) throw new Error(error.message);
   return new Map(data.map((u) => [u.id, u]));
 }
@@ -283,6 +284,40 @@ async function reunioesAlteradas(contas, contagem) {
   }
 }
 
+// 4. Fim dos 14 dias grátis: um email para cada administrador, uma vez por conta.
+// Só olha para os últimos 3 dias: as contas mais antigas já foram avisadas.
+async function fimExperiencias(contagem) {
+  const agora = Date.now();
+  const { data: contas, error } = await supabase
+    .from("usuarios")
+    .select("id, nome, email, telefone, experiencia_ate")
+    .eq("estado", "pendente")
+    .lte("experiencia_ate", new Date(agora).toISOString())
+    .gte("experiencia_ate", new Date(agora - 3 * 24 * HORA_MS).toISOString());
+  if (error) throw new Error(error.message);
+  if (!contas.length) return;
+
+  const { data: admins } = await supabase
+    .from("usuarios")
+    .select("id, email, email_avisos")
+    .eq("papel", "admin")
+    .eq("estado", "aprovado");
+  for (const conta of contas) {
+    const { texto, html } = emailFimExperiencia(conta);
+    for (const admin of admins ?? []) {
+      contagem[await enviarUmaVez({
+        usuarioId: admin.id,
+        chave: `experiencia-fim:${conta.id}:${admin.id}`,
+        tipo: "experiencia_fim",
+        para: destino(admin),
+        assunto: `Experiência terminou: ${conta.nome}`,
+        texto,
+        html,
+      })] += 1;
+    }
+  }
+}
+
 // Tudo de uma vez. Devolve quantos saíram, quantos falharam e quantos já tinham saído.
 export async function enviarAvisos() {
   const contas = await utilizadores();
@@ -291,6 +326,7 @@ export async function enviarAvisos() {
   await tarefasEmBreve(contas, contagem);
   await reunioesEmBreve(contas, contagem);
   await reunioesAlteradas(contas, contagem);
+  await fimExperiencias(contagem);
   return contagem;
 }
 
@@ -334,32 +370,49 @@ ${linhas.map((l) => `<p style="margin:0 0 6px">${escapar(l)}</p>`).join("\n")}
 }
 
 // Aviso ao administrador: alguém criou conta e está à espera de aprovação.
+const DIA_DATA = new Intl.DateTimeFormat("pt-PT", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Lisbon" });
+
+// Aviso ao administrador: alguém criou conta e começou os 14 dias grátis.
 export function emailRegisto(conta) {
   return montar({
-    titulo: "Conta nova à espera de aprovação",
-    linhas: [`Nome: ${conta.nome}`, `Email: ${conta.email}`, `Telefone: ${conta.telefone}`],
+    titulo: "Conta nova em experiência (14 dias grátis)",
+    linhas: [
+      `Nome: ${conta.nome}`,
+      `Email: ${conta.email}`,
+      `Telefone: ${conta.telefone || "—"}`,
+      `Experiência até: ${DIA_DATA.format(new Date(conta.experienciaAte))}`,
+      "Para a conta continuar depois disso, aprove-a em Usuários.",
+    ],
     caminho: "/usuarios",
   });
 }
 
-// Para quem acabou de criar conta: a mesma mensagem do pop-up do fim do registo.
-// Sem link para o CRM: até ser aprovada, a conta ainda não entra.
-export function emailRegistoRecebido(nome) {
-  const titulo = "Recebemos o seu registo";
-  const linhas = [
-    `Olá ${nome},`,
-    "Obrigado por criar conta no First Media CRM.",
-    "A sua conta está à espera de aprovação. Entraremos em contacto muito brevemente.",
-    "Quando for aprovada, recebe outro email e já pode entrar.",
-  ];
-  // Sem o rodapé dos avisos ("Pode escolher que avisos recebe…"): esta pessoa
-  // ainda não entra no CRM.
-  const texto = [titulo, "", ...linhas].join("\n");
-  const html = `<div style="font-family:Arial,sans-serif;font-size:15px;color:#151B24;line-height:1.5">
-<h2 style="font-size:18px;margin:0 0 12px">${titulo}</h2>
-${linhas.map((l) => `<p style="margin:0 0 6px">${escapar(l)}</p>`).join("\n")}
-</div>`;
-  return { texto, html };
+// Para quem acabou de criar conta: os 14 dias grátis começaram.
+export function emailBoasVindas(conta) {
+  return montar({
+    titulo: "Os seus 14 dias grátis começaram",
+    linhas: [
+      `Olá ${conta.nome},`,
+      "Obrigado por experimentar o First Media CRM. A sua conta já está ativa.",
+      `Pode usar o CRM à vontade até ${DIA_DATA.format(new Date(conta.experienciaAte))}. Antes disso, entraremos em contacto para ativar a conta de vez.`,
+    ],
+    caminho: "/login",
+  });
+}
+
+// Aviso ao administrador: os 14 dias de uma conta acabaram e ela ficou bloqueada.
+export function emailFimExperiencia(conta) {
+  return montar({
+    titulo: `Experiência terminou: ${conta.nome}`,
+    linhas: [
+      `Nome: ${conta.nome}`,
+      `Email: ${conta.email}`,
+      `Telefone: ${conta.telefone || "—"}`,
+      `Terminou em: ${DIA_DATA.format(new Date(conta.experiencia_ate))}`,
+      "A conta está bloqueada, com os dados guardados. Aprove-a em Usuários para voltar a entrar.",
+    ],
+    caminho: "/usuarios",
+  });
 }
 
 // Para quem acabou de ser aprovado pelo administrador.

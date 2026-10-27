@@ -34,7 +34,7 @@ export default async function Usuarios() {
 
   const { data: utilizadores } = await supabase
     .from("usuarios")
-    .select("id, nome, telefone, email, papel, estado, criado_em")
+    .select("id, nome, telefone, email, papel, estado, criado_em, experiencia_ate")
     .order("criado_em", { ascending: false });
 
   const pendentes = utilizadores?.filter((u) => u.estado === "pendente") ?? [];
@@ -44,7 +44,7 @@ export default async function Usuarios() {
     <>
       <header className="cabecalho">
         <h1>Usuários</h1>
-        <p className="apoio">Quem pode entrar no CRM. Contas novas ficam à sua espera.</p>
+        <p className="apoio">Quem pode entrar no CRM. Contas novas têm 14 dias grátis; para continuarem depois disso, aprove-as aqui.</p>
       </header>
 
       <section className="cartao">
@@ -67,6 +67,12 @@ export default async function Usuarios() {
                       Pediu acesso em{" "}
                       <span className="mono">{FORMATO_DATA.format(new Date(u.criado_em))}</span>
                     </p>
+                    {u.experiencia_ate && (
+                      <p className="apoio">
+                        {Date.parse(u.experiencia_ate) > Date.now() ? "Em experiência até " : "Experiência terminou em "}
+                        <span className="mono">{FORMATO_DATA.format(new Date(u.experiencia_ate))}</span>
+                      </p>
+                    )}
                   </div>
                   <div className="acoes-nota">
                     <AcaoConfirmada

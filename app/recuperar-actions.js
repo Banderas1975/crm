@@ -8,6 +8,7 @@ import { envioConfigurado } from "../lib/email";
 import { enviarUmaVez, emailRecuperacao } from "./avisos";
 import { LIMITES, emailValido } from "../lib/validacao";
 import { limpar, limparComecadas } from "../lib/limites";
+import { podeEntrar } from "./contas";
 
 const SENHA_MINIMA = 8;
 const VALIDADE_MS = 60 * 60 * 1000; // 1 hora
@@ -34,10 +35,11 @@ export async function pedirRecuperacao(estadoAnterior, dados) {
 
   const { data: conta } = await supabase
     .from("usuarios")
-    .select("id, email, email_avisos, estado")
+    .select("id, email, email_avisos, estado, experiencia_ate")
     .eq("email", email)
     .maybeSingle();
-  if (!conta || conta.estado !== "aprovado") return enviado;
+  // Aprovada, ou ainda dentro dos 14 dias grátis.
+  if (!podeEntrar(conta)) return enviado;
 
   // No máximo 3 pedidos por hora para a mesma conta.
   const { count } = await supabase

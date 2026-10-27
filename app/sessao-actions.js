@@ -5,18 +5,15 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { supabase } from "../lib/supabase";
 import { criarHash, senhaConfere } from "../lib/senha";
-import { criarSessao, NOME_COOKIE, DURACAO_SEGUNDOS } from "../lib/sessao";
+import { NOME_COOKIE } from "../lib/sessao";
 import { exigirAdmin } from "./acesso";
 import { envioConfigurado } from "../lib/email";
-import { enviarUmaVez, emailRegisto, emailAprovado, emailRegistoRecebido } from "./avisos";
+import { enviarUmaVez, emailAprovado } from "./avisos";
+import { abrirSessao, criarContaExperiencia, podeEntrar, experienciaTerminou } from "./contas";
 import { LIMITES, emailValido, idValido, montarTelefone } from "../lib/validacao";
 import { ipDoPedido, bloqueado, contar, limpar } from "../lib/limites";
 
 const SENHA_MINIMA = 8;
-
-// Contas novas por hora, de toda a gente junta. Chega para um dia normal e
-// trava um robô a criar centenas de contas (e a mandar centenas de avisos).
-const MAX_REGISTOS_HORA = 10;
 
 // Travão contra quem tenta adivinhar senhas, em duas partes:
 // - 5 falhas com o mesmo email, a partir da mesma ligação (IP), bloqueiam esse
@@ -56,7 +53,7 @@ export async function entrar(dados) {
 
   const { data: utilizador } = await supabase
     .from("usuarios")
-    .select("id, senha_hash, estado")
+    .select("id, senha_hash, estado, experiencia_ate")
     .eq("email", email)
     .single();
 
@@ -72,22 +69,21 @@ export async function entrar(dados) {
   // Senha certa: a contagem deste email recomeça do zero.
   await limpar(chaveEmail);
 
-  if (utilizador.estado !== "aprovado") redirect("/login?erro=pendente");
+  // Aprovada, ou ainda dentro dos 14 dias grátis.
+  if (!podeEntrar(utilizador)) {
+    redirect(experienciaTerminou(utilizador) ? "/login?erro=experiencia" : "/login?erro=pendente");
+  }
 
-  (await cookies()).set(NOME_COOKIE, await criarSessao(utilizador.id), {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: DURACAO_SEGUNDOS,
-  });
+  await abrirSessao(utilizador.id);
 
   redirect("/");
 }
 
+// Criar conta: começa logo os 14 dias grátis e entra no CRM, sem esperar pelo
+// administrador. A aprovação só é precisa para continuar depois dos 14 dias.
 export async function registar(dados) {
   // Campo escondido que só um robô preenche. Finge que correu bem e não grava nada.
-  if ((dados.get("site") ?? "") !== "") redirect("/registo?concluido=1");
+  if ((dados.get("site") ?? "") !== "") redirect("/login");
 
   const nome = (dados.get("nome") ?? "").trim();
   const email = (dados.get("email") ?? "").trim().toLowerCase();
@@ -101,64 +97,11 @@ export async function registar(dados) {
   // O limite máximo também protege o servidor: cifrar uma senha gigante custa tempo de CPU.
   if (senha.length < SENHA_MINIMA || senha.length > LIMITES.senha) redirect("/registo?erro=senha");
 
-  const { count } = await supabase
-    .from("usuarios")
-    .select("id", { count: "exact", head: true })
-    .gte("criado_em", new Date(Date.now() - 60 * 60 * 1000).toISOString());
-  if (count >= MAX_REGISTOS_HORA) redirect("/registo?erro=muitos");
+  const conta = await criarContaExperiencia({ nome, email, telefone, senha });
+  if (conta.erro) redirect(`/registo?erro=${conta.erro}`);
 
-  const { data: nova, error } = await supabase
-    .from("usuarios")
-    .insert({ nome, email, telefone, senha_hash: await criarHash(senha) })
-    .select("id")
-    .single();
-
-  // 23505 = email repetido (a coluna é unique).
-  if (error?.code === "23505") redirect("/registo?erro=repetido");
-  if (error) redirect("/registo?erro=geral");
-
-  // O aviso sai em segundo plano: quem se regista não fica à espera do email.
-  if (envioConfigurado()) {
-    avisarAdministradores(nova.id, { nome, email, telefone }).catch((e) =>
-      console.error("Falha no aviso de conta nova:", e.message),
-    );
-    // E à própria pessoa: recebemos o registo, a conta está à espera de aprovação.
-    const { texto, html } = emailRegistoRecebido(nome);
-    enviarUmaVez({
-      usuarioId: nova.id,
-      chave: `registo-recebido:${nova.id}`,
-      tipo: "registo_recebido",
-      para: email,
-      assunto: "Recebemos o seu registo no First Media CRM",
-      texto,
-      html,
-    }).catch((e) => console.error("Falha no email de registo recebido:", e.message));
-  }
-
-  redirect("/registo?concluido=1");
-}
-
-// Um email para cada administrador (para o email de avisos, se tiver um).
-async function avisarAdministradores(id, conta) {
-  const { data: admins, error } = await supabase
-    .from("usuarios")
-    .select("id, email, email_avisos")
-    .eq("papel", "admin")
-    .eq("estado", "aprovado");
-  if (error) throw new Error(error.message);
-
-  const { texto, html } = emailRegisto(conta);
-  for (const admin of admins) {
-    await enviarUmaVez({
-      usuarioId: admin.id,
-      chave: `registo:${id}:${admin.id}`,
-      tipo: "registo",
-      para: admin.email_avisos || admin.email,
-      assunto: `Conta nova: ${conta.nome}`,
-      texto,
-      html,
-    });
-  }
+  await abrirSessao(conta.id);
+  redirect("/");
 }
 
 export async function sair() {
@@ -222,7 +165,9 @@ export async function removerAcesso(dados) {
   const id = Number(dados.get("id"));
   if (!idValido(id) || id === admin.id) return;
 
-  await supabase.from("usuarios").update({ estado: "pendente" }).eq("id", id);
+  // Também acaba com os 14 dias de experiência, se ainda os tinha: sem isto, a
+  // conta voltava a entrar enquanto a experiência não terminasse.
+  await supabase.from("usuarios").update({ estado: "pendente", experiencia_ate: null }).eq("id", id);
   revalidatePath("/usuarios");
 }
 

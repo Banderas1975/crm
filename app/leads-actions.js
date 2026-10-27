@@ -5,6 +5,7 @@ import { envioConfigurado } from "../lib/email";
 import { enviarUmaVez, emailLead } from "./avisos";
 import { LIMITES, emailValido } from "../lib/validacao";
 import { ipDoPedido, bloqueado, contar } from "../lib/limites";
+import { abrirSessao, criarContaExperiencia } from "./contas";
 
 const MAX_POR_DIA = 10; // pedidos do mesmo email em 24 horas
 const MAX_POR_IP = 20; // pedidos da mesma ligação (IP) em 24 horas, com quaisquer emails
@@ -15,7 +16,15 @@ const texto = (dados, campo, max) => {
   return valor.length <= max ? valor : null;
 };
 
-// Formulário da landing page: grava o lead e avisa os administradores por email.
+// Formulário da landing page: cria logo a conta com 14 dias grátis, abre a
+// sessão (a pessoa entra no CRM sem passar pelo login), grava o lead e avisa os
+// administradores por email.
+const SENHA_MINIMA = 8;
+const ERROS_CONTA = {
+  repetido: "Já existe uma conta com esse email. Entre no CRM com a sua senha.",
+  muitos: "Estamos a receber muitos registos neste momento. Tente de novo daqui a uma hora.",
+  geral: "Não foi possível criar a conta. Tente de novo daqui a pouco.",
+};
 export async function pedirExperiencia(estadoAnterior, dados) {
   // Campo escondido que só um robô preenche. Fingimos que correu bem.
   if ((dados.get("site") ?? "") !== "") return { erro: "", enviado: true };
@@ -45,6 +54,9 @@ export async function pedirExperiencia(estadoAnterior, dados) {
   }
   if (empresa === null) return falha("O nome da empresa é muito comprido.");
   if (mensagem === null) return falha("A mensagem é muito comprida (máximo 1000 caracteres).");
+  const senha = String(dados.get("senha") ?? "");
+  if (senha.length < SENHA_MINIMA) return falha(`A senha tem de ter pelo menos ${SENHA_MINIMA} caracteres.`);
+  if (senha.length > LIMITES.senha) return falha("A senha é muito comprida.");
   if (dados.get("consentimento") !== "sim") {
     return falha("Para o podermos contactar, marque a caixa do consentimento.");
   }
@@ -68,24 +80,31 @@ export async function pedirExperiencia(estadoAnterior, dados) {
     return falha("Recebemos demasiados pedidos a partir desta ligação hoje. Tente de novo amanhã.");
   }
 
+  // A conta primeiro: se o email já tem conta, nada fica gravado.
+  // Na conta, o telefone fica só com os dígitos (e o + do indicativo).
+  const telefoneConta = telefone ? telefone.replace(/[^\d+]/g, "").slice(0, 20) || null : null;
+  const conta = await criarContaExperiencia({ nome, email, telefone: telefoneConta, senha });
+  if (conta.erro) return falha(ERROS_CONTA[conta.erro]);
+
   const lead = { nome, email, telefone: telefone || null, empresa: empresa || null, mensagem: mensagem || null };
   const { data: novo, error } = await supabase
     .from("leads")
     .insert({ ...lead, consentimento_em: new Date().toISOString() })
     .select("id")
     .single();
-  if (error) {
-    console.error("Falha a gravar lead:", error.message);
-    return falha("Não foi possível enviar o pedido. Tente de novo daqui a pouco.");
-  }
+  // A conta já existe: uma falha aqui só se regista, não impede a pessoa de entrar.
+  if (error) console.error("Falha a gravar lead:", error.message);
 
   if (ip) await contar(`lead-ip:${ip}`, MAX_POR_IP, DIA_MS, DIA_MS);
 
   // O aviso sai em segundo plano: quem preenche não fica à espera do email.
-  if (envioConfigurado()) avisarAdministradores(novo.id, lead).catch((e) => console.error("Falha no aviso de lead:", e.message));
+  if (novo && envioConfigurado()) {
+    avisarAdministradores(novo.id, lead).catch((e) => console.error("Falha no aviso de lead:", e.message));
+  }
 
-  // Volta ao navegador para preencher logo o formulário de criar conta.
-  return { ...enviado, dados: { nome, email, telefone: telefone || "" } };
+  await abrirSessao(conta.id);
+  // O email volta ao navegador só para as conversões otimizadas do Google Ads.
+  return { ...enviado, dados: { email } };
 }
 
 async function avisarAdministradores(id, lead) {
