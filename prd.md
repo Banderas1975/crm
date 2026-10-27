@@ -414,7 +414,7 @@ Quem abre `firstmediacrm.online` sem sessão vê a landing page, no mesmo endere
 
 A página segue o funil de conversão, de cima para baixo:
 
-1. **Atenção:** "Nunca mais perca um follow-up" e o botão "Experimentar 14 dias grátis".
+1. **Atenção:** "Nunca mais perca um follow-up" e o botão "Experimentar 14 dias grátis". Por baixo, em letra média: "Dados alojados na UE, conformidade RGPD, apoio em português por email, telefone ou WhatsApp e cancelamento a qualquer momento." (saíram a nota do preço e a ligação "Ver preço").
    Logo a seguir, a ocupar um ecrã: "Experimente já, hoje mesmo." à esquerda e, à direita, um screenshot grande do funil real, encostado à margem direita do ecrã e cortado por ela no desktop (`public/kanban-crm.png`, com contactos de demonstração fictícios).
 2. **Interesse:** as três dores (contactos espalhados, follow-ups esquecidos, vendas às escuras).
 3. **Desejo:** as funcionalidades que o CRM já tem e os 3 passos para começar.
@@ -439,6 +439,7 @@ Mudanças de banco em `sql/leads.sql`.
 
 - O preço diz **"IVA incluído"** (no topo, no cartão do preço e nas perguntas).
 - Página **Política de privacidade** em `/privacidade`, com o aspeto da landing page: quem trata os dados, que dados, para quê, quanto tempo (24 meses depois do último contacto), com quem se partilham, cookies (só os essenciais), direitos e queixa à CNPD. Ligada na caixa do consentimento (abre noutro separador, para não perder o que já se escreveu) e no rodapé.
+- **Rodapé** da landing page com os dados da empresa: Eloquent Desert, Lda., NIF 518951480, Rua Fialho de Almeida, nº 14, 2º Esq., Escritório EP2, 1070-129 Avenidas Novas, Lisboa, telefone (+351) 932 386 810 (com a indicação "chamada para a rede móvel nacional") e o site firstmedia.pt.
 - No formulário, os campos obrigatórios têm asterisco: **Nome, Email, Telefone**, número de utilizadores e a caixa do consentimento. O telefone passou a ser obrigatório. A **Empresa é opcional** (`sql/leads-empresa-opcional.sql`).
 
 Mudança de banco: `sql/leads-empresa-opcional.sql`.

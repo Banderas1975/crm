@@ -254,11 +254,11 @@ export default async function Inicio() {
               <a href="#experimentar" className="botao lp-botao-grande">
                 Experimentar 14 dias grátis
               </a>
-              <a href="#preco" className="lp-secundario">
-                Ver preço
-              </a>
             </div>
-            <p className="lp-nota">14 dias grátis · depois 29,99 € por utilizador/mês, IVA incluído</p>
+            <p className="lp-garantias">
+              Dados alojados na UE, conformidade RGPD, apoio em português por email, telefone ou WhatsApp e cancelamento
+              a qualquer momento.
+            </p>
           </div>
         </section>
 
@@ -393,6 +393,19 @@ export default async function Inicio() {
       </main>
 
       <footer className="lp-rodape">
+        <address className="lp-largura lp-rodape-empresa">
+          <span>
+            <strong>Eloquent Desert, Lda.</strong> · NIF 518951480
+          </span>
+          <span>Rua Fialho de Almeida, nº 14, 2º Esq., Escritório EP2, 1070-129 Avenidas Novas, Lisboa</span>
+          <span>
+            <a href="tel:+351932386810">(+351) 932 386 810</a>{" "}
+            <small>(chamada para a rede móvel nacional)</small> ·{" "}
+            <a href="https://firstmedia.pt" rel="noopener">
+              firstmedia.pt
+            </a>
+          </span>
+        </address>
         <div className="lp-largura lp-rodape-linha">
           <span>© First Media</span>
           <span className="lp-rodape-links">
