@@ -254,11 +254,11 @@ export default async function Inicio() {
               <a href="#experimentar" className="botao lp-botao-grande">
                 Experimentar 14 dias grátis
               </a>
-              <a href="#preco" className="lp-secundario">
-                Ver preço
-              </a>
             </div>
-            <p className="lp-nota">14 dias grátis · depois 29,99 € por utilizador/mês, IVA incluído</p>
+            <p className="lp-garantias">
+              Dados alojados na UE, conformidade RGPD, apoio em português por email, telefone ou WhatsApp e cancelamento
+              a qualquer momento.
+            </p>
           </div>
         </section>
 
