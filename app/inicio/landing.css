@@ -400,6 +400,26 @@
 
 .lp-rodape-linha { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 28px; padding-bottom: 28px; font-size: 14px; color: var(--texto-apoio); }
 
+/* ---- WhatsApp: botão redondo, verde oficial, no canto inferior direito ---- */
+
+.lp-whatsapp {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 15;
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #25D366;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s ease;
+}
+.lp-whatsapp svg { fill: #fff; }
+.lp-whatsapp:hover { transform: scale(1.06); }
+.lp-whatsapp:focus-visible { outline: 2px solid var(--lilas); outline-offset: 3px; }
+
 /* ---- cookies ---- */
 
 /* "Gerir cookies" no rodapé: um botão com aspeto de ligação, como as vizinhas. */
@@ -540,6 +560,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .lp-interruptor span, .lp-interruptor span::after { transition: none; }
+  .lp-whatsapp { transition: none; }
 }
 
 /* ---- telas estreitas ---- */
@@ -568,5 +589,6 @@
   .lp-caixa-form, .lp-preco { padding: 24px; }
   .lp-testemunho { padding: 32px 24px 28px; }
   .lp-seccao { padding-top: 56px; padding-bottom: 56px; }
+  .lp-whatsapp { right: 16px; bottom: 16px; width: 56px; height: 56px; }
   .lp-software { padding-left: 16px; padding-right: 16px; }
 }
