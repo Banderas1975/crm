@@ -439,6 +439,7 @@ Mudanças de banco em `sql/leads.sql`.
 
 - O preço diz **"IVA incluído"** (no topo, no cartão do preço e nas perguntas).
 - Página **Política de privacidade** em `/privacidade`, com o aspeto da landing page: quem trata os dados, que dados, para quê, quanto tempo (24 meses depois do último contacto), com quem se partilham, cookies (só os essenciais), direitos e queixa à CNPD. Ligada na caixa do consentimento (abre noutro separador, para não perder o que já se escreveu) e no rodapé.
+- **Rodapé** da landing page com os dados da empresa: Eloquent Desert, Lda., NIF 518951480, Rua Fialho de Almeida, nº 14, 2º Esq., Escritório EP2, 1070-129 Avenidas Novas, Lisboa, telefone (+351) 932 386 810 (com a indicação "chamada para a rede móvel nacional") e o site firstmedia.pt.
 - No formulário, os campos obrigatórios têm asterisco: **Nome, Email, Telefone**, número de utilizadores e a caixa do consentimento. O telefone passou a ser obrigatório. A **Empresa é opcional** (`sql/leads-empresa-opcional.sql`).
 
 Mudança de banco: `sql/leads-empresa-opcional.sql`.

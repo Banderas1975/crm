@@ -387,6 +387,18 @@
 .lp-texto ul { padding-left: 20px; }
 .lp-texto strong { color: var(--texto); }
 
+.lp-rodape-empresa {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 28px;
+  font-size: 14px;
+  font-style: normal;
+  color: var(--texto-apoio);
+}
+.lp-rodape-empresa strong { color: var(--texto); }
+.lp-rodape-empresa small { font-size: 12px; }
+
 .lp-rodape-linha { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 28px; padding-bottom: 28px; font-size: 14px; color: var(--texto-apoio); }
 
 /* ---- cookies ---- */
