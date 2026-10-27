@@ -263,19 +263,14 @@ export default async function Inicio() {
         </section>
 
         {/* O software por dentro: o funil real, a ocupar um ecrã */}
-        <section id="software" className="lp-software lp-largura">
-          <div className="lp-software-topo">
-            <div>
-              <p className="lp-sobretitulo">O software por dentro</p>
-              <h2>Experimente já, hoje mesmo.</h2>
-              <p className="lp-lead">
-                Este é o funil do First Media CRM, tal como o vai usar. Crie a conta e entre logo a seguir, sem esperas:
-                14 dias grátis para experimentar tudo.
-              </p>
-            </div>
-            <a href="#experimentar" className="botao lp-botao-grande">
-              Começar já
-            </a>
+        <section id="software" className="lp-software">
+          <div className="lp-software-texto">
+            <p className="lp-sobretitulo">O software por dentro</p>
+            <h2>Experimente já, hoje mesmo.</h2>
+            <p className="lp-lead">
+              Este é o funil do First Media CRM, tal como o vai usar. Crie a conta e entre logo a seguir, sem esperas:
+              14 dias grátis para experimentar tudo.
+            </p>
           </div>
           <figure className="lp-ecra">
             <img
