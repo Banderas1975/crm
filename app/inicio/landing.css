@@ -109,43 +109,42 @@
 
 /* ---- o software por dentro: o funil real, a ocupar um ecrã ---- */
 
+/* Texto à esquerda, alinhado com o resto da página; o funil à direita, grande,
+   encostado à margem direita do ecrã e cortado por ela. */
 .lp-software {
   min-height: calc(100svh - 72px);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 28px;
-  padding-top: 32px;
-  padding-bottom: 32px;
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  align-items: center;
+  gap: 48px;
+  padding: 40px 0 40px calc(max(0px, (100% - 1120px) / 2) + 24px);
   border-top: 1px solid var(--borda);
+  overflow: hidden;
   scroll-margin-top: 72px;
 }
 
-.lp-software-topo { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px 40px; flex-wrap: wrap; }
-.lp-software-topo .lp-botao-grande { flex-shrink: 0; }
-.lp-software h2 { margin-bottom: 12px; }
-.lp-software .lp-lead { margin-bottom: 0; max-width: 640px; }
+.lp-software h2 { margin-bottom: 16px; }
+.lp-software .lp-lead { margin-bottom: 0; }
 
 .lp-ecra {
   margin: 0;
-  align-self: center;
-  max-width: 100%;
-  padding: 8px;
+  width: max-content;
+  padding: 8px 0 8px 8px;
   background: var(--superficie);
   border: 1px solid var(--borda);
-  border-radius: 16px;
+  border-right: 0;
+  border-radius: 16px 0 0 16px;
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
 }
 
-/* A imagem cabe sempre no ecrã: a largura toda, ou menos se a altura não der. */
+/* A altura do ecrã manda: a imagem enche a dobra e a largura sobra para a direita. */
 .lp-ecra img {
   display: block;
   width: auto;
-  max-width: 100%;
-  height: auto;
-  max-height: calc(100svh - 340px);
-  min-height: 0;
-  border-radius: 10px;
+  height: calc(100svh - 72px - 100px);
+  min-height: 480px;
+  max-height: 1000px;
+  border-radius: 10px 0 0 10px;
 }
 
 /* ---- secções ---- */
@@ -541,8 +540,9 @@
   .lp-cookies-acoes .lp-cookies-botao { min-width: 0; }
   .lp-cookies-texto-botao { grid-column: 1 / -1; order: 1; }
   .lp-heroi { padding-top: 56px; padding-bottom: 56px; }
-  .lp-software { min-height: 0; }
-  .lp-ecra img { max-height: none; }
+  .lp-software { min-height: 0; grid-template-columns: 1fr; gap: 32px; padding: 56px 24px; overflow: visible; }
+  .lp-ecra { width: auto; padding: 8px; border-right: 1px solid var(--borda); border-radius: 16px; }
+  .lp-ecra img { width: 100%; height: auto; min-height: 0; border-radius: 10px; }
   .lp-grelha-3, .lp-passos { grid-template-columns: 1fr; }
   .lp-nav { display: none; }
 }
@@ -557,4 +557,5 @@
   .lp-caixa-form, .lp-preco { padding: 24px; }
   .lp-testemunho { padding: 32px 24px 28px; }
   .lp-seccao { padding-top: 56px; padding-bottom: 56px; }
+  .lp-software { padding-left: 16px; padding-right: 16px; }
 }

@@ -415,7 +415,7 @@ Quem abre `firstmediacrm.online` sem sessão vê a landing page, no mesmo endere
 A página segue o funil de conversão, de cima para baixo:
 
 1. **Atenção:** "Nunca mais perca um follow-up" e o botão "Experimentar 14 dias grátis".
-   Logo a seguir, a ocupar um ecrã: "Experimente já, hoje mesmo." com o botão "Começar já" e um screenshot do funil real (`public/kanban-crm.png`, com contactos de demonstração fictícios).
+   Logo a seguir, a ocupar um ecrã: "Experimente já, hoje mesmo." à esquerda e, à direita, um screenshot grande do funil real, encostado à margem direita do ecrã e cortado por ela no desktop (`public/kanban-crm.png`, com contactos de demonstração fictícios).
 2. **Interesse:** as três dores (contactos espalhados, follow-ups esquecidos, vendas às escuras).
 3. **Desejo:** as funcionalidades que o CRM já tem e os 3 passos para começar.
 4. **Ação:** preço — **29,99 € por utilizador por mês, com 14 dias grátis**, e ao lado, à direita, o cartão anual: **287 € por utilizador por ano**, 20% de desconto face ao mensal —, perguntas frequentes e o formulário.
