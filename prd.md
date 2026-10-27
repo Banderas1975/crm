@@ -500,6 +500,8 @@ Os contadores da tabela `limites` com mais de 2 dias, e que não estejam bloquea
 
 **Conversão do Google Ads** ("CRM 2", `AW-17954366291/5xHUCIiHrp4dENPGp_FC`): conta um pedido dos 14 dias grátis enviado com sucesso. O código dado pelo Google Ads (`gtag_report_conversion`) vai no `<head>`, logo a seguir à etiqueta Google, só para quem aceitou a Publicidade; é da mesma conta da etiqueta, `AW-17954366291` (a conta `AW-17945715732`, dada antes, não conta e saiu). O formulário chama a função quando o pedido fica gravado, antes de seguir para Criar conta. Pedidos travados (robôs, limites, erros) não contam.
 
+**Consent Mode v2** (desde a v16, a pedido, para os visitantes que recusam não ficarem invisíveis): a etiqueta Google (Analytics e Ads) e o código da conversão carregam **sempre**, em todas as páginas, com `gtag('consent', 'default', …)` tudo `denied` (`ad_storage`, `ad_user_data`, `ad_personalization`, `analytics_storage`) e `ads_data_redaction`. A escolha do aviso de cookies passa à Google com `gtag('consent', 'update', …)` — no servidor, para quem já escolheu, e no navegador, quando se escolhe. Sem autorização, a Google não grava cookies nem usa dados pessoais e recebe só sinais anónimos para modelar. A conversão "CRM 2" dispara sempre que um pedido fica gravado, e leva o email para as **conversões otimizadas** (`gtag('set', 'user_data', { email })`; a Google cifra-o e só o usa com `ad_user_data` autorizado). É preciso ligar as conversões otimizadas no Google Ads. Isto substitui o "só carrega para quem aceitou" dos parágrafos acima; o OffConversion continua só com autorização de Publicidade. A política de privacidade explica o modo de consentimento e o envio do email.
+
 **OffConversion** (`pk_live_kg-HC7HywyHjCxa6NKWbKxdwuP__QS-Q`), desde a v16: script com `data-forms="true"` (lê os formulários) e `data-consent-mode="auto"`. Só nas páginas públicas sem passwords — a landing page e a política de privacidade (`app/offconversion.js`) — e só para quem aceitou os cookies de **Publicidade**; quem aceita na própria visita recebe-o logo, sem recarregar. Fica de fora do login, do registo, de recuperar a senha e do CRM por dentro, para nenhum fornecedor externo ler passwords nem dados de clientes. A CSP deixa o navegador falar com `*.offconversion.com`. A política de privacidade nomeia o OffConversion como fornecedor.
 
 No canto superior esquerdo do login e do registo há um "← Voltar": no login leva à página inicial, no registo leva ao login.
@@ -520,6 +522,29 @@ Mudanças de banco: `sql/usuarios-nome-telefone.sql` (colunas `usuarios.nome` e 
 - [ ] Quando alguém cria conta, recebo no email de administrador o aviso "Conta nova" com o nome, o email e o telefone
 - [ ] Só depois de criar a conta aparece o pop-up "Entraremos em contacto muito brevemente"; ao abrir o registo ou com um erro no formulário, não aparece; ao fechá-lo, vou para o login
 - [ ] Aprovo uma conta e a pessoa recebe o email "Obrigado, a sua conta do First Media CRM foi ativada, desfrute!"
+
+### 2. 14 dias grátis sem esperar pelo administrador — CONCLUÍDO
+
+Quem cria conta — no formulário da landing page ou em **Criar conta** (`/registo`) — começa logo os **14 dias grátis** e entra no CRM, sem passar pelo login nem esperar pela aprovação. A aprovação do administrador só é precisa para continuar **depois** dos 14 dias.
+
+- **Formulário da landing page:** passou a ter **Senha** (com Mostrar/Ocultar, pelo menos 8 caracteres). Ao enviar, cria a conta (`usuarios.experiencia_ate` = agora + 14 dias), grava o lead, abre a sessão e entra no Dashboard. Se o email já tem conta, diz para entrar com a senha. Deixou de ir para Criar conta, e o pop-up "Entraremos em contacto muito brevemente" saiu.
+- **Criar conta (`/registo`):** o mesmo — cria a conta com 14 dias e entra logo.
+- **Durante os 14 dias** a conta está "à espera de aprovação", mas entra normalmente, recebe os avisos por email e pode recuperar a senha. Em **Usuários**, cada conta à espera mostra "Em experiência até …" ou "Experiência terminou em …".
+- **No fim dos 14 dias**, sem aprovação, a conta deixa de entrar e vê "A sua experiência de 14 dias terminou. Vamos entrar em contacto para ativar a conta." Os dados ficam guardados; ao aprovar, volta tudo. Cada administrador recebe um email "Experiência terminou: …" (cron dos avisos, uma vez por conta).
+- **Emails:** quem cria conta recebe "Os seus 14 dias grátis no First Media CRM começaram", com a data do fim; o administrador recebe "Conta nova em experiência", com a data do fim; ao aprovar, sai o "Conta ativada" de sempre.
+- **Remover acesso** também acaba com a experiência: a conta deixa logo de entrar.
+- Os limites contra abusos continuam: 10 contas novas por hora, campo-armadilha para robôs, limites por email e por ligação na landing page.
+- A conversão do Google Ads passa a contar contas criadas na landing page.
+
+Mudança de banco: `sql/experiencia.sql` (coluna `usuarios.experiencia_ate` e o tipo novo de email).
+
+**PRONTO QUANDO**
+
+- [ ] Preencho o formulário da landing page com senha e entro logo no Dashboard
+- [ ] Em Criar conta, crio uma conta e entro logo
+- [ ] Em Usuários, a conta nova aparece "Em experiência até …"
+- [ ] Com a data de fim no passado, a conta não entra e vê a mensagem do fim da experiência; o administrador recebe o email
+- [ ] Aprovo a conta e ela volta a entrar, com os dados todos
 
 ### O que fica para depois
 

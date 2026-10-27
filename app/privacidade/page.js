@@ -81,7 +81,11 @@ export default function Privacidade() {
           de publicidade do Google Ads, para medirmos se os nossos anúncios trazem visitas e pedidos e para os
           mostrarmos a quem já visitou o site. Pode aceitar, recusar ou mudar de ideias a qualquer momento em
           &laquo;Gerir cookies&raquo;, no fim da página principal; se retirar uma autorização, apagamos os cookies
-          correspondentes neste site.
+          correspondentes neste site. Usamos o modo de consentimento da Google: enquanto não autorizar, as etiquetas
+          da Google carregam sem gravar cookies e sem usar dados pessoais, e só enviam à Google sinais anónimos (por
+          exemplo, que houve uma visita ou um pedido), que a Google usa para estimar resultados de forma agregada. Se
+          autorizar a publicidade e pedir os 14 dias grátis, o seu email é enviado à Google cifrado (em hash) para
+          medirmos se o pedido veio de um anúncio.
         </p>
 
         <h2>Os seus direitos</h2>

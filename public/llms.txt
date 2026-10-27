@@ -23,7 +23,7 @@ Feito pela First Media. Site: https://firstmediacrm.online
 
 ## Perguntas frequentes
 
-- Como funcionam os 14 dias grátis? Preenche-se o formulário no site, a First Media ativa a conta e usa-se o CRM durante 14 dias sem pagar. No fim decide-se se continua.
+- Como funcionam os 14 dias grátis? Preenche-se o formulário no site, a conta fica logo ativa e entra-se no CRM. Usa-se durante 14 dias sem pagar e, no fim, decide-se se continua.
 - Preciso de instalar alguma coisa? Não. Funciona no browser, no computador e no telemóvel.
 - Os meus colegas veem os meus contactos? Depende de como a equipa preferir trabalhar: cada utilizador pode ver apenas os seus contactos, tarefas e reuniões, ou os contactos podem ser partilhados com toda a equipa.
 - Posso tirar os meus dados? Sim. Os contactos exportam-se para Excel a qualquer momento.
