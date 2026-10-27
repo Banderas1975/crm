@@ -314,8 +314,8 @@ export default async function Inicio() {
           <h2>Comece em 3 passos</h2>
           <ol className="lp-passos">
             <li>
-              <strong>Peça os 14 dias grátis</strong>
-              <span>Preencha o formulário no fim desta página.</span>
+              <strong>Coloque os seus dados</strong>
+              <span>Ponha os seus dados e proteja-os com uma password.</span>
             </li>
             <li>
               <strong>Comece Já</strong>
