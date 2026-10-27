@@ -244,7 +244,7 @@ export default async function Inicio() {
           <div>
             <p className="lp-sobretitulo">CRM simples, em português</p>
             <h1>
-              Nunca mais perca um <em>follow-up</em>.
+              CRM em português a menos de <em>1 café por dia</em>
             </h1>
             <p className="lp-lead">
               O First Media CRM junta o pipeline de vendas, os contactos e as tarefas num só lugar. Feito para Empresas em

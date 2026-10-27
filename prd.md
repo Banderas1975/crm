@@ -414,7 +414,7 @@ Quem abre `firstmediacrm.online` sem sessão vê a landing page, no mesmo endere
 
 A página segue o funil de conversão, de cima para baixo:
 
-1. **Atenção:** "Nunca mais perca um follow-up" e o botão "Experimentar 14 dias grátis". Por baixo, em letra média: "Dados alojados na UE, conformidade RGPD, apoio em português por email, telefone ou WhatsApp e cancelamento a qualquer momento." (saíram a nota do preço e a ligação "Ver preço").
+1. **Atenção:** "CRM em português a menos de 1 café por dia" (era "Nunca mais perca um follow-up") e o botão "Experimentar 14 dias grátis". Por baixo, em letra média: "Dados alojados na UE, conformidade RGPD, apoio em português por email, telefone ou WhatsApp e cancelamento a qualquer momento." (saíram a nota do preço e a ligação "Ver preço").
    Logo a seguir, a ocupar um ecrã: "Experimente já, hoje mesmo." à esquerda e, à direita, um screenshot grande do funil real, encostado à margem direita do ecrã e cortado por ela no desktop (`public/kanban-crm.png`, com contactos de demonstração fictícios).
 2. **Interesse:** as três dores (contactos espalhados, follow-ups esquecidos, vendas às escuras).
 3. **Desejo:** as funcionalidades que o CRM já tem e os 3 passos para começar.
