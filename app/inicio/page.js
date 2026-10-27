@@ -118,14 +118,6 @@ const TESTEMUNHOS = [
   },
 ];
 
-// Um funil de exemplo, desenhado só com CSS (não é uma imagem).
-const EXEMPLO = [
-  { etapa: "Novo", cor: "#9BA1C2", cartoes: ["Padaria Lusa", "Atelier Norte"] },
-  { etapa: "Em contacto", cor: "#F5A35C", cartoes: ["Clínica Sol"] },
-  { etapa: "Proposta", cor: "#A4ACE9", cartoes: ["Hotel Ribeira", "Oficina Silva"] },
-  { etapa: "Cliente", cor: "#5FD39B", cartoes: ["Café Central"] },
-];
-
 // Schema markup (JSON-LD): diz ao Google, em linguagem de máquina, o que é esta
 // página — um software, o preço, quem o faz e as perguntas frequentes. Só leva
 // o que a página já mostra: nada de avaliações ou números inventados.
@@ -268,21 +260,31 @@ export default async function Inicio() {
             </div>
             <p className="lp-nota">14 dias grátis · depois 29,99 € por utilizador/mês, IVA incluído</p>
           </div>
+        </section>
 
-          <div className="lp-funil" aria-hidden="true">
-            {EXEMPLO.map((coluna) => (
-              <div key={coluna.etapa} className="lp-coluna">
-                <p className="lp-coluna-titulo" style={{ color: coluna.cor }}>
-                  {coluna.etapa}
-                </p>
-                {coluna.cartoes.map((c) => (
-                  <div key={c} className="lp-cartao-exemplo" style={{ borderLeftColor: coluna.cor }}>
-                    {c}
-                  </div>
-                ))}
-              </div>
-            ))}
+        {/* O software por dentro: o funil real, a ocupar um ecrã */}
+        <section id="software" className="lp-software lp-largura">
+          <div className="lp-software-topo">
+            <div>
+              <p className="lp-sobretitulo">O software por dentro</p>
+              <h2>Experimente já, hoje mesmo.</h2>
+              <p className="lp-lead">
+                Este é o funil do First Media CRM, tal como o vai usar. Crie a conta e entre logo a seguir, sem esperas:
+                14 dias grátis para experimentar tudo.
+              </p>
+            </div>
+            <a href="#experimentar" className="botao lp-botao-grande">
+              Começar já
+            </a>
           </div>
+          <figure className="lp-ecra">
+            <img
+              src="/kanban-crm.png"
+              width={2880}
+              height={1534}
+              alt="Funil de vendas do First Media CRM, com contactos de demonstração nas etapas Novo, Em contato, Proposta, Cliente e Perdido"
+            />
+          </figure>
         </section>
 
         {/* 2. Interesse: o problema */}
@@ -321,8 +323,8 @@ export default async function Inicio() {
               <span>Preencha o formulário no fim desta página.</span>
             </li>
             <li>
-              <strong>Entre e registe-se</strong>
-              <span>Rapidamente lhe damos acesso ao software</span>
+              <strong>Comece Já</strong>
+              <span>Aceda de imediato ao software, experimente já</span>
             </li>
             <li>
               <strong>Feche mais negócios</strong>

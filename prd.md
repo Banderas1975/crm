@@ -414,7 +414,8 @@ Quem abre `firstmediacrm.online` sem sessão vê a landing page, no mesmo endere
 
 A página segue o funil de conversão, de cima para baixo:
 
-1. **Atenção:** "Nunca mais perca um follow-up", com um funil de exemplo e o botão "Experimentar 14 dias grátis".
+1. **Atenção:** "Nunca mais perca um follow-up" e o botão "Experimentar 14 dias grátis".
+   Logo a seguir, a ocupar um ecrã: "Experimente já, hoje mesmo." com o botão "Começar já" e um screenshot do funil real (`public/kanban-crm.png`, com contactos de demonstração fictícios).
 2. **Interesse:** as três dores (contactos espalhados, follow-ups esquecidos, vendas às escuras).
 3. **Desejo:** as funcionalidades que o CRM já tem e os 3 passos para começar.
 4. **Ação:** preço — **29,99 € por utilizador por mês, com 14 dias grátis**, e ao lado, à direita, o cartão anual: **287 € por utilizador por ano**, 20% de desconto face ao mensal —, perguntas frequentes e o formulário.
@@ -423,7 +424,7 @@ A página segue o funil de conversão, de cima para baixo:
 
 Cores e logótipo da First Media (ver `design.md`, "Landing page").
 
-**Formulário:** nome, email, telefone (obrigatório na v14.2, opcional desde a v16), empresa (opcional desde a v14.2), mensagem (opcional) e a caixa obrigatória de consentimento (RGPD). Cada pedido fica guardado na tabela `leads` e sai um email de aviso de crm@firstmedia.pt para cada administrador (para o email de avisos, se tiver um). Contra abusos: um campo escondido que só robôs preenchem, e no máximo 10 pedidos por dia do mesmo email (eram 3 até à v16). Desde a v16, também no máximo 20 pedidos por dia a partir da mesma ligação (IP), com quaisquer emails. Passado o limite, o formulário diz que já recebemos vários pedidos com aquele email hoje, em vez de fingir que enviou. O campo "Quantos utilizadores?" saiu na v16 (`sql/leads-utilizadores-opcional.sql`). O botão diz **"Quero os 14 dias grátis já"**. Desde a v16, mal o pedido é enviado, a página segue para **Criar conta** (`/registo`) com nome, email e telefone já preenchidos (o telefone separado em indicativo e número); falta só a senha. Os dados passam pela memória do separador (sessionStorage) e apagam-se ao serem usados: não vão no endereço, para não ficarem no histórico nem no Google Analytics.
+**Formulário:** nome, email, telefone (obrigatório na v14.2, opcional desde a v16), empresa (opcional desde a v14.2), mensagem (opcional) e a caixa obrigatória de consentimento (RGPD). Cada pedido fica guardado na tabela `leads` e sai um email de aviso de crm@firstmedia.pt para cada administrador (para o email de avisos, se tiver um). Contra abusos: um campo escondido que só robôs preenchem, e no máximo 10 pedidos por dia do mesmo email (eram 3 até à v16). Desde a v16, também no máximo 20 pedidos por dia a partir da mesma ligação (IP), com quaisquer emails. Passado o limite, o formulário diz que já recebemos vários pedidos com aquele email hoje, em vez de fingir que enviou. O campo "Quantos utilizadores?" saiu na v16 (`sql/leads-utilizadores-opcional.sql`). O botão diz **"Começar já"** (era "Quero os 14 dias grátis já"). Desde a v16, mal o pedido é enviado, a página segue para **Criar conta** (`/registo`) com nome, email e telefone já preenchidos (o telefone separado em indicativo e número); falta só a senha. Os dados passam pela memória do separador (sessionStorage) e apagam-se ao serem usados: não vão no endereço, para não ficarem no histórico nem no Google Analytics.
 
 Mudanças de banco em `sql/leads.sql`.
 
