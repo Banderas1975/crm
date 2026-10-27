@@ -103,7 +103,7 @@ export default function FormLead() {
       )}
 
       <button className="botao lp-botao-grande" disabled={aEnviar}>
-        {aEnviar ? "A enviar..." : "Quero os 14 dias grátis já"}
+        {aEnviar ? "A enviar..." : "Começar já"}
       </button>
     </form>
   );

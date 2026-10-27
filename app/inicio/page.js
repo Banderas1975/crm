@@ -321,8 +321,8 @@ export default async function Inicio() {
               <span>Preencha o formulário no fim desta página.</span>
             </li>
             <li>
-              <strong>Entre e registe-se</strong>
-              <span>Rapidamente lhe damos acesso ao software</span>
+              <strong>Comece Já</strong>
+              <span>Aceda de imediato ao software, experimente já</span>
             </li>
             <li>
               <strong>Feche mais negócios</strong>
