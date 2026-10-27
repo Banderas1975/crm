@@ -416,9 +416,11 @@ export default async function Inicio() {
         </div>
       </footer>
 
-      {/* Botão do WhatsApp, fixo no canto inferior direito. O aviso de cookies fica por cima dele. */}
+      {/* Botão do WhatsApp, fixo no canto inferior direito. Abre a conversa já com a mensagem
+          "Gostaria de conhecer melhor o vosso CRM, quando podemos marcar uma demonstração?".
+          O aviso de cookies fica por cima dele. */}
       <a
-        href="https://wa.me/351932386810"
+        href="https://wa.me/351932386810?text=Gostaria%20de%20conhecer%20melhor%20o%20vosso%20CRM%2C%20quando%20podemos%20marcar%20uma%20demonstra%C3%A7%C3%A3o%3F"
         className="lp-whatsapp"
         target="_blank"
         rel="noopener noreferrer"
